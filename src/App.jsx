@@ -1,0 +1,19 @@
+import { Routes, Route } from 'react-router-dom'
+import LandingPage from './pages/LandingPage'
+import FestivalDetailPage from './pages/FestivalDetailPage'
+import { AuthProvider } from './hooks/useAuth'
+
+function App() {
+  return (
+    <AuthProvider>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/festival/:id" element={<FestivalDetailPage />} />
+        </Routes>
+      </div>
+    </AuthProvider>
+  )
+}
+
+export default App
