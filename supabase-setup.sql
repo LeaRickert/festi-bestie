@@ -112,6 +112,78 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+-- Create user role enum
+CREATE TYPE user_role AS ENUM ('admin', 'editor', 'viewer');
+
+-- Create user profiles table with roles and username
+CREATE TABLE IF NOT EXISTS user_profiles (
+  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  role user_role DEFAULT 'viewer',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS on user_profiles
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+
+-- Policy for user profiles
+CREATE POLICY "Users can view their own profile" ON user_profiles 
+  FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Users can update their own profile" ON user_profiles 
+  FOR UPDATE USING (auth.uid() = id);
+
+-- Create a function to get user role
+CREATE OR REPLACE FUNCTION get_user_role(user_id UUID)
+RETURNS user_role AS $$
+BEGIN
+  RETURN (
+    SELECT role FROM user_profiles 
+    WHERE id = user_id
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create a function to check if user can edit acts
+CREATE OR REPLACE FUNCTION can_edit_acts(user_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN get_user_role(user_id) IN ('admin', 'editor');
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Update RLS policies for acts table
+DROP POLICY IF EXISTS "Acts are viewable by everyone" ON acts;
+
+-- Create new policies for acts
+CREATE POLICY "Acts are viewable by everyone" ON acts 
+  FOR SELECT USING (true);
+
+CREATE POLICY "Only admins and editors can insert acts" ON acts 
+  FOR INSERT WITH CHECK (can_edit_acts(auth.uid()));
+
+CREATE POLICY "Only admins and editors can update acts" ON acts 
+  FOR UPDATE USING (can_edit_acts(auth.uid()));
+
+CREATE POLICY "Only admins can delete acts" ON acts 
+  FOR DELETE USING (get_user_role(auth.uid()) = 'admin');
+
+-- Create function to handle new user signup
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.user_profiles (id, username, role)
+  VALUES (NEW.id, NEW.email, 'viewer'); -- Use email as initial username, user can change later
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create trigger for new user signup
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
 -- Create triggers to automatically update the updated_at column
 CREATE TRIGGER update_festivals_updated_at BEFORE UPDATE ON festivals
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -120,4 +192,7 @@ CREATE TRIGGER update_acts_updated_at BEFORE UPDATE ON acts
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_user_ratings_updated_at BEFORE UPDATE ON user_ratings
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_user_profiles_updated_at BEFORE UPDATE ON user_profiles
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

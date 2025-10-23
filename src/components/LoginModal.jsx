@@ -6,7 +6,7 @@ const LoginModal = ({ isOpen, onClose }) => {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
+  const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
@@ -22,7 +22,7 @@ const LoginModal = ({ isOpen, onClose }) => {
         const { error } = await signIn(email, password)
         if (error) throw error
       } else {
-        const { error } = await signUp(email, password)
+        const { error } = await signUp(email, password, username)
         if (error) throw error
       }
       onClose()
@@ -36,7 +36,7 @@ const LoginModal = ({ isOpen, onClose }) => {
   const resetForm = () => {
     setEmail('')
     setPassword('')
-    setName('')
+    setUsername('')
     setError('')
   }
 
@@ -65,15 +65,16 @@ const LoginModal = ({ isOpen, onClose }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
-              <label className="block text-white/80 text-sm mb-2">Name</label>
+              <label className="block text-white/80 text-sm mb-2">Username</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/60" />
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:ring-2 focus:ring-festival-purple focus:border-transparent"
-                  placeholder="Your name"
+                  placeholder="Choose a username"
+                  required
                 />
               </div>
             </div>
