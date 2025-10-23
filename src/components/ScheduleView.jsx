@@ -1,8 +1,10 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Clock, Music, Calendar } from 'lucide-react'
+import { Clock, Music, Calendar, Download } from 'lucide-react'
+import ExportScheduleModal from './ExportScheduleModal'
 
-const ScheduleView = ({ acts, onActClick }) => {
+const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
   const [selectedDay, setSelectedDay] = useState('')
+  const [showExportModal, setShowExportModal] = useState(false)
 
   // Get unique days from acts
   const days = useMemo(() => {
@@ -26,7 +28,7 @@ const ScheduleView = ({ acts, onActClick }) => {
     return [...new Set(dayActs.filter(act => act.stage).map(act => act.stage))].sort()
   }, [dayActs])
 
-  // Generate time slots (festival runs from 1 PM to 2 AM, using simple numbers)
+  // Generate time slots (festival runs from 1 PM to 12 AM, using simple numbers)
   const timeSlots = useMemo(() => {
     const slots = []
     // 1 PM to 11 PM (13:00 to 23:00)
@@ -34,11 +36,8 @@ const ScheduleView = ({ acts, onActClick }) => {
       const displayHour = hour - 12 // Convert to 1-11 format
       slots.push(displayHour.toString())
     }
-    // 12 AM to 2 AM (00:00 to 02:00)
-    for (let hour = 0; hour <= 2; hour++) {
-      const displayHour = hour === 0 ? 12 : hour // 12 AM, 1 AM, 2 AM
-      slots.push(displayHour.toString())
-    }
+    // 12 AM (00:00)
+    slots.push('12')
     return slots
   }, [])
 
@@ -64,7 +63,7 @@ const ScheduleView = ({ acts, onActClick }) => {
     return hours * 60 + minutes
   }
 
-  // Convert simple number format to minutes (1 = 1 PM = 13:00)
+  // Convert simple number format to minutes (1 = 1 PM = 13:00, 12 = 12 AM = 00:00)
   const simpleTimeToMinutes = (timeStr) => {
     const hour = parseInt(timeStr)
     let actualHour = hour
@@ -129,6 +128,15 @@ const ScheduleView = ({ acts, onActClick }) => {
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">Festival Schedule</h2>
         <p className="text-white/70">Complete schedule with set times</p>
+        <div className="mt-4">
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center px-6 py-3 bg-festival-purple/20 text-festival-purple rounded-lg hover:bg-festival-purple/30 transition-colors mx-auto"
+          >
+            <Download className="h-5 w-5 mr-2" />
+            Export Schedule
+          </button>
+        </div>
       </div>
 
       {/* Day Selector */}
@@ -211,6 +219,15 @@ const ScheduleView = ({ acts, onActClick }) => {
           )}
         </div>
       )}
+
+      {/* Export Schedule Modal */}
+      <ExportScheduleModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        acts={acts}
+        festivalName={festivalName}
+        ratings={ratings}
+      />
     </div>
   )
 }

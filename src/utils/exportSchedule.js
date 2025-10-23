@@ -1,8 +1,9 @@
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
-
+// Legacy export function - now handled by ExportScheduleModal component
+// This function is kept for backward compatibility but should not be used
 export const exportScheduleToImage = async (acts, festivalName, ratings = {}) => {
-  // Create a temporary container for the schedule
+  console.warn('exportScheduleToImage is deprecated. Use ExportScheduleModal component instead.')
+  
+  // Create a simple fallback export
   const container = document.createElement('div')
   container.style.cssText = `
     position: fixed;
@@ -15,7 +16,6 @@ export const exportScheduleToImage = async (acts, festivalName, ratings = {}) =>
     color: white;
   `
 
-  // Create header
   const header = document.createElement('div')
   header.innerHTML = `
     <h1 style="font-size: 32px; font-weight: bold; margin-bottom: 20px; text-align: center;">
@@ -107,34 +107,10 @@ export const exportScheduleToImage = async (acts, festivalName, ratings = {}) =>
       useCORS: true,
     })
 
-    // Create PDF
-    const imgData = canvas.toDataURL('image/png')
-    const pdf = new jsPDF('p', 'mm', 'a4')
-    
-    const imgWidth = 210
-    const pageHeight = 295
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
-    let heightLeft = imgHeight
-
-    let position = 0
-
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-    heightLeft -= pageHeight
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight
-      pdf.addPage()
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-      heightLeft -= pageHeight
-    }
-
-    // Download PDF
-    pdf.save(`${festivalName.replace(/\s+/g, '_')}_schedule.pdf`)
-
-    // Also create a simple image download
+    // Create image download only (no PDF)
     const link = document.createElement('a')
     link.download = `${festivalName.replace(/\s+/g, '_')}_schedule.png`
-    link.href = imgData
+    link.href = canvas.toDataURL('image/png')
     link.click()
 
   } catch (error) {
