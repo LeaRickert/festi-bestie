@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { 
   ArrowLeft, 
   Calendar, 
@@ -21,6 +21,7 @@ import ScheduleByDayView from '../components/ScheduleByDayView'
 
 const FestivalDetailPage = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { user } = useAuth()
   const [festival, setFestival] = useState(null)
   const [acts, setActs] = useState([])

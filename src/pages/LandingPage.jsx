@@ -12,6 +12,7 @@ const LandingPage = () => {
   const { user, signOut } = useAuth()
 
   useEffect(() => {
+    console.log('LandingPage useEffect');
     fetchFestivals()
   }, [])
 
@@ -59,11 +60,13 @@ const LandingPage = () => {
         ]
         setFestivals(mockFestivals)
       } else {
+        console.log('LandingPage useEffect setFestivals', data);
         setFestivals(data)
       }
     } catch (error) {
       console.error('Error fetching festivals:', error)
     } finally {
+      console.log('LandingPage useEffect finally');
       setLoading(false)
     }
   }

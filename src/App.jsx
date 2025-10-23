@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import FestivalDetailPage from './pages/FestivalDetailPage'
+import ExportPage from './pages/ExportPage'
 import { AuthProvider } from './hooks/useAuth'
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/festival/:id" element={<FestivalDetailPage />} />
+          <Route path="/festival/:id/export" element={<ExportPage />} />
         </Routes>
       </div>
     </AuthProvider>

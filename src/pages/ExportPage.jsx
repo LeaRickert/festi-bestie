@@ -1,13 +1,139 @@
-import { useState, useMemo, useEffect } from 'react'
-import { X, Download, Calendar, MapPin, Star } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { ArrowLeft, Download, Calendar, MapPin } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
+import { supabase } from '../utils/supabase'
 import html2canvas from 'html2canvas'
 
-const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {} }) => {
+const ExportPage = () => {
+  const { id } = useParams()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  
+  const [festival, setFestival] = useState(null)
+  const [acts, setActs] = useState([])
+  const [ratings, setRatings] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [isExporting, setIsExporting] = useState(false)
+  
+  // Export settings
   const [selectedDay, setSelectedDay] = useState('')
   const [selectedStages, setSelectedStages] = useState([])
-  const [isExporting, setIsExporting] = useState(false)
-  const [showPreview, setShowPreview] = useState(false)
   const [previewHtml, setPreviewHtml] = useState('')
+
+  // Get passed data from navigation state
+  const passedData = location.state
+
+  useEffect(() => {
+    if (passedData?.festival) {
+      // Use passed data (no refetch needed)
+      setFestival(passedData.festival)
+      setActs(passedData.acts)
+      setRatings(passedData.ratings)
+      setLoading(false)
+    } else {
+      // Fallback: fetch data
+      fetchFestivalData()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (user && acts.length > 0) {
+      loadUserRatings()
+    }
+  }, [user, acts])
+
+  const fetchFestivalData = async () => {
+    try {
+      // Try to fetch from Supabase first
+      const { data: festivalData, error: festivalError } = await supabase
+        .from('festivals')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (festivalError || !festivalData) {
+        // Fallback to mock data if Supabase is not configured
+        const mockFestival = {
+          id: '1',
+          name: 'EDC Orlando 2024',
+          start_date: '2024-11-15',
+          end_date: '2024-11-17',
+          location: 'Orlando, FL',
+          image_url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop',
+          description: 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience',
+          status: 'complete'
+        }
+        setFestival(mockFestival)
+        
+        // Use mock acts data
+        const mockActs = [
+          { id: 'mock-1', artist: 'Alex Kennon', day: 'Friday', startTime: '8:00 PM', length: 60, stage: 'Neon Garden', specialNotes: '', genre: 'Tech House', category: 'Techno', youtubeUrl: 'https://youtube.com/watch?v=example1', youtubeTitle: 'Ibiza 2023', festivalId: id, avgRating: 3.6 },
+          { id: 'mock-2', artist: 'Avision', day: 'Friday', startTime: '9:00 PM', length: 60, stage: 'Neon Garden', specialNotes: '', genre: 'Techno', category: 'House', youtubeUrl: 'https://youtube.com/watch?v=example2', youtubeTitle: 'Club 2023', festivalId: id, avgRating: 4.0 },
+          { id: 'mock-3', artist: 'Black Tiger Sex Machine', day: 'Friday', startTime: '10:00 PM', length: 60, stage: 'Circuit Grounds', specialNotes: '', genre: 'Dubstep', category: 'Bass', youtubeUrl: 'https://youtube.com/watch?v=example3', youtubeTitle: 'WAMU 2024', festivalId: id, avgRating: 4.2 },
+          { id: 'mock-4', artist: 'Carl Cox B2B Vintage Culture', day: 'Friday', startTime: '11:00 PM', length: 60, stage: 'Neon Garden', specialNotes: 'Worldwide Debut', genre: 'Tech House', category: 'Pop EDM', youtubeUrl: 'https://youtube.com/watch?v=example4', youtubeTitle: 'Exit 2024', festivalId: id, avgRating: 8.0 },
+          { id: 'mock-5', artist: 'Hedex', day: 'Friday', startTime: '7:00 PM', length: 60, stage: 'Circuit Grounds', specialNotes: '', genre: 'Drum & Bass', category: 'Bass', youtubeUrl: 'https://youtube.com/watch?v=example5', youtubeTitle: 'EDCLV 2024', festivalId: id, avgRating: 6.6 },
+          { id: 'mock-6', artist: 'Lost Frequencies', day: 'Friday', startTime: '8:30 PM', length: 60, stage: 'Kinetic Field', specialNotes: '', genre: 'House', category: 'Pop EDM', youtubeUrl: 'https://youtube.com/watch?v=example6', youtubeTitle: 'Tomorrowland 2024', festivalId: id, avgRating: 7.4 },
+          // Saturday acts
+          { id: 'mock-7', artist: 'Above & Beyond', day: 'Saturday', startTime: '11:00 PM', length: 60, stage: 'Kinetic Field', specialNotes: 'Group Therapy', genre: 'Trance', category: 'Progressive', youtubeUrl: 'https://youtube.com/watch?v=example7', youtubeTitle: 'ABGT 500', festivalId: id, avgRating: 9.2 },
+          { id: 'mock-8', artist: 'Armin van Buuren', day: 'Saturday', startTime: '9:30 PM', length: 90, stage: 'Kinetic Field', specialNotes: 'A State of Trance', genre: 'Trance', category: 'Progressive', youtubeUrl: 'https://youtube.com/watch?v=example8', youtubeTitle: 'ASOT 1000', festivalId: id, avgRating: 8.8 },
+          { id: 'mock-9', artist: 'Charlotte de Witte', day: 'Saturday', startTime: '10:00 PM', length: 60, stage: 'Neon Garden', specialNotes: '', genre: 'Techno', category: 'Dark Techno', youtubeUrl: 'https://youtube.com/watch?v=example9', youtubeTitle: 'Tomorrowland 2024', festivalId: id, avgRating: 7.8 },
+          { id: 'mock-10', artist: 'Flume', day: 'Saturday', startTime: '8:00 PM', length: 60, stage: 'Kinetic Field', specialNotes: '', genre: 'Future Bass', category: 'Electronic', youtubeUrl: 'https://youtube.com/watch?v=example10', youtubeTitle: 'Coachella 2024', festivalId: id, avgRating: 6.8 },
+          { id: 'mock-11', artist: 'Gryffin', day: 'Saturday', startTime: '7:00 PM', length: 60, stage: 'Kinetic Field', specialNotes: '', genre: 'Progressive House', category: 'Melodic', youtubeUrl: 'https://youtube.com/watch?v=example11', youtubeTitle: 'EDC Las Vegas 2024', festivalId: id, avgRating: 6.2 },
+          // Sunday acts
+          { id: 'mock-12', artist: 'John Summit', day: 'Sunday', startTime: '9:00 PM', length: 90, stage: 'Neon Garden', specialNotes: '', genre: 'Tech House', category: 'Underground', youtubeUrl: 'https://youtube.com/watch?v=example12', youtubeTitle: 'Summit Sessions', festivalId: id, avgRating: 7.3 },
+          { id: 'mock-13', artist: 'Kx5', day: 'Sunday', startTime: '11:00 PM', length: 60, stage: 'Kinetic Field', specialNotes: 'Kaskade x Deadmau5', genre: 'Progressive House', category: 'Collaboration', youtubeUrl: 'https://youtube.com/watch?v=example13', youtubeTitle: 'EDC Las Vegas 2024', festivalId: id, avgRating: 8.7 },
+          { id: 'mock-14', artist: 'Lane 8', day: 'Sunday', startTime: '7:30 PM', length: 60, stage: 'Neon Garden', specialNotes: 'This Never Happened', genre: 'Deep House', category: 'Melodic', youtubeUrl: 'https://youtube.com/watch?v=example14', youtubeTitle: 'Summer Gatherings', festivalId: id, avgRating: 6.9 },
+          { id: 'mock-15', artist: 'Nora En Pure', day: 'Sunday', startTime: '6:00 PM', length: 60, stage: 'Neon Garden', specialNotes: '', genre: 'Deep House', category: 'Melodic', youtubeUrl: 'https://youtube.com/watch?v=example15', youtubeTitle: 'Purified Radio', festivalId: id, avgRating: 6.4 },
+          { id: 'mock-16', artist: 'Odesza', day: 'Sunday', startTime: '10:00 PM', length: 90, stage: 'Kinetic Field', specialNotes: 'Live Show', genre: 'Future Bass', category: 'Live Electronic', youtubeUrl: 'https://youtube.com/watch?v=example16', youtubeTitle: 'The Last Goodbye Tour', festivalId: id, avgRating: 8.9 },
+          { id: 'mock-17', artist: 'Seven Lions', day: 'Sunday', startTime: '8:30 PM', length: 60, stage: 'Circuit Grounds', specialNotes: '', genre: 'Melodic Dubstep', category: 'Emotional', youtubeUrl: 'https://youtube.com/watch?v=example17', youtubeTitle: 'Ophelia Records', festivalId: id, avgRating: 7.1 }
+        ]
+        setActs(mockActs)
+      } else {
+        setFestival(festivalData)
+        
+        // Fetch acts for this festival
+        const { data: actsData, error: actsError } = await supabase
+          .from('acts')
+          .select('*')
+          .eq('festival_id', id)
+          .order('start_time')
+
+        if (actsError) {
+          console.error('Error fetching acts:', actsError)
+        } else {
+          setActs(actsData || [])
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching festival data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadUserRatings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_ratings')
+        .select('act_id, rating')
+        .eq('user_id', user.id)
+
+      if (error) {
+        console.error('Error loading ratings:', error)
+        return
+      }
+
+      const ratingsMap = {}
+      data.forEach(item => {
+        ratingsMap[item.act_id] = item.rating
+      })
+      setRatings(ratingsMap)
+    } catch (error) {
+      console.error('Error loading ratings:', error)
+    }
+  }
 
   // Get unique days from acts
   const days = useMemo(() => {
@@ -53,20 +179,6 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
     }
     // 12 AM (00:00)
     slots.push('12')
-    return slots
-  }, [])
-
-  // Generate half-hour time slots for grid lines
-  const halfHourSlots = useMemo(() => {
-    const slots = []
-    // 1 PM to 11 PM (13:00 to 23:00)
-    for (let hour = 13; hour <= 23; hour++) {
-      const displayHour = hour - 12 // Convert to 1-11 format
-      slots.push({ hour: displayHour.toString(), isHalfHour: false })
-      slots.push({ hour: displayHour.toString(), isHalfHour: true })
-    }
-    // 12 AM (00:00)
-    slots.push({ hour: '12', isHalfHour: false })
     return slots
   }, [])
 
@@ -119,11 +231,6 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
       return actStartMinutes < slotEndMinutes && actEndMinutes > slotStartMinutes
     })
     
-    // Debug logging
-    if (acts.length > 0) {
-      console.log(`Found ${acts.length} acts for stage ${stage} at time ${timeSlot}:`, acts.map(a => a.artist))
-    }
-    
     return acts
   }
 
@@ -140,9 +247,6 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
     // Convert minutes to pixels (assuming 1 minute = 1 pixel for now)
     const topPixels = topOffset
     const heightPixels = Math.max(height, 20) // Minimum height of 20px
-    
-    // Debug logging
-    console.log(`Act: ${act.artist}, TimeSlot: ${timeSlot}, SlotStart: ${slotStartMinutes}, ActStart: ${actStartMinutes}, TopOffset: ${topOffset}, Height: ${height}, TopPixels: ${topPixels}, HeightPixels: ${heightPixels}`)
     
     return {
       top: `${topPixels}px`,
@@ -256,7 +360,7 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
         <!-- Header -->
         <div style="margin-bottom: 15px;">
           <h1 style="font-size: ${isMobile && !isTablet ? '16px' : '18px'}; font-weight: bold; margin-bottom: 8px; text-align: center;">
-            ${selectedDay.toUpperCase()} - ${festivalName}
+            ${selectedDay.toUpperCase()} - ${festival.name}
           </h1>
           <div style="text-align: center; font-size: ${isMobile && !isTablet ? '10px' : '12px'}; opacity: 0.8; margin-bottom: 15px;">
             Generated on ${new Date().toLocaleDateString()} • ${selectedStages.length} stages
@@ -409,11 +513,11 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
     return scheduleHtml
   }
 
-  const handlePreview = () => {
+  // Auto-update preview when settings change
+  useEffect(() => {
     const html = generatePreviewHtml()
     setPreviewHtml(html)
-    setShowPreview(true)
-  }
+  }, [selectedDay, selectedStages, festival, filteredActs])
 
   const exportSchedule = async () => {
     if (!selectedDay || selectedStages.length === 0) return
@@ -433,7 +537,7 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
         containerHeight = 852
         fontSize = '11px'
         padding = '15px'
-        timeColumnWidth = '25px' // Even smaller - just wide enough for 2 digits
+        timeColumnWidth = '20px' // Even smaller - just wide enough for 2 digits
       } else if (isTablet) {
         // Tablet dimensions
         containerWidth = 768
@@ -447,7 +551,7 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
         containerHeight = 852
         fontSize = '11px'
         padding = '15px'
-        timeColumnWidth = '25px'
+        timeColumnWidth = '20px'
       }
 
       // Create a temporary container for the schedule
@@ -469,8 +573,8 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
       // Create header
       const header = document.createElement('div')
       header.innerHTML = `
-        <h1 style="font-size: ${isMobile && !isTablet ? '20px' : '24px'}; font-weight: bold; margin-bottom: 8px; text-align: center;">
-          ${festivalName} - ${selectedDay}
+        <h1 style="font-size: ${isMobile && !isTablet ? '16px' : '18px'}; font-weight: bold; margin-bottom: 8px; text-align: center;">
+          ${selectedDay.toUpperCase()} - ${festival.name}
         </h1>
         <div style="text-align: center; font-size: ${isMobile && !isTablet ? '10px' : '12px'}; opacity: 0.8; margin-bottom: 15px;">
           Generated on ${new Date().toLocaleDateString()} • ${selectedStages.length} stages
@@ -635,43 +739,6 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
 
       container.appendChild(scheduleGrid)
 
-      // Add legend only for larger screens to save space on mobile
-      if (!isMobile || isTablet) {
-        const legend = document.createElement('div')
-        legend.style.cssText = `
-          margin-top: ${isTablet ? '20px' : '15px'};
-          padding: ${isTablet ? '15px' : '10px'};
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: ${isTablet ? '8px' : '6px'};
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        `
-        legend.innerHTML = `
-          <h3 style="font-size: ${isTablet ? '16px' : '14px'}; font-weight: bold; margin-bottom: 10px; color: #fbbf24;">Legend</h3>
-          <div style="display: flex; gap: ${isTablet ? '20px' : '15px'}; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <div style="width: ${isTablet ? '16px' : '12px'}; height: ${isTablet ? '16px' : '12px'}; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); border-radius: 3px; border: 2px solid #ff4757;"></div>
-              <span style="font-size: ${isTablet ? '12px' : '10px'};"><strong>5⭐</strong></span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <div style="width: ${isTablet ? '16px' : '12px'}; height: ${isTablet ? '16px' : '12px'}; background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%); border-radius: 3px; border: 2px solid #ff9ff3;"></div>
-              <span style="font-size: ${isTablet ? '12px' : '10px'};"><strong>4⭐</strong></span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <div style="width: ${isTablet ? '16px' : '12px'}; height: ${isTablet ? '16px' : '12px'}; background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); border-radius: 3px; border: 2px solid #74b9ff;"></div>
-              <span style="font-size: ${isTablet ? '12px' : '10px'};"><strong>3⭐</strong></span>
-            </div>
-          </div>
-        `
-        container.appendChild(legend)
-      }
-
-      // Debug logging
-      console.log('Export Debug Info:')
-      console.log('Selected Day:', selectedDay)
-      console.log('Selected Stages:', selectedStages)
-      console.log('Filtered Acts:', filteredActs)
-      console.log('Time Slots:', timeSlots)
-      
       // Add to DOM temporarily
       document.body.appendChild(container)
 
@@ -682,55 +749,11 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
         useCORS: true,
       })
 
-      // Open image in new tab for debugging instead of downloading
-      const imageDataUrl = canvas.toDataURL('image/png')
-      const newTab = window.open()
-      newTab.document.write(`
-        <html>
-          <head>
-            <title>${festivalName} - ${selectedDay} Schedule</title>
-            <style>
-              body { 
-                margin: 0; 
-                padding: 20px; 
-                background: #1a1a2e; 
-                display: flex; 
-                justify-content: center; 
-                align-items: center; 
-                min-height: 100vh;
-              }
-              img { 
-                max-width: 100%; 
-                height: auto; 
-                border-radius: 12px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-              }
-              .download-btn {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #8b5cf6;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 8px;
-                text-decoration: none;
-                font-weight: bold;
-                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-              }
-              .download-btn:hover {
-                background: #7c3aed;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="${imageDataUrl}" alt="${festivalName} - ${selectedDay} Schedule" />
-            <a href="${imageDataUrl}" download="${festivalName.replace(/\s+/g, '_')}_${selectedDay.replace(/\s+/g, '_')}_schedule.png" class="download-btn">
-              Download Image
-            </a>
-          </body>
-        </html>
-      `)
-      newTab.document.close()
+      // Create image download
+      const link = document.createElement('a')
+      link.download = `${festival.name.replace(/\s+/g, '_')}_${selectedDay.replace(/\s+/g, '_')}_schedule.png`
+      link.href = canvas.toDataURL('image/png')
+      link.click()
 
       // Clean up
       document.body.removeChild(container)
@@ -743,166 +766,173 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
     }
   }
 
-  if (!isOpen) return null
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!festival) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-white text-xl">Festival not found</div>
+      </div>
+    )
+  }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <Download className="h-6 w-6 text-festival-purple" />
-            <h2 className="text-2xl font-bold text-white">Export Schedule</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
-            <X className="h-6 w-6 text-white/60" />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-          {/* Day Selection */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-festival-purple" />
-              <h3 className="text-lg font-semibold text-white">Select Day</h3>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {days.map(day => (
-                <button
-                  key={day}
-                  onClick={() => setSelectedDay(day)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    selectedDay === day
-                      ? 'bg-festival-purple text-white'
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  {day}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Stage Selection */}
-          {selectedDay && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-festival-purple" />
-                  <h3 className="text-lg font-semibold text-white">Select Stages</h3>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSelectAllStages}
-                    className="px-3 py-1 text-sm bg-festival-purple/20 text-festival-purple rounded hover:bg-festival-purple/30 transition-colors"
-                  >
-                    Select All
-                  </button>
-                  <button
-                    onClick={handleDeselectAllStages}
-                    className="px-3 py-1 text-sm bg-white/10 text-white/80 rounded hover:bg-white/20 transition-colors"
-                  >
-                    Deselect All
-                  </button>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {allStages.map(stage => (
-                  <button
-                    key={stage}
-                    onClick={() => handleStageToggle(stage)}
-                    className={`p-3 rounded-lg font-medium transition-colors text-left ${
-                      selectedStages.includes(stage)
-                        ? 'bg-festival-purple text-white'
-                        : 'bg-white/10 text-white/80 hover:bg-white/20'
-                    }`}
-                  >
-                    {stage}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Preview */}
-          {selectedDay && selectedStages.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-white">Preview</h3>
-              <div className="bg-white/5 rounded-xl p-4">
-                <div className="text-white/80 text-sm">
-                  <p><strong>Day:</strong> {selectedDay}</p>
-                  <p><strong>Stages:</strong> {selectedStages.join(', ')}</p>
-                  <p><strong>Total Acts:</strong> {filteredActs.length}</p>
-                  <p><strong>Interested Acts (3⭐+):</strong> {filteredActs.filter(act => (ratings[act.id] || 0) >= 3).length}</p>
-                  <p><strong>High Priority Acts (4⭐+):</strong> {filteredActs.filter(act => (ratings[act.id] || 0) >= 4).length}</p>
-                  <p><strong>Must See Acts (5⭐):</strong> {filteredActs.filter(act => (ratings[act.id] || 0) >= 5).length}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Preview Area */}
-        {showPreview && (
-          <div className="border-t border-white/10 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Preview</h3>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      {/* Header */}
+      <div className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-4">
               <button
-                onClick={() => setShowPreview(false)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                onClick={() => navigate(`/festival/${id}`)}
+                className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
               >
-                <X className="h-5 w-5 text-white/60" />
+                <ArrowLeft className="h-5 w-5" />
+                Back to Festival
               </button>
+              <div className="h-6 w-px bg-white/20" />
+              <h1 className="text-xl font-bold text-white">Export Schedule</h1>
             </div>
-            <div className="bg-black/20 rounded-lg p-4 overflow-auto max-h-96">
-              <div 
-                dangerouslySetInnerHTML={{ __html: previewHtml }}
-                className="scale-75 origin-top-left"
-                style={{ transform: 'scale(0.75)', transformOrigin: 'top left' }}
-              />
+            <button
+              onClick={exportSchedule}
+              disabled={!selectedDay || selectedStages.length === 0 || isExporting}
+              className="px-6 py-2 bg-festival-purple text-white rounded-lg font-medium hover:bg-festival-purple/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            >
+              {isExporting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  Export Schedule
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-120px)]">
+          {/* Left side - Settings */}
+          <div className="w-full lg:w-1/2 overflow-y-auto">
+            <div className="space-y-6">
+              {/* Day Selection */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-festival-purple" />
+                  <h3 className="text-lg font-semibold text-white">Select Day</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {days.map(day => (
+                    <button
+                      key={day}
+                      onClick={() => setSelectedDay(day)}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        selectedDay === day
+                          ? 'bg-festival-purple text-white'
+                          : 'bg-white/10 text-white/80 hover:bg-white/20'
+                      }`}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Stage Selection */}
+              {selectedDay && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-festival-purple" />
+                      <h3 className="text-lg font-semibold text-white">Select Stages</h3>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSelectAllStages}
+                        className="px-3 py-1 text-sm bg-festival-purple/20 text-festival-purple rounded hover:bg-festival-purple/30 transition-colors"
+                      >
+                        Select All
+                      </button>
+                      <button
+                        onClick={handleDeselectAllStages}
+                        className="px-3 py-1 text-sm bg-white/10 text-white/80 rounded hover:bg-white/20 transition-colors"
+                      >
+                        Deselect All
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {allStages.map(stage => (
+                      <button
+                        key={stage}
+                        onClick={() => handleStageToggle(stage)}
+                        className={`p-3 rounded-lg font-medium transition-colors text-left ${
+                          selectedStages.includes(stage)
+                            ? 'bg-festival-purple text-white'
+                            : 'bg-white/10 text-white/80 hover:bg-white/20'
+                        }`}
+                      >
+                        {stage}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Preview */}
+              {selectedDay && selectedStages.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-lg font-semibold text-white">Preview Info</h3>
+                  <div className="bg-white/5 rounded-xl p-4">
+                    <div className="text-white/80 text-sm">
+                      <p><strong>Day:</strong> {selectedDay}</p>
+                      <p><strong>Stages:</strong> {selectedStages.join(', ')}</p>
+                      <p><strong>Total Acts:</strong> {filteredActs.length}</p>
+                      <p><strong>Interested Acts (3⭐+):</strong> {filteredActs.filter(act => (ratings[act.id] || 0) >= 3).length}</p>
+                      <p><strong>High Priority Acts (4⭐+):</strong> {filteredActs.filter(act => (ratings[act.id] || 0) >= 4).length}</p>
+                      <p><strong>Must See Acts (5⭐):</strong> {filteredActs.filter(act => (ratings[act.id] || 0) >= 5).length}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        )}
-
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-white/10">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-white/80 hover:text-white transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handlePreview}
-            disabled={!selectedDay || selectedStages.length === 0}
-            className="px-4 py-2 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Preview
-          </button>
-          <button
-            onClick={exportSchedule}
-            disabled={!selectedDay || selectedStages.length === 0 || isExporting}
-            className="px-6 py-2 bg-festival-purple text-white rounded-lg font-medium hover:bg-festival-purple/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
-          >
-            {isExporting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Exporting...
-              </>
-            ) : (
-              <>
-                <Download className="h-4 w-4" />
-                Export Schedule
-              </>
-            )}
-          </button>
+          
+          {/* Right side - Preview */}
+          <div className="w-full lg:w-1/2 overflow-y-auto">
+            <div className="bg-black/20 rounded-lg p-4 h-full">
+              <h3 className="text-lg font-semibold text-white mb-4">Live Preview</h3>
+              {previewHtml ? (
+                <div 
+                  dangerouslySetInnerHTML={{ __html: previewHtml }}
+                  className="scale-75 origin-top-left"
+                  style={{ transform: 'scale(0.75)', transformOrigin: 'top left' }}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-64 text-white/60">
+                  <div className="text-center">
+                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Select a day and stages to see preview</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
-export default ExportScheduleModal
+export default ExportPage

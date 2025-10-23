@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Clock, Music, Calendar, Download } from 'lucide-react'
-import ExportScheduleModal from './ExportScheduleModal'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
+  const navigate = useNavigate()
+  const { id } = useParams()
   const [selectedDay, setSelectedDay] = useState('')
-  const [showExportModal, setShowExportModal] = useState(false)
 
   // Get unique days from acts
   const days = useMemo(() => {
@@ -130,7 +131,9 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
         <p className="text-white/70">Complete schedule with set times</p>
         <div className="mt-4">
           <button
-            onClick={() => setShowExportModal(true)}
+            onClick={() => navigate(`/festival/${id}/export`, { 
+              state: { festival: { name: festivalName }, acts, ratings } 
+            })}
             className="flex items-center px-6 py-3 bg-festival-purple/20 text-festival-purple rounded-lg hover:bg-festival-purple/30 transition-colors mx-auto"
           >
             <Download className="h-5 w-5 mr-2" />
@@ -220,14 +223,6 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
         </div>
       )}
 
-      {/* Export Schedule Modal */}
-      <ExportScheduleModal
-        isOpen={showExportModal}
-        onClose={() => setShowExportModal(false)}
-        acts={acts}
-        festivalName={festivalName}
-        ratings={ratings}
-      />
     </div>
   )
 }
