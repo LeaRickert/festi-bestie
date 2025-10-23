@@ -1,6 +1,11 @@
 -- Supabase Database Setup for Festi Besti
 -- Run these commands in your Supabase SQL editor
 
+-- Create festival status enum type
+CREATE TYPE festival_status AS ENUM (
+  'announced', 'lineup', 'stages', 'schedule', 'times', 'complete'
+);
+
 -- Create festivals table
 CREATE TABLE IF NOT EXISTS festivals (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -10,6 +15,7 @@ CREATE TABLE IF NOT EXISTS festivals (
   location TEXT NOT NULL,
   image_url TEXT,
   description TEXT,
+  status festival_status DEFAULT 'announced',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -19,10 +25,10 @@ CREATE TABLE IF NOT EXISTS acts (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   festival_id UUID REFERENCES festivals(id) ON DELETE CASCADE,
   artist TEXT NOT NULL,
-  day TEXT NOT NULL,
-  start_time TIME NOT NULL,
+  day TEXT,
+  start_time TIME,
   length_minutes INTEGER DEFAULT 60,
-  stage TEXT NOT NULL,
+  stage TEXT,
   special_notes TEXT,
   genre TEXT,
   category TEXT,
@@ -79,10 +85,10 @@ CREATE INDEX IF NOT EXISTS idx_user_ratings_user_id ON user_ratings(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_ratings_act_id ON user_ratings(act_id);
 
 -- Insert sample festival data
-INSERT INTO festivals (name, start_date, end_date, location, image_url, description) VALUES
-('EDC Orlando 2024', '2024-11-15', '2024-11-17', 'Orlando, FL', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop', 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience'),
-('Ultra Music Festival 2024', '2024-03-22', '2024-03-24', 'Miami, FL', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop', 'Ultra Music Festival - Where electronic music meets the ocean'),
-('Tomorrowland 2024', '2024-07-19', '2024-07-21', 'Boom, Belgium', 'https://images.unsplash.com/photo-1571266028243-e68c785c3b73?w=800&h=400&fit=crop', 'Tomorrowland - The magical electronic music festival');
+INSERT INTO festivals (name, start_date, end_date, location, image_url, description, status) VALUES
+('EDC Orlando 2024', '2024-11-15', '2024-11-17', 'Orlando, FL', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop', 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience', 'complete'),
+('Ultra Music Festival 2024', '2024-03-22', '2024-03-24', 'Miami, FL', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop', 'Ultra Music Festival - Where electronic music meets the ocean', 'lineup'),
+('Tomorrowland 2024', '2024-07-19', '2024-07-21', 'Boom, Belgium', 'https://images.unsplash.com/photo-1571266028243-e68c785c3b73?w=800&h=400&fit=crop', 'Tomorrowland - The magical electronic music festival', 'announced');
 
 -- Insert sample acts data (using the EDC Orlando 2024 festival)
 INSERT INTO acts (festival_id, artist, day, start_time, length_minutes, stage, special_notes, genre, category, youtube_url, youtube_title, avg_rating) VALUES

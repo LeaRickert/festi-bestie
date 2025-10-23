@@ -33,7 +33,8 @@ const LandingPage = () => {
             end_date: '2024-11-17',
             location: 'Orlando, FL',
             image_url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop',
-            description: 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience'
+            description: 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience',
+            status: 'complete'
           },
           {
             id: '2',
@@ -42,7 +43,8 @@ const LandingPage = () => {
             end_date: '2024-03-24',
             location: 'Miami, FL',
             image_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop',
-            description: 'Ultra Music Festival - Where electronic music meets the ocean'
+            description: 'Ultra Music Festival - Where electronic music meets the ocean',
+            status: 'lineup'
           },
           {
             id: '3',
@@ -51,7 +53,8 @@ const LandingPage = () => {
             end_date: '2024-07-21',
             location: 'Boom, Belgium',
             image_url: 'https://images.unsplash.com/photo-1571266028243-e68c785c3b73?w=800&h=400&fit=crop',
-            description: 'Tomorrowland - The magical electronic music festival'
+            description: 'Tomorrowland - The magical electronic music festival',
+            status: 'announced'
           }
         ]
         setFestivals(mockFestivals)
@@ -157,6 +160,24 @@ const LandingPage = () => {
                       <h4 className="text-2xl font-bold text-white mb-2">
                         {festival.name}
                       </h4>
+                      {/* Status Badge */}
+                      <div className="inline-block">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          festival.status === 'complete' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                          festival.status === 'times' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
+                          festival.status === 'schedule' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                          festival.status === 'stages' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
+                          festival.status === 'lineup' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
+                          'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                        }`}>
+                          {festival.status === 'complete' ? 'Complete Schedule' :
+                           festival.status === 'times' ? 'Set Times Available' :
+                           festival.status === 'schedule' ? 'Schedule Available' :
+                           festival.status === 'stages' ? 'Stages Announced' :
+                           festival.status === 'lineup' ? 'Lineup Announced' :
+                           'Just Announced'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   

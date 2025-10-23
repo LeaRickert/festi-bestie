@@ -58,11 +58,11 @@ const StarRating = ({
   const getRatingText = () => {
     const currentRating = isHovering ? hoverRating : rating
     if (currentRating === 0) return 'Not rated'
-    if (currentRating <= 1) return 'Poor'
-    if (currentRating <= 2) return 'Fair'
-    if (currentRating <= 3) return 'Good'
-    if (currentRating <= 4) return 'Very Good'
-    return 'Excellent'
+    if (currentRating <= 1) return 'Not for Me'
+    if (currentRating <= 2) return 'Meh'
+    if (currentRating <= 3) return 'Interested'
+    if (currentRating <= 4) return 'Hyped'
+    return 'Must See!!'
   }
 
   return (

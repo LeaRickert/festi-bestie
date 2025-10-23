@@ -1,55 +1,62 @@
-export interface Festival {
-  id: string;
-  name: string;
-  startDate: string;
-  endDate: string;
-  location: string;
-  image: string;
-  description?: string;
-}
+/**
+ * @typedef {Object} Festival
+ * @property {string} id
+ * @property {string} name
+ * @property {string} startDate
+ * @property {string} endDate
+ * @property {string} location
+ * @property {string} image
+ * @property {string} [description]
+ * @property {'announced'|'lineup'|'stages'|'schedule'|'times'|'complete'} status
+ */
 
-export interface Act {
-  id: string;
-  artist: string;
-  day: string;
-  startTime: string;
-  length: number; // in minutes
-  stage: string;
-  specialNotes?: string;
-  genre: string;
-  category: string;
-  youtubeUrl?: string;
-  youtubeTitle?: string;
-  festivalId: string;
-}
+/**
+ * @typedef {Object} Act
+ * @property {string} id
+ * @property {string} artist
+ * @property {string} festivalId
+ * @property {string} [day]
+ * @property {string} [startTime]
+ * @property {number} [length]
+ * @property {string} [stage]
+ * @property {string} [specialNotes]
+ * @property {string} [genre]
+ * @property {string} [category]
+ * @property {string} [youtubeUrl]
+ * @property {string} [youtubeTitle]
+ * @property {number} [avgRating]
+ */
 
-export interface UserRating {
-  id: string;
-  userId: string;
-  actId: string;
-  rating: number; // 0-5 scale with half-star precision
-  createdAt: string;
-}
+/**
+ * @typedef {Object} UserRating
+ * @property {string} id
+ * @property {string} userId
+ * @property {string} actId
+ * @property {number} rating
+ * @property {string} createdAt
+ */
 
-export interface User {
-  id: string;
-  email: string;
-  name?: string;
-  avatar?: string;
-}
+/**
+ * @typedef {Object} User
+ * @property {string} id
+ * @property {string} email
+ * @property {string} [name]
+ * @property {string} [avatar]
+ */
 
-export interface FilterOptions {
-  day?: string;
-  stage?: string;
-  genre?: string;
-  category?: string;
-  timeRange?: {
-    start: string;
-    end: string;
-  };
-}
+/**
+ * @typedef {Object} FilterOptions
+ * @property {string} [day]
+ * @property {string} [stage]
+ * @property {string} [genre]
+ * @property {string} [category]
+ * @property {Object} [timeRange]
+ * @property {string} timeRange.start
+ * @property {string} timeRange.end
+ */
 
-export interface SortOptions {
-  field: 'artist' | 'startTime' | 'stage' | 'genre';
-  direction: 'asc' | 'desc';
-}
+/**
+ * @typedef {Object} SortOptions
+ * @property {'artist'|'startTime'|'stage'|'genre'} field
+ * @property {'asc'|'desc'} direction
+ */
