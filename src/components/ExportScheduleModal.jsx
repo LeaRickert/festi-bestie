@@ -6,6 +6,8 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
   const [selectedDay, setSelectedDay] = useState('')
   const [selectedStages, setSelectedStages] = useState([])
   const [isExporting, setIsExporting] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
+  const [previewHtml, setPreviewHtml] = useState('')
 
   // Get unique days from acts
   const days = useMemo(() => {
@@ -54,6 +56,20 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
     return slots
   }, [])
 
+  // Generate half-hour time slots for grid lines
+  const halfHourSlots = useMemo(() => {
+    const slots = []
+    // 1 PM to 11 PM (13:00 to 23:00)
+    for (let hour = 13; hour <= 23; hour++) {
+      const displayHour = hour - 12 // Convert to 1-11 format
+      slots.push({ hour: displayHour.toString(), isHalfHour: false })
+      slots.push({ hour: displayHour.toString(), isHalfHour: true })
+    }
+    // 12 AM (00:00)
+    slots.push({ hour: '12', isHalfHour: false })
+    return slots
+  }, [])
+
   // Convert time string to minutes since midnight
   const timeToMinutes = (timeStr) => {
     if (timeStr.includes('AM') || timeStr.includes('PM')) {
@@ -93,29 +109,44 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
     const slotStartMinutes = simpleTimeToMinutes(timeSlot)
     const slotEndMinutes = slotStartMinutes + 60
     
-    return filteredActs.filter(act => {
+    const acts = filteredActs.filter(act => {
       if (act.stage !== stage) return false
-      if (!act.start_time || !act.length_minutes) return false
+      if (!act.startTime || !act.length) return false
       
-      const actStartMinutes = timeToMinutes(act.start_time)
-      const actEndMinutes = actStartMinutes + act.length_minutes
+      const actStartMinutes = timeToMinutes(act.startTime)
+      const actEndMinutes = actStartMinutes + act.length
       
       return actStartMinutes < slotEndMinutes && actEndMinutes > slotStartMinutes
     })
+    
+    // Debug logging
+    if (acts.length > 0) {
+      console.log(`Found ${acts.length} acts for stage ${stage} at time ${timeSlot}:`, acts.map(a => a.artist))
+    }
+    
+    return acts
   }
 
   // Calculate act position and height for grid
   const getActStyle = (act, timeSlot) => {
     const slotStartMinutes = simpleTimeToMinutes(timeSlot)
-    const actStartMinutes = timeToMinutes(act.start_time)
-    const actEndMinutes = actStartMinutes + act.length_minutes
+    const actStartMinutes = timeToMinutes(act.startTime)
+    const actEndMinutes = actStartMinutes + act.length
     
+    // Calculate position within the hour slot (0-60 minutes)
     const topOffset = Math.max(0, actStartMinutes - slotStartMinutes)
-    const height = Math.min(act.length_minutes, slotStartMinutes + 60 - actStartMinutes)
+    const height = Math.min(act.length, slotStartMinutes + 60 - actStartMinutes)
+    
+    // Convert minutes to pixels (assuming 1 minute = 1 pixel for now)
+    const topPixels = topOffset
+    const heightPixels = Math.max(height, 20) // Minimum height of 20px
+    
+    // Debug logging
+    console.log(`Act: ${act.artist}, TimeSlot: ${timeSlot}, SlotStart: ${slotStartMinutes}, ActStart: ${actStartMinutes}, TopOffset: ${topOffset}, Height: ${height}, TopPixels: ${topPixels}, HeightPixels: ${heightPixels}`)
     
     return {
-      top: `${topOffset}px`,
-      height: `${height}px`,
+      top: `${topPixels}px`,
+      height: `${heightPixels}px`,
       position: 'absolute',
       width: '100%',
       zIndex: 10
@@ -180,6 +211,210 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
     setSelectedStages([])
   }
 
+  const generatePreviewHtml = () => {
+    if (!selectedDay || selectedStages.length === 0) return ''
+
+    // Detect device type and set appropriate dimensions
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    const isTablet = /iPad|Android/i.test(navigator.userAgent) && window.innerWidth >= 768
+    
+    let containerWidth, containerHeight, fontSize, padding, timeColumnWidth
+    
+    if (isMobile && !isTablet) {
+      containerWidth = 393
+      containerHeight = 852
+      fontSize = '11px'
+      padding = '15px'
+      timeColumnWidth = '20px'
+    } else if (isTablet) {
+      containerWidth = 768
+      containerHeight = 1024
+      fontSize = '14px'
+      padding = '30px'
+      timeColumnWidth = '35px'
+    } else {
+      containerWidth = 393
+      containerHeight = 852
+      fontSize = '11px'
+      padding = '15px'
+      timeColumnWidth = '20px'
+    }
+
+    // Create schedule grid HTML
+    let scheduleHtml = `
+      <div style="
+        width: ${containerWidth}px;
+        height: ${containerHeight}px;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        padding: ${padding};
+        font-family: 'Inter', sans-serif;
+        color: white;
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 0 auto;
+      ">
+        <!-- Header -->
+        <div style="margin-bottom: 15px;">
+          <h1 style="font-size: ${isMobile && !isTablet ? '16px' : '18px'}; font-weight: bold; margin-bottom: 8px; text-align: center;">
+            ${selectedDay.toUpperCase()} - ${festivalName}
+          </h1>
+          <div style="text-align: center; font-size: ${isMobile && !isTablet ? '10px' : '12px'}; opacity: 0.8; margin-bottom: 15px;">
+            Generated on ${new Date().toLocaleDateString()} • ${selectedStages.length} stages
+          </div>
+        </div>
+
+        <!-- Schedule Grid -->
+        <div style="
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: ${isMobile && !isTablet ? '8px' : '12px'};
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          font-size: ${fontSize};
+        ">
+          <!-- Header Row -->
+          <div style="
+            display: flex;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+          ">
+            <!-- Empty time column header -->
+            <div style="
+              width: ${timeColumnWidth};
+              padding: ${isMobile && !isTablet ? '4px' : '8px'};
+              border-right: 1px solid rgba(255, 255, 255, 0.1);
+            "></div>
+    `
+
+    // Add stage headers
+    selectedStages.forEach(stage => {
+      scheduleHtml += `
+        <div style="
+          flex: 1;
+          padding: ${isMobile && !isTablet ? '8px' : '12px'};
+          border-right: 1px solid rgba(255, 255, 255, 0.1);
+          font-weight: bold;
+          text-align: center;
+          background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
+          font-size: ${isMobile && !isTablet ? '10px' : '12px'};
+        ">${stage}</div>
+      `
+    })
+
+    scheduleHtml += `</div>`
+
+    // Add time slots
+    timeSlots.forEach(timeSlot => {
+      scheduleHtml += `
+        <div style="
+          display: flex;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          min-height: ${isMobile && !isTablet ? '50px' : '60px'};
+          position: relative;
+        ">
+          <!-- Half-hour grid line -->
+          <div style="
+            position: absolute;
+            top: 50%;
+            left: ${timeColumnWidth};
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 1;
+          "></div>
+
+          <!-- Time column -->
+          <div style="
+            width: ${timeColumnWidth};
+            padding: ${isMobile && !isTablet ? '2px 1px' : '3px 2px'};
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            font-size: ${isMobile && !isTablet ? '8px' : '10px'};
+            padding-top: ${isMobile && !isTablet ? '4px' : '6px'};
+            padding-left: ${isMobile && !isTablet ? '2px' : '3px'};
+          ">${timeSlot}</div>
+      `
+
+      // Add stage columns
+      selectedStages.forEach(stage => {
+        scheduleHtml += `
+          <div style="
+            flex: 1;
+            padding: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            min-height: ${isMobile && !isTablet ? '50px' : '60px'};
+          ">
+        `
+
+        const actsForSlot = getActsForSlot(stage, timeSlot)
+        actsForSlot.forEach(act => {
+          const visualStyle = getActVisualStyle(act)
+          const style = getActStyle(act, timeSlot)
+          
+          // Format times
+          const formatTime = (timeStr) => {
+            if (timeStr.includes('AM') || timeStr.includes('PM')) {
+              return timeStr
+            }
+            const [hours, minutes] = timeStr.split(':').map(Number)
+            const period = hours >= 12 ? 'PM' : 'AM'
+            const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours
+            return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`
+          }
+          
+          const startTime = formatTime(act.startTime)
+          const endTime = formatTime(new Date(new Date(`2000-01-01 ${act.startTime}`).getTime() + act.length * 60000).toTimeString().slice(0, 5))
+
+          scheduleHtml += `
+            <div style="
+              position: absolute;
+              left: 0;
+              width: 100%;
+              padding: ${isMobile && !isTablet ? '2px 3px' : '4px 6px'};
+              border-radius: ${isMobile && !isTablet ? '3px' : '4px'};
+              font-size: ${isMobile && !isTablet ? '7px' : '9px'};
+              font-weight: ${visualStyle.fontWeight};
+              background: ${visualStyle.background};
+              border: ${visualStyle.border};
+              box-shadow: ${visualStyle.boxShadow || 'none'};
+              color: white;
+              text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+              overflow: visible;
+              white-space: normal;
+              line-height: 1.1;
+              word-wrap: break-word;
+              top: ${style.top};
+              height: ${style.height};
+            ">
+              <div style="display: flex; flex-direction: column; gap: 1px;">
+                <div style="font-weight: bold; font-size: ${isMobile && !isTablet ? '7px' : '8px'};">${act.artist}</div>
+                <div style="font-size: ${isMobile && !isTablet ? '6px' : '7px'}; opacity: 0.9;">${startTime} - ${endTime}</div>
+              </div>
+            </div>
+          `
+        })
+
+        scheduleHtml += `</div>`
+      })
+
+      scheduleHtml += `</div>`
+    })
+
+    scheduleHtml += `</div></div>`
+
+    return scheduleHtml
+  }
+
+  const handlePreview = () => {
+    const html = generatePreviewHtml()
+    setPreviewHtml(html)
+    setShowPreview(true)
+  }
+
   const exportSchedule = async () => {
     if (!selectedDay || selectedStages.length === 0) return
     
@@ -190,29 +425,29 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
       const isTablet = /iPad|Android/i.test(navigator.userAgent) && window.innerWidth >= 768
       
-      let containerWidth, containerHeight, fontSize, padding, stageColumnWidth
+      let containerWidth, containerHeight, fontSize, padding, timeColumnWidth
       
       if (isMobile && !isTablet) {
-        // Mobile phone dimensions (iPhone 15: 393x852)
+        // Mobile phone dimensions (iPhone 15: 393x852) - optimized for mobile
         containerWidth = 393
         containerHeight = 852
-        fontSize = '12px'
-        padding = '20px'
-        stageColumnWidth = '80px'
+        fontSize = '11px'
+        padding = '15px'
+        timeColumnWidth = '25px' // Even smaller - just wide enough for 2 digits
       } else if (isTablet) {
         // Tablet dimensions
         containerWidth = 768
         containerHeight = 1024
         fontSize = '14px'
         padding = '30px'
-        stageColumnWidth = '120px'
+        timeColumnWidth = '35px'
       } else {
         // Desktop - default to iPhone 15 dimensions
         containerWidth = 393
         containerHeight = 852
-        fontSize = '12px'
-        padding = '20px'
-        stageColumnWidth = '80px'
+        fontSize = '11px'
+        padding = '15px'
+        timeColumnWidth = '25px'
       }
 
       // Create a temporary container for the schedule
@@ -253,7 +488,7 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
         font-size: ${fontSize};
       `
 
-      // Header row
+      // Header row - no time column title for mobile optimization
       const headerRow = document.createElement('div')
       headerRow.style.cssText = `
         display: flex;
@@ -261,16 +496,13 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
         background: rgba(255, 255, 255, 0.1);
       `
 
+      // Empty time column header (no title)
       const timeHeader = document.createElement('div')
       timeHeader.style.cssText = `
-        width: ${stageColumnWidth};
-        padding: ${isMobile && !isTablet ? '8px' : '12px'};
+        width: ${timeColumnWidth};
+        padding: ${isMobile && !isTablet ? '4px' : '8px'};
         border-right: 1px solid rgba(255, 255, 255, 0.1);
-        font-weight: bold;
-        text-align: center;
-        font-size: ${isMobile && !isTablet ? '10px' : '12px'};
       `
-      timeHeader.textContent = 'Time'
       headerRow.appendChild(timeHeader)
 
       selectedStages.forEach(stage => {
@@ -290,40 +522,56 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
 
       scheduleGrid.appendChild(headerRow)
 
-      // Time slots
+      // Time slots with half-hour grid lines
       timeSlots.forEach(timeSlot => {
         const timeRow = document.createElement('div')
         timeRow.style.cssText = `
           display: flex;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          min-height: 60px;
+          min-height: ${isMobile && !isTablet ? '50px' : '60px'};
+          position: relative;
         `
 
-        // Time column
+        // Add half-hour grid line
+        const halfHourLine = document.createElement('div')
+        halfHourLine.style.cssText = `
+          position: absolute;
+          top: 50%;
+          left: ${timeColumnWidth};
+          right: 0;
+          height: 1px;
+          background: rgba(255, 255, 255, 0.05);
+          z-index: 1;
+        `
+        timeRow.appendChild(halfHourLine)
+
+        // Time column - ultra compact, aligned to start
         const timeColumn = document.createElement('div')
         timeColumn.style.cssText = `
-          width: ${stageColumnWidth};
-          padding: ${isMobile && !isTablet ? '8px' : '12px'};
+          width: ${timeColumnWidth};
+          padding: ${isMobile && !isTablet ? '2px 1px' : '3px 2px'};
           border-right: 1px solid rgba(255, 255, 255, 0.1);
           display: flex;
-          align-items: center;
-          justify-content: center;
+          align-items: flex-start;
+          justify-content: flex-start;
           background: rgba(255, 255, 255, 0.05);
           font-weight: 600;
-          font-size: ${isMobile && !isTablet ? '10px' : '12px'};
+          font-size: ${isMobile && !isTablet ? '8px' : '10px'};
+          padding-top: ${isMobile && !isTablet ? '4px' : '6px'};
+          padding-left: ${isMobile && !isTablet ? '2px' : '3px'};
         `
         timeColumn.textContent = timeSlot
         timeRow.appendChild(timeColumn)
 
-        // Stage columns
+        // Stage columns - optimized for mobile space usage
         selectedStages.forEach(stage => {
           const stageColumn = document.createElement('div')
           stageColumn.style.cssText = `
             flex: 1;
-            padding: ${isMobile && !isTablet ? '4px' : '6px'};
+            padding: 0;
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
-            min-height: ${isMobile && !isTablet ? '40px' : '50px'};
+            min-height: ${isMobile && !isTablet ? '50px' : '60px'};
           `
 
           const actsForSlot = getActsForSlot(stage, timeSlot)
@@ -333,28 +581,43 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
             
             actDiv.style.cssText = `
               position: absolute;
-              width: calc(100% - ${isMobile && !isTablet ? '8px' : '12px'});
-              padding: ${isMobile && !isTablet ? '4px' : '6px'};
-              border-radius: ${isMobile && !isTablet ? '4px' : '6px'};
+              left: 0;
+              width: 100%;
+              padding: ${isMobile && !isTablet ? '2px 3px' : '4px 6px'};
+              border-radius: ${isMobile && !isTablet ? '3px' : '4px'};
               cursor: pointer;
-              font-size: ${isMobile && !isTablet ? '9px' : '11px'};
+              font-size: ${isMobile && !isTablet ? '7px' : '9px'};
               font-weight: ${visualStyle.fontWeight};
               background: ${visualStyle.background};
               border: ${visualStyle.border};
               box-shadow: ${visualStyle.boxShadow || 'none'};
               color: white;
               text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
+              overflow: visible;
+              white-space: normal;
+              line-height: 1.1;
+              word-wrap: break-word;
             `
 
-            const rating = ratings[act.id] || 0
-            const ratingIcon = rating >= 3 ? '⭐' : ''
+            // Format start and end times
+            const formatTime = (timeStr) => {
+              if (timeStr.includes('AM') || timeStr.includes('PM')) {
+                return timeStr
+              }
+              // Convert 24-hour format to 12-hour format
+              const [hours, minutes] = timeStr.split(':').map(Number)
+              const period = hours >= 12 ? 'PM' : 'AM'
+              const displayHours = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours
+              return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`
+            }
+            
+            const startTime = formatTime(act.startTime)
+            const endTime = formatTime(new Date(new Date(`2000-01-01 ${act.startTime}`).getTime() + act.length * 60000).toTimeString().slice(0, 5))
             
             actDiv.innerHTML = `
-              <div style="display: flex; align-items: center; gap: 4px;">
-                ${ratingIcon} ${act.artist}
+              <div style="display: flex; flex-direction: column; gap: 1px;">
+                <div style="font-weight: bold; font-size: ${isMobile && !isTablet ? '7px' : '8px'};">${act.artist}</div>
+                <div style="font-size: ${isMobile && !isTablet ? '6px' : '7px'}; opacity: 0.9;">${startTime} - ${endTime}</div>
               </div>
             `
 
@@ -402,6 +665,13 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
         container.appendChild(legend)
       }
 
+      // Debug logging
+      console.log('Export Debug Info:')
+      console.log('Selected Day:', selectedDay)
+      console.log('Selected Stages:', selectedStages)
+      console.log('Filtered Acts:', filteredActs)
+      console.log('Time Slots:', timeSlots)
+      
       // Add to DOM temporarily
       document.body.appendChild(container)
 
@@ -412,11 +682,55 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
         useCORS: true,
       })
 
-      // Create image download
-      const link = document.createElement('a')
-      link.download = `${festivalName.replace(/\s+/g, '_')}_${selectedDay.replace(/\s+/g, '_')}_schedule.png`
-      link.href = canvas.toDataURL('image/png')
-      link.click()
+      // Open image in new tab for debugging instead of downloading
+      const imageDataUrl = canvas.toDataURL('image/png')
+      const newTab = window.open()
+      newTab.document.write(`
+        <html>
+          <head>
+            <title>${festivalName} - ${selectedDay} Schedule</title>
+            <style>
+              body { 
+                margin: 0; 
+                padding: 20px; 
+                background: #1a1a2e; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                min-height: 100vh;
+              }
+              img { 
+                max-width: 100%; 
+                height: auto; 
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+              }
+              .download-btn {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #8b5cf6;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+              }
+              .download-btn:hover {
+                background: #7c3aed;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="${imageDataUrl}" alt="${festivalName} - ${selectedDay} Schedule" />
+            <a href="${imageDataUrl}" download="${festivalName.replace(/\s+/g, '_')}_${selectedDay.replace(/\s+/g, '_')}_schedule.png" class="download-btn">
+              Download Image
+            </a>
+          </body>
+        </html>
+      `)
+      newTab.document.close()
 
       // Clean up
       document.body.removeChild(container)
@@ -531,6 +845,28 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
           )}
         </div>
 
+        {/* Preview Area */}
+        {showPreview && (
+          <div className="border-t border-white/10 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Preview</h3>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-white/60" />
+              </button>
+            </div>
+            <div className="bg-black/20 rounded-lg p-4 overflow-auto max-h-96">
+              <div 
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+                className="scale-75 origin-top-left"
+                style={{ transform: 'scale(0.75)', transformOrigin: 'top left' }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 p-6 border-t border-white/10">
           <button
@@ -538,6 +874,13 @@ const ExportScheduleModal = ({ isOpen, onClose, acts, festivalName, ratings = {}
             className="px-4 py-2 text-white/80 hover:text-white transition-colors"
           >
             Cancel
+          </button>
+          <button
+            onClick={handlePreview}
+            disabled={!selectedDay || selectedStages.length === 0}
+            className="px-4 py-2 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Preview
           </button>
           <button
             onClick={exportSchedule}
