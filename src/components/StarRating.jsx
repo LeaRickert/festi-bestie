@@ -20,14 +20,7 @@ const StarRating = ({
 
   const handleStarClick = (starValue) => {
     if (!interactive) return
-    
-    // If clicking the same star, toggle between full and half
-    if (rating === starValue) {
-      const newRating = rating === starValue ? starValue - 0.5 : starValue
-      onRatingChange(Math.max(0, newRating))
-    } else {
-      onRatingChange(starValue)
-    }
+    onRatingChange(starValue)
   }
 
   const handleStarHover = (starValue) => {
@@ -45,11 +38,9 @@ const StarRating = ({
   const getStarFill = (starIndex) => {
     const currentRating = isHovering ? hoverRating : rating
     const starValue = starIndex + 1
-    
+
     if (currentRating >= starValue) {
       return 'fill-festival-purple text-festival-purple' // Full star
-    } else if (currentRating >= starValue - 0.5) {
-      return 'fill-festival-purple/50 text-festival-purple' // Half star
     } else {
       return 'fill-transparent text-white/30' // Empty star
     }
@@ -58,11 +49,12 @@ const StarRating = ({
   const getRatingText = () => {
     const currentRating = isHovering ? hoverRating : rating
     if (currentRating === 0) return 'Not rated'
-    if (currentRating <= 1) return 'Not for Me'
-    if (currentRating <= 2) return 'Meh'
-    if (currentRating <= 3) return 'Interested'
-    if (currentRating <= 4) return 'Hyped'
-    return 'Must See!!'
+    if (currentRating === 1) return 'Not for Me'
+    if (currentRating === 2) return 'Meh'
+    if (currentRating === 3) return 'Interested'
+    if (currentRating === 4) return 'Hyped'
+    if (currentRating === 5) return 'Must See!!'
+    return 'Not rated'
   }
 
   return (

@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS user_ratings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   act_id UUID REFERENCES acts(id) ON DELETE CASCADE,
-  rating DECIMAL(2,1) CHECK (rating >= 0 AND rating <= 5),
+  rating INTEGER CHECK (rating >= 1 AND rating <= 5),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(user_id, act_id)

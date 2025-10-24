@@ -6,7 +6,7 @@ A modern web application for planning music festival schedules with friends. Bui
 
 - 🎵 **Festival Discovery**: Browse upcoming music festivals
 - 📅 **Smart Scheduling**: Filter and sort acts by day, stage, genre, and time
-- ⭐ **5-Star Rating System**: Rate acts with half-star precision (0-5 scale)
+- ⭐ **5-Star Rating System**: Rate acts from 1 to 5 stars
 - 📱 **Export & Share**: Export schedules as PDF or mobile lock screen images
 - 🔐 **User Authentication**: Sign up/login to save your ratings
 - 🎨 **Modern UI**: Beautiful, responsive design with dark theme
@@ -91,7 +91,7 @@ A modern web application for planning music festival schedules with friends. Bui
      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
      user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
      act_id UUID REFERENCES acts(id) ON DELETE CASCADE,
-     rating DECIMAL(2,1) CHECK (rating >= 0 AND rating <= 5),
+     rating INTEGER CHECK (rating >= 1 AND rating <= 5),
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      UNIQUE(user_id, act_id)
@@ -152,22 +152,21 @@ src/
 
 1. **Browse Festivals**: View upcoming festivals on the landing page
 2. **Plan Schedule**: Filter acts by day, stage, genre, and time
-3. **Rate Acts**: Use the 5-star rating system to rate acts (0-5 with half-star precision)
+3. **Rate Acts**: Use the 5-star rating system to rate acts (1-5 stars)
 4. **Export Schedule**: Download PDF or mobile lock screen images
 5. **Share with Friends**: Export and share your personalized schedule
 
 ## Rating System
 
-The app features a 5-star rating system with half-star precision:
+The app features a 5-star rating system:
 
-- **0 stars**: Not rated
-- **1 star**: Poor
-- **2 stars**: Fair
-- **3 stars**: Good
-- **4 stars**: Very Good
-- **5 stars**: Excellent
+- **1 star**: Not for Me
+- **2 stars**: Meh
+- **3 stars**: Interested
+- **4 stars**: Hyped
+- **5 stars**: Must See!!
 
-Users can click on stars to set ratings, and click again to toggle half-star ratings (e.g., 3 → 2.5).
+Users can click on stars to set ratings from 1 to 5.
 
 ## Data Format
 
@@ -189,7 +188,7 @@ The application expects CSV data with the following columns:
 
 - **festivals**: Festival information (name, dates, location, image)
 - **acts**: Individual performances (artist, time, stage, genre, YouTube links)
-- **user_ratings**: User ratings for acts (0-5 scale with half-star precision)
+- **user_ratings**: User ratings for acts (1-5 stars)
 
 ### Features
 
