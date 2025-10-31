@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Download, Calendar, MapPin } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { supabase } from '../utils/supabase'
+import { useFestivalData } from '../hooks/useFestivalData'
 import html2canvas from 'html2canvas'
 
 const ExportPage = () => {
@@ -10,130 +10,27 @@ const ExportPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { user } = useAuth()
-  
-  const [festival, setFestival] = useState(null)
-  const [acts, setActs] = useState([])
-  const [ratings, setRatings] = useState({})
-  const [loading, setLoading] = useState(true)
-  const [isExporting, setIsExporting] = useState(false)
-  
-  // Export settings
-  const [selectedDay, setSelectedDay] = useState('')
-  const [selectedStages, setSelectedStages] = useState([])
-  const [previewHtml, setPreviewHtml] = useState('')
 
   // Get passed data from navigation state
   const passedData = location.state
 
-  useEffect(() => {
-    if (passedData?.festival) {
-      // Use passed data (no refetch needed)
-      setFestival(passedData.festival)
-      setActs(passedData.acts)
-      setRatings(passedData.ratings)
-      setLoading(false)
-    } else {
-      // Fallback: fetch data
-      fetchFestivalData()
-    }
-  }, [])
+  // Use the shared hook for festival data, acts, and ratings
+  // Only fetch if data wasn't passed via navigation state
+  const shouldFetch = !passedData?.festival
+  const hookData = useFestivalData(shouldFetch ? id : null, user)
 
-  useEffect(() => {
-    if (user && acts.length > 0) {
-      loadUserRatings()
-    }
-  }, [user, acts])
+  // Use passed data if available, otherwise use hook data
+  const festival = passedData?.festival || hookData.festival
+  const acts = passedData?.acts || hookData.acts
+  const ratings = passedData?.ratings || hookData.ratings
+  const loading = shouldFetch ? hookData.loading : false
 
-  const fetchFestivalData = async () => {
-    try {
-      // Try to fetch from Supabase first
-      const { data: festivalData, error: festivalError } = await supabase
-        .from('festivals')
-        .select('*')
-        .eq('id', id)
-        .single()
+  const [isExporting, setIsExporting] = useState(false)
 
-      if (festivalError || !festivalData) {
-        // Fallback to mock data if Supabase is not configured
-        const mockFestival = {
-          id: '1',
-          name: 'EDC Orlando 2024',
-          start_date: '2024-11-15',
-          end_date: '2024-11-17',
-          location: 'Orlando, FL',
-          image_url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop',
-          description: 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience',
-          status: 'complete'
-        }
-        setFestival(mockFestival)
-        
-        // Use mock acts data
-        const mockActs = [
-          { id: 'mock-1', artist: 'Alex Kennon', day: 'Friday', startTime: '8:00 PM', length: 60, stage: 'Neon Garden', specialNotes: '', genre: 'Tech House', category: 'Techno', youtubeUrl: 'https://youtube.com/watch?v=example1', youtubeTitle: 'Ibiza 2023', festivalId: id, avgRating: 3.6 },
-          { id: 'mock-2', artist: 'Avision', day: 'Friday', startTime: '9:00 PM', length: 60, stage: 'Neon Garden', specialNotes: '', genre: 'Techno', category: 'House', youtubeUrl: 'https://youtube.com/watch?v=example2', youtubeTitle: 'Club 2023', festivalId: id, avgRating: 4.0 },
-          { id: 'mock-3', artist: 'Black Tiger Sex Machine', day: 'Friday', startTime: '10:00 PM', length: 60, stage: 'Circuit Grounds', specialNotes: '', genre: 'Dubstep', category: 'Bass', youtubeUrl: 'https://youtube.com/watch?v=example3', youtubeTitle: 'WAMU 2024', festivalId: id, avgRating: 4.2 },
-          { id: 'mock-4', artist: 'Carl Cox B2B Vintage Culture', day: 'Friday', startTime: '11:00 PM', length: 60, stage: 'Neon Garden', specialNotes: 'Worldwide Debut', genre: 'Tech House', category: 'Pop EDM', youtubeUrl: 'https://youtube.com/watch?v=example4', youtubeTitle: 'Exit 2024', festivalId: id, avgRating: 8.0 },
-          { id: 'mock-5', artist: 'Hedex', day: 'Friday', startTime: '7:00 PM', length: 60, stage: 'Circuit Grounds', specialNotes: '', genre: 'Drum & Bass', category: 'Bass', youtubeUrl: 'https://youtube.com/watch?v=example5', youtubeTitle: 'EDCLV 2024', festivalId: id, avgRating: 6.6 },
-          { id: 'mock-6', artist: 'Lost Frequencies', day: 'Friday', startTime: '8:30 PM', length: 60, stage: 'Kinetic Field', specialNotes: '', genre: 'House', category: 'Pop EDM', youtubeUrl: 'https://youtube.com/watch?v=example6', youtubeTitle: 'Tomorrowland 2024', festivalId: id, avgRating: 7.4 },
-          // Saturday acts
-          { id: 'mock-7', artist: 'Above & Beyond', day: 'Saturday', startTime: '11:00 PM', length: 60, stage: 'Kinetic Field', specialNotes: 'Group Therapy', genre: 'Trance', category: 'Progressive', youtubeUrl: 'https://youtube.com/watch?v=example7', youtubeTitle: 'ABGT 500', festivalId: id, avgRating: 9.2 },
-          { id: 'mock-8', artist: 'Armin van Buuren', day: 'Saturday', startTime: '9:30 PM', length: 90, stage: 'Kinetic Field', specialNotes: 'A State of Trance', genre: 'Trance', category: 'Progressive', youtubeUrl: 'https://youtube.com/watch?v=example8', youtubeTitle: 'ASOT 1000', festivalId: id, avgRating: 8.8 },
-          { id: 'mock-9', artist: 'Charlotte de Witte', day: 'Saturday', startTime: '10:00 PM', length: 60, stage: 'Neon Garden', specialNotes: '', genre: 'Techno', category: 'Dark Techno', youtubeUrl: 'https://youtube.com/watch?v=example9', youtubeTitle: 'Tomorrowland 2024', festivalId: id, avgRating: 7.8 },
-          { id: 'mock-10', artist: 'Flume', day: 'Saturday', startTime: '8:00 PM', length: 60, stage: 'Kinetic Field', specialNotes: '', genre: 'Future Bass', category: 'Electronic', youtubeUrl: 'https://youtube.com/watch?v=example10', youtubeTitle: 'Coachella 2024', festivalId: id, avgRating: 6.8 },
-          { id: 'mock-11', artist: 'Gryffin', day: 'Saturday', startTime: '7:00 PM', length: 60, stage: 'Kinetic Field', specialNotes: '', genre: 'Progressive House', category: 'Melodic', youtubeUrl: 'https://youtube.com/watch?v=example11', youtubeTitle: 'EDC Las Vegas 2024', festivalId: id, avgRating: 6.2 },
-          // Sunday acts
-          { id: 'mock-12', artist: 'John Summit', day: 'Sunday', startTime: '9:00 PM', length: 90, stage: 'Neon Garden', specialNotes: '', genre: 'Tech House', category: 'Underground', youtubeUrl: 'https://youtube.com/watch?v=example12', youtubeTitle: 'Summit Sessions', festivalId: id, avgRating: 7.3 },
-          { id: 'mock-13', artist: 'Kx5', day: 'Sunday', startTime: '11:00 PM', length: 60, stage: 'Kinetic Field', specialNotes: 'Kaskade x Deadmau5', genre: 'Progressive House', category: 'Collaboration', youtubeUrl: 'https://youtube.com/watch?v=example13', youtubeTitle: 'EDC Las Vegas 2024', festivalId: id, avgRating: 8.7 },
-          { id: 'mock-14', artist: 'Lane 8', day: 'Sunday', startTime: '7:30 PM', length: 60, stage: 'Neon Garden', specialNotes: 'This Never Happened', genre: 'Deep House', category: 'Melodic', youtubeUrl: 'https://youtube.com/watch?v=example14', youtubeTitle: 'Summer Gatherings', festivalId: id, avgRating: 6.9 },
-          { id: 'mock-15', artist: 'Nora En Pure', day: 'Sunday', startTime: '6:00 PM', length: 60, stage: 'Neon Garden', specialNotes: '', genre: 'Deep House', category: 'Melodic', youtubeUrl: 'https://youtube.com/watch?v=example15', youtubeTitle: 'Purified Radio', festivalId: id, avgRating: 6.4 },
-          { id: 'mock-16', artist: 'Odesza', day: 'Sunday', startTime: '10:00 PM', length: 90, stage: 'Kinetic Field', specialNotes: 'Live Show', genre: 'Future Bass', category: 'Live Electronic', youtubeUrl: 'https://youtube.com/watch?v=example16', youtubeTitle: 'The Last Goodbye Tour', festivalId: id, avgRating: 8.9 },
-          { id: 'mock-17', artist: 'Seven Lions', day: 'Sunday', startTime: '8:30 PM', length: 60, stage: 'Circuit Grounds', specialNotes: '', genre: 'Melodic Dubstep', category: 'Emotional', youtubeUrl: 'https://youtube.com/watch?v=example17', youtubeTitle: 'Ophelia Records', festivalId: id, avgRating: 7.1 }
-        ]
-        setActs(mockActs)
-      } else {
-        setFestival(festivalData)
-        
-        // Fetch acts for this festival
-        const { data: actsData, error: actsError } = await supabase
-          .from('acts')
-          .select('*')
-          .eq('festival_id', id)
-          .order('start_time')
-
-        if (actsError) {
-          console.error('Error fetching acts:', actsError)
-        } else {
-          setActs(actsData || [])
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching festival data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const loadUserRatings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('user_ratings')
-        .select('act_id, rating')
-        .eq('user_id', user.id)
-
-      if (error) {
-        console.error('Error loading ratings:', error)
-        return
-      }
-
-      const ratingsMap = {}
-      data.forEach(item => {
-        ratingsMap[item.act_id] = item.rating
-      })
-      setRatings(ratingsMap)
-    } catch (error) {
-      console.error('Error loading ratings:', error)
-    }
-  }
+  // Export settings
+  const [selectedDay, setSelectedDay] = useState('')
+  const [selectedStages, setSelectedStages] = useState([])
+  const [previewHtml, setPreviewHtml] = useState('')
 
   // Get unique days from acts
   const days = useMemo(() => {
@@ -518,7 +415,6 @@ const ExportPage = () => {
     const html = generatePreviewHtml()
     setPreviewHtml(html)
   }, [selectedDay, selectedStages, festival, filteredActs])
-
   const exportSchedule = async () => {
     if (!selectedDay || selectedStages.length === 0) return
     

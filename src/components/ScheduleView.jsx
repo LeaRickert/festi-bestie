@@ -1,15 +1,17 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Clock, Music, Calendar, Download } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { 
-  timeToMinutes, 
-  simpleTimeToMinutes, 
-  generateTimeSlots, 
-  getActsForStage, 
-  getActStyle, 
-  getUniqueDays, 
-  getUniqueStages, 
-  filterActsByDay 
+import {
+  timeToMinutes,
+  simpleTimeToMinutes,
+  generateTimeSlots,
+  getActsForStage,
+  getActStyle,
+  getUniqueDays,
+  getUniqueStages,
+  filterActsByDay,
+  formatTime,
+  calculateEndTime
 } from '../utils/scheduleUtils'
 
 const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
@@ -137,19 +139,29 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
                         <div className="w-20"></div>
                         {/* Stage columns with acts */}
                         {stages.map(stage => (
-                          <div key={`acts-${stage}`} className="flex-1 p-2 relative" style={{ minHeight: '720px' }}>
-                            {getActsForStage(dayActs, stage).map(act => (
-                              <div
-                                key={act.id}
-                                onClick={() => onActClick(act)}
-                                className="bg-festival-purple/20 border border-festival-purple/30 rounded-lg p-2 hover:bg-festival-purple/30 transition-colors cursor-pointer absolute w-full"
-                                style={getActStyle(act)}
-                              >
-                                <div className="font-medium text-white text-sm truncate">
-                                  {act.artist}
-                                </div>
-                              </div>
-                            ))}
+                          <div key={`acts-${stage}`} className="flex-1 relative" style={{ minHeight: '720px' }}>
+                            <div className="absolute inset-0 p-2">
+                              {getActsForStage(dayActs, stage).map(act => {
+                                const startTime = formatTime(act.startTime)
+                                const endTime = calculateEndTime(act.startTime, act.length)
+
+                                return (
+                                  <div
+                                    key={act.id}
+                                    onClick={() => onActClick(act)}
+                                    className="bg-festival-purple/20 border border-festival-purple/30 rounded-lg p-2 hover:bg-festival-purple/30 transition-colors cursor-pointer absolute left-0 right-0"
+                                    style={getActStyle(act)}
+                                  >
+                                    <div className="font-medium text-white text-sm truncate">
+                                      {act.artist}
+                                    </div>
+                                    <div className="text-white/70 text-xs mt-0.5">
+                                      {startTime} - {endTime}
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
                           </div>
                         ))}
                       </div>
