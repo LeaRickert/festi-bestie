@@ -117,7 +117,7 @@ const FestivalDetailPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
       </div>
     )
   }
@@ -125,7 +125,7 @@ const FestivalDetailPage = () => {
   if (!festival) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white text-xl">Festival not found</div>
+        <div className="text-white text-sm">Festival not found</div>
       </div>
     )
   }
@@ -133,37 +133,37 @@ const FestivalDetailPage = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-4xl mx-auto px-4 py-2.5">
           <div className="flex items-center justify-between">
             <Link 
               to="/" 
-              className="flex items-center text-white/80 hover:text-white transition-colors"
+              className="flex items-center text-white/70 hover:text-white transition-colors text-sm"
             >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Back to Festivals
+              <ArrowLeft className="h-4 w-4 mr-1.5" />
+              Back
             </Link>
           </div>
         </div>
       </header>
 
       {/* Festival Hero */}
-      <section className="relative h-64 overflow-hidden">
+      <section className="relative h-40 overflow-hidden">
         <img
           src={festival.image_url}
           alt={festival.name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-        <div className="absolute bottom-8 left-8 right-8">
-          <h1 className="text-4xl font-bold text-white mb-2">{festival.name}</h1>
-          <div className="flex items-center space-x-6 text-white/80">
+        <div className="absolute bottom-3 left-3 right-3">
+          <h1 className="text-xl font-bold text-white mb-1.5">{festival.name}</h1>
+          <div className="flex items-center space-x-4 text-white/70 text-xs">
             <div className="flex items-center">
-              <Calendar className="h-4 w-4 mr-2" />
+              <Calendar className="h-3 w-3 mr-1" />
               <span>{festival.start_date} - {festival.end_date}</span>
             </div>
             <div className="flex items-center">
-              <MapPin className="h-4 w-4 mr-2" />
+              <MapPin className="h-3 w-3 mr-1" />
               <span>{festival.location}</span>
             </div>
           </div>
@@ -172,27 +172,27 @@ const FestivalDetailPage = () => {
 
       {/* Debug Controls */}
       {showDebugControls && (
-        <section className="py-4 px-4 sm:px-6 lg:px-8 bg-red-500/10 border-b border-red-500/20">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between">
+        <section className="py-2.5 px-4 bg-red-500/10 border-b border-red-500/20">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center space-x-2">
-                <span className="text-red-400 text-sm font-medium">DEBUG MODE:</span>
-                <span className="text-white/80 text-sm">
-                  Current Status: {debugStatus || festival?.status || 'unknown'}
+                <span className="text-red-400 text-xs font-medium">DEBUG:</span>
+                <span className="text-white/80 text-xs">
+                  {debugStatus || festival?.status || 'unknown'}
                 </span>
                 {debugStatus && (
-                  <span className="text-yellow-400 text-xs">
-                    (Overriding database status)
+                  <span className="text-yellow-400 text-[10px]">
+                    (override)
                   </span>
                 )}
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-white/60 text-xs">Switch to:</span>
+              <div className="flex items-center space-x-1.5 flex-wrap">
+                <span className="text-white/60 text-[10px]">Switch:</span>
                 {['announced', 'lineup', 'stages', 'schedule', 'times', 'complete'].map(status => (
                   <button
                     key={status}
                     onClick={() => setDebugStatus(status)}
-                    className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                    className={`px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors ${
                       (debugStatus || festival?.status) === status
                         ? 'bg-red-500 text-white'
                         : 'bg-white/10 text-white/80 hover:bg-white/20'
@@ -203,7 +203,7 @@ const FestivalDetailPage = () => {
                 ))}
                 <button
                   onClick={() => setDebugStatus(null)}
-                  className="px-2 py-1 rounded text-xs font-medium bg-gray-500/20 text-gray-400 hover:bg-gray-500/30 transition-colors"
+                  className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-500/20 text-gray-400 hover:bg-gray-500/30 transition-colors"
                 >
                   Reset
                 </button>
@@ -214,10 +214,10 @@ const FestivalDetailPage = () => {
       )}
 
       {/* Debug Toggle Button */}
-      <div className="fixed top-4 right-4 z-50">
+      <div className="fixed top-3 right-3 z-50">
         <button
           onClick={() => setShowDebugControls(prev => !prev)}
-          className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+          className={`px-2 py-1 rounded-md text-[10px] font-medium transition-colors ${
             showDebugControls 
               ? 'bg-red-500 text-white' 
               : 'bg-black/50 text-white/60 hover:bg-black/70'
@@ -230,8 +230,8 @@ const FestivalDetailPage = () => {
 
 
       {/* Content Display */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-4 px-4">
+        <div className="max-w-4xl mx-auto">
           {renderContentByStatus()}
         </div>
       </section>
@@ -239,37 +239,37 @@ const FestivalDetailPage = () => {
       {/* Act Detail Popup */}
       {selectedAct && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-2xl font-bold text-white">{selectedAct.artist}</h3>
+          <div className="bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 max-w-md w-full max-h-[80vh] overflow-y-auto border border-white/10">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-bold text-white">{selectedAct.artist}</h3>
               <button
                 onClick={() => setSelectedAct(null)}
                 className="text-white/60 hover:text-white transition-colors"
               >
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Basic Info */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {selectedAct.day && (
-                  <div className="flex items-center text-white/80">
-                    <Calendar className="h-4 w-4 mr-2" />
+                  <div className="flex items-center text-white/80 text-sm">
+                    <Calendar className="h-3.5 w-3.5 mr-1.5" />
                     <span>{selectedAct.day}</span>
                   </div>
                 )}
                 {selectedAct.stage && (
-                  <div className="flex items-center text-white/80">
-                    <MapPin className="h-4 w-4 mr-2" />
+                  <div className="flex items-center text-white/80 text-sm">
+                    <MapPin className="h-3.5 w-3.5 mr-1.5" />
                     <span>{selectedAct.stage}</span>
                   </div>
                 )}
                 {selectedAct.startTime && selectedAct.length && (
-                  <div className="flex items-center text-white/80">
-                    <Clock className="h-4 w-4 mr-2" />
+                  <div className="flex items-center text-white/80 text-sm">
+                    <Clock className="h-3.5 w-3.5 mr-1.5" />
                     <span>{selectedAct.startTime} • {selectedAct.length}min</span>
                   </div>
                 )}
@@ -277,15 +277,15 @@ const FestivalDetailPage = () => {
 
               {/* Genre and Category */}
               {(selectedAct.genre || selectedAct.category) && (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {selectedAct.genre && (
-                    <div className="flex items-center text-white/70">
-                      <Music className="h-4 w-4 mr-2" />
+                    <div className="flex items-center text-white/70 text-sm">
+                      <Music className="h-3.5 w-3.5 mr-1.5" />
                       <span>{selectedAct.genre}</span>
                     </div>
                   )}
                   {selectedAct.category && (
-                    <div className="text-white/60 text-sm">
+                    <div className="text-white/60 text-xs">
                       {selectedAct.category}
                     </div>
                   )}
@@ -294,8 +294,8 @@ const FestivalDetailPage = () => {
 
               {/* Special Notes */}
               {selectedAct.specialNotes && (
-                <div className="bg-festival-purple/20 border border-festival-purple/30 rounded-lg p-3">
-                  <p className="text-festival-purple font-medium text-sm">
+                <div className="bg-festival-purple/20 border border-festival-purple/30 rounded-md p-2">
+                  <p className="text-festival-purple font-medium text-xs">
                     {selectedAct.specialNotes}
                   </p>
                 </div>
@@ -303,15 +303,15 @@ const FestivalDetailPage = () => {
 
               {/* Average Rating */}
               {selectedAct.avgRating > 0 && (
-                <div className="flex items-center text-festival-purple">
-                  <Star className="h-4 w-4 mr-2" />
-                  <span className="font-medium">Average Rating: {selectedAct.avgRating.toFixed(1)}</span>
+                <div className="flex items-center text-festival-purple text-sm">
+                  <Star className="h-3.5 w-3.5 mr-1.5" />
+                  <span className="font-medium">Avg: {selectedAct.avgRating.toFixed(1)}</span>
                 </div>
               )}
 
               {/* User Rating */}
-              <div className="border-t border-white/10 pt-4">
-                <div className="text-white/80 text-sm mb-2">Your Rating:</div>
+              <div className="border-t border-white/10 pt-3">
+                <div className="text-white/70 text-xs mb-2">Your Rating:</div>
                 {user ? (
                   <StarRating
                     rating={ratings[selectedAct.id] || 0}
@@ -320,20 +320,20 @@ const FestivalDetailPage = () => {
                     showValue={true}
                   />
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <StarRating
                       rating={0}
                       onRatingChange={() => {}}
                       size="md"
                       showValue={false}
                     />
-                    <div className="bg-festival-purple/10 border border-festival-purple/30 rounded-lg p-3">
-                      <p className="text-white/70 text-sm mb-3">
-                        Sign in to rate this artist and track your favorites
+                    <div className="bg-festival-purple/10 border border-festival-purple/30 rounded-md p-2.5">
+                      <p className="text-white/70 text-xs mb-2">
+                        Sign in to rate this artist
                       </p>
                       <button
                         onClick={() => setShowLoginModal(true)}
-                        className="w-full py-2 bg-festival-purple hover:bg-festival-purple/80 text-white font-medium rounded-lg transition-colors"
+                        className="w-full py-1.5 bg-festival-purple hover:bg-festival-purple/80 text-white font-medium rounded-md transition-colors text-sm"
                       >
                         Sign In to Rate
                       </button>
@@ -344,14 +344,14 @@ const FestivalDetailPage = () => {
 
               {/* YouTube Link */}
               {selectedAct.youtubeUrl && (
-                <div className="border-t border-white/10 pt-4">
+                <div className="border-t border-white/10 pt-3">
                   <a
                     href={selectedAct.youtubeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-festival-blue/20 text-festival-blue rounded-lg hover:bg-festival-blue/30 transition-colors"
+                    className="inline-flex items-center px-3 py-1.5 bg-festival-blue/20 text-festival-blue rounded-md hover:bg-festival-blue/30 transition-colors text-sm"
                   >
-                    <Play className="h-4 w-4 mr-2" />
+                    <Play className="h-3.5 w-3.5 mr-1.5" />
                     {selectedAct.youtubeTitle || 'Watch Set'}
                   </a>
                 </div>

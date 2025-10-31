@@ -40,27 +40,27 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
 
   if (days.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Music className="h-16 w-16 text-white/40 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-white/80 mb-2">No schedule data</h3>
-        <p className="text-white/60">No acts found for this festival.</p>
+      <div className="text-center py-8">
+        <Music className="h-12 w-12 text-white/40 mx-auto mb-3" />
+        <h3 className="text-lg font-semibold text-white/80 mb-1.5">No schedule data</h3>
+        <p className="text-white/60 text-sm">No acts found for this festival.</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Festival Schedule</h2>
-        <p className="text-white/70">Complete schedule with set times</p>
-        <div className="mt-4">
+    <div className="space-y-4">
+      <div className="text-center mb-4">
+        <h2 className="text-xl font-bold text-white mb-1">Festival Schedule</h2>
+        <p className="text-white/70 text-sm">Complete schedule with set times</p>
+        <div className="mt-3">
           <button
             onClick={() => navigate(`/festival/${id}/export`, { 
               state: { festival: { name: festivalName }, acts, ratings } 
             })}
-            className="flex items-center px-6 py-3 bg-festival-purple/20 text-festival-purple rounded-lg hover:bg-festival-purple/30 transition-colors mx-auto"
+            className="flex items-center px-4 py-2 bg-festival-purple/20 text-festival-purple rounded-md hover:bg-festival-purple/30 transition-colors mx-auto text-sm"
           >
-            <Download className="h-5 w-5 mr-2" />
+            <Download className="h-4 w-4 mr-1.5" />
             Export Schedule
           </button>
         </div>
@@ -72,7 +72,7 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
           <button
             key={day}
             onClick={() => setSelectedDay(day)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md font-medium transition-colors text-sm ${
               selectedDay === day
                 ? 'bg-festival-purple text-white'
                 : 'bg-white/10 text-white/80 hover:bg-white/20'
@@ -85,10 +85,10 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
 
       {/* Selected Day Content */}
       {selectedDay && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-center mb-6">
-            <Calendar className="h-6 w-6 text-festival-purple mr-3" />
-            <h3 className="text-2xl font-bold text-white">{selectedDay}</h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-center mb-3">
+            <Calendar className="h-5 w-5 text-festival-purple mr-2" />
+            <h3 className="text-lg font-bold text-white">{selectedDay}</h3>
           </div>
 
           {stages.length === 0 ? (
@@ -101,12 +101,12 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
                 <div className="min-w-full">
                   {/* Header Row */}
                   <div className="flex border-b border-white/10">
-                    <div className="w-20 p-4 bg-white/5 border-r border-white/10">
-                      <span className="text-white/60 text-sm font-medium">Time</span>
+                    <div className="w-16 p-2 bg-white/5 border-r border-white/10">
+                      <span className="text-white/60 text-xs font-medium">Time</span>
                     </div>
                     {stages.map(stage => (
-                      <div key={stage} className="flex-1 p-4 bg-white/5 border-r border-white/10 last:border-r-0">
-                        <span className="text-white font-medium">{stage}</span>
+                      <div key={stage} className="flex-1 p-2 bg-white/5 border-r border-white/10 last:border-r-0">
+                        <span className="text-white font-medium text-sm">{stage}</span>
                       </div>
                     ))}
                   </div>
@@ -117,15 +117,15 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
                     {timeSlots.map(timeSlot => (
                       <div key={timeSlot} className="flex border-b border-white/10 last:border-b-0">
                         {/* Time Column */}
-                        <div className="w-20 p-4 bg-white/5 border-r border-white/10 flex items-center">
-                          <span className="text-white/80 text-sm">
+                        <div className="w-16 p-2 bg-white/5 border-r border-white/10 flex items-center h-[90px]">
+                          <span className="text-white/80 text-xs">
                             {timeSlot}
                           </span>
                         </div>
 
                         {/* Stage Columns Background */}
                         {stages.map(stage => (
-                          <div key={`${timeSlot}-${stage}`} className="flex-1 p-2 border-r border-white/10 last:border-r-0 min-h-[60px]">
+                          <div key={`${timeSlot}-${stage}`} className="flex-1 p-1 border-r border-white/10 last:border-r-0 h-[90px]">
                             {/* Empty background cells */}
                           </div>
                         ))}
@@ -136,11 +136,11 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
                     <div className="absolute top-0 left-0 w-full">
                       <div className="flex">
                         {/* Time column spacer */}
-                        <div className="w-20"></div>
+                        <div className="w-16"></div>
                         {/* Stage columns with acts */}
                         {stages.map(stage => (
-                          <div key={`acts-${stage}`} className="flex-1 relative" style={{ minHeight: '720px' }}>
-                            <div className="absolute inset-0 p-2">
+                          <div key={`acts-${stage}`} className="flex-1 relative" style={{ height: `${timeSlots.length * 90}px` }}>
+                            <div className="absolute inset-0 p-1">
                               {getActsForStage(dayActs, stage).map(act => {
                                 const startTime = formatTime(act.startTime)
                                 const endTime = calculateEndTime(act.startTime, act.length)
@@ -149,13 +149,13 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
                                   <div
                                     key={act.id}
                                     onClick={() => onActClick(act)}
-                                    className="bg-festival-purple/20 border border-festival-purple/30 rounded-lg p-2 hover:bg-festival-purple/30 transition-colors cursor-pointer absolute left-0 right-0"
+                                    className="bg-festival-purple/20 border border-festival-purple/30 rounded-md p-1.5 hover:bg-festival-purple/30 transition-colors cursor-pointer absolute left-0 right-0"
                                     style={getActStyle(act)}
                                   >
-                                    <div className="font-medium text-white text-sm truncate">
+                                    <div className="font-medium text-white text-xs truncate">
                                       {act.artist}
                                     </div>
-                                    <div className="text-white/70 text-xs mt-0.5">
+                                    <div className="text-white/70 text-[10px] mt-0.5">
                                       {startTime} - {endTime}
                                     </div>
                                   </div>

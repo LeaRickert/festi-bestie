@@ -21,36 +21,36 @@ const StagesView = ({ acts, onActClick }) => {
 
   if (stages.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Music className="h-16 w-16 text-white/40 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-white/80 mb-2">No stage information available</h3>
-        <p className="text-white/60">Stage assignments coming soon.</p>
+      <div className="text-center py-8">
+        <Music className="h-12 w-12 text-white/40 mx-auto mb-3" />
+        <h3 className="text-lg font-semibold text-white/80 mb-1.5">No stage information available</h3>
+        <p className="text-white/60 text-sm">Stage assignments coming soon.</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Stages & Artists</h2>
-        <p className="text-white/70">Schedule information coming soon</p>
+    <div className="space-y-4">
+      <div className="text-center mb-4">
+        <h2 className="text-xl font-bold text-white mb-1">Stages & Artists</h2>
+        <p className="text-white/70 text-sm">Schedule information coming soon</p>
       </div>
 
       {stages.map(stage => (
-        <div key={stage} className="bg-white/5 rounded-xl p-6">
-          <div className="flex items-center mb-6">
-            <MapPin className="h-6 w-6 text-festival-purple mr-3" />
-            <h3 className="text-2xl font-bold text-white">{stage}</h3>
+        <div key={stage} className="bg-white/5 rounded-lg p-3">
+          <div className="flex items-center mb-3">
+            <MapPin className="h-4 w-4 text-festival-purple mr-2" />
+            <h3 className="text-base font-bold text-white">{stage}</h3>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {actsByStage[stage].map(act => (
-                    <div
-                      key={act.id}
-                      onClick={() => onActClick(act)}
-                      className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-all duration-300 cursor-pointer"
-                    >
-                <div className="space-y-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+            {actsByStage[stage].map(act => (
+              <div
+                key={act.id}
+                onClick={() => onActClick(act)}
+                className="bg-white/10 backdrop-blur-sm rounded-md p-2.5 hover:bg-white/20 transition-all duration-200 cursor-pointer"
+              >
+                <div className="space-y-1.5">
                   <h4 className="text-white font-medium text-sm truncate">
                     {act.artist}
                   </h4>
@@ -60,7 +60,7 @@ const StagesView = ({ acts, onActClick }) => {
                     </p>
                   )}
                   {act.category && (
-                    <p className="text-white/50 text-xs truncate">
+                    <p className="text-white/50 text-[10px] truncate">
                       {act.category}
                     </p>
                   )}
@@ -71,9 +71,9 @@ const StagesView = ({ acts, onActClick }) => {
         </div>
       ))}
 
-      <div className="text-center mt-8">
-        <div className="bg-festival-blue/20 border border-festival-blue/30 rounded-lg p-4 inline-block">
-          <p className="text-festival-blue font-medium">
+      <div className="text-center mt-4">
+        <div className="bg-festival-blue/20 border border-festival-blue/30 rounded-md p-3 inline-block">
+          <p className="text-festival-blue font-medium text-sm">
             Schedule and times coming soon!
           </p>
         </div>

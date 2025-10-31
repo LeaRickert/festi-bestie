@@ -60,14 +60,18 @@ export const getActsForStage = (acts, stage) => {
 }
 
 // Calculate act position and height for the entire schedule grid
+// Each hour (60 minutes) = 90px, so 1 minute = 1.5px
+const PIXELS_PER_MINUTE = 90 / 60 // 1.5px per minute
+
 export const getActStyle = (act) => {
   const actStartMinutes = timeToMinutes(act.startTime)
   const actEndMinutes = actStartMinutes + act.length
   
   // Calculate position relative to the start of the schedule (1 PM = 13:00)
   const scheduleStartMinutes = 13 * 60 // 1 PM in minutes
-  const topOffset = Math.max(0, actStartMinutes - scheduleStartMinutes)
-  const height = act.length
+  const topOffsetMinutes = Math.max(0, actStartMinutes - scheduleStartMinutes)
+  const topOffset = topOffsetMinutes * PIXELS_PER_MINUTE
+  const height = act.length * PIXELS_PER_MINUTE
   
   return {
     top: `${topOffset}px`,

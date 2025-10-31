@@ -82,7 +82,7 @@ const LandingPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
       </div>
     )
   }
@@ -90,32 +90,31 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <header className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Music className="h-8 w-8 text-festival-purple" />
-              <h1 className="text-3xl font-bold text-white">Festi Besti</h1>
+            <div className="flex items-center space-x-2">
+              <Music className="h-5 w-5 text-festival-purple" />
+              <h1 className="text-xl font-bold text-white">Festi Besti</h1>
             </div>
-            <div className="flex items-center space-x-4">
-              <p className="text-white/80 text-lg">Festival Planning Made Easy</p>
+            <div className="flex items-center space-x-2">
               {user ? (
-                <div className="flex items-center space-x-3">
-                  <span className="text-white/80 text-sm">{user.email}</span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-white/70 text-xs hidden sm:inline">{user.email}</span>
                   <button
                     onClick={signOut}
-                    className="flex items-center px-3 py-1 bg-white/10 text-white/80 rounded-lg hover:bg-white/20 transition-colors"
+                    className="flex items-center px-2 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
                   >
-                    <LogOut className="h-4 w-4 mr-1" />
-                    Sign Out
+                    <LogOut className="h-3.5 w-3.5 mr-1" />
+                    <span className="hidden sm:inline">Sign Out</span>
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setShowLogin(true)}
-                  className="flex items-center px-4 py-2 bg-festival-purple/20 text-festival-purple rounded-lg hover:bg-festival-purple/30 transition-colors"
+                  className="flex items-center px-3 py-1.5 bg-festival-purple/20 text-festival-purple rounded-md hover:bg-festival-purple/30 transition-colors text-sm"
                 >
-                  <User className="h-4 w-4 mr-2" />
+                  <User className="h-3.5 w-3.5 mr-1.5" />
                   Sign In
                 </button>
               )}
@@ -124,48 +123,47 @@ const LandingPage = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-5xl font-bold text-white mb-6">
+      {/* Hero Section - Compact */}
+      <section className="py-6 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Plan Your Perfect Festival Experience
           </h2>
-          <p className="text-xl text-white/80 mb-8 max-w-3xl mx-auto">
-            Never miss your favorite artists again. Create personalized schedules, 
-            share with friends, and export to your phone for easy access.
+          <p className="text-sm text-white/70 max-w-2xl mx-auto">
+            Never miss your favorite artists again. Create personalized schedules and export to your phone.
           </p>
         </div>
       </section>
 
       {/* Festivals Grid */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-3xl font-bold text-white mb-12 text-center">
+      <section className="py-4 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h3 className="text-lg font-semibold text-white/90 mb-4 text-center">
             Upcoming Festivals
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {festivals.map((festival) => (
               <Link
                 key={festival.id}
                 to={`/festival/${festival.id}`}
                 className="group block"
               >
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden hover:bg-white/20 transition-all duration-300 transform group-hover:scale-105">
-                  <div className="relative h-48 overflow-hidden">
+                <div className="bg-white/5 backdrop-blur-sm rounded-lg overflow-hidden hover:bg-white/10 transition-all duration-200">
+                  <div className="relative h-32 overflow-hidden">
                     <img
                       src={festival.image_url}
                       alt={festival.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-2xl font-bold text-white mb-2">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <h4 className="text-base font-bold text-white mb-1.5">
                         {festival.name}
                       </h4>
                       {/* Status Badge */}
                       <div className="inline-block">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
                           festival.status === 'complete' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
                           festival.status === 'times' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
                           festival.status === 'schedule' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
@@ -173,32 +171,32 @@ const LandingPage = () => {
                           festival.status === 'lineup' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
                           'bg-gray-500/20 text-gray-400 border border-gray-500/30'
                         }`}>
-                          {festival.status === 'complete' ? 'Complete Schedule' :
-                           festival.status === 'times' ? 'Set Times Available' :
-                           festival.status === 'schedule' ? 'Schedule Available' :
-                           festival.status === 'stages' ? 'Stages Announced' :
-                           festival.status === 'lineup' ? 'Lineup Announced' :
-                           'Just Announced'}
+                          {festival.status === 'complete' ? 'Complete' :
+                           festival.status === 'times' ? 'Times' :
+                           festival.status === 'schedule' ? 'Schedule' :
+                           festival.status === 'stages' ? 'Stages' :
+                           festival.status === 'lineup' ? 'Lineup' :
+                           'Announced'}
                         </span>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="p-6">
-                    <p className="text-white/80 mb-4 line-clamp-2">
+                  <div className="p-3">
+                    <p className="text-white/70 mb-2.5 line-clamp-2 text-xs">
                       {festival.description}
                     </p>
                     
-                    <div className="space-y-2">
-                      <div className="flex items-center text-white/70">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        <span className="text-sm">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center text-white/60">
+                        <Calendar className="h-3 w-3 mr-1.5" />
+                        <span className="text-xs">
                           {formatDate(festival.start_date)} - {formatDate(festival.end_date)}
                         </span>
                       </div>
-                      <div className="flex items-center text-white/70">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        <span className="text-sm">{festival.location}</span>
+                      <div className="flex items-center text-white/60">
+                        <MapPin className="h-3 w-3 mr-1.5" />
+                        <span className="text-xs">{festival.location}</span>
                       </div>
                     </div>
                   </div>
@@ -209,52 +207,52 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/5">
-        <div className="max-w-7xl mx-auto">
-          <h3 className="text-3xl font-bold text-white mb-12 text-center">
+      {/* Features Section - Compact */}
+      <section className="py-6 px-4 bg-white/5">
+        <div className="max-w-4xl mx-auto">
+          <h3 className="text-base font-semibold text-white/90 mb-4 text-center">
             Why Choose Festi Besti?
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="bg-festival-purple/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Calendar className="h-8 w-8 text-festival-purple" />
+              <div className="bg-festival-purple/20 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
+                <Calendar className="h-5 w-5 text-festival-purple" />
               </div>
-              <h4 className="text-xl font-semibold text-white mb-2">Smart Scheduling</h4>
-              <p className="text-white/70">
-                Filter by day, stage, genre, and time to find exactly what you want to see.
+              <h4 className="text-sm font-semibold text-white mb-1">Smart Scheduling</h4>
+              <p className="text-white/60 text-xs">
+                Filter by day, stage, genre, and time.
               </p>
             </div>
             
             <div className="text-center">
-              <div className="bg-festival-pink/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Music className="h-8 w-8 text-festival-pink" />
+              <div className="bg-festival-pink/20 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
+                <Music className="h-5 w-5 text-festival-pink" />
               </div>
-              <h4 className="text-xl font-semibold text-white mb-2">Personal Preferences</h4>
-              <p className="text-white/70">
-                Mark artists as "interested" or "must-see" to create your perfect lineup.
+              <h4 className="text-sm font-semibold text-white mb-1">Personal Preferences</h4>
+              <p className="text-white/60 text-xs">
+                Mark artists as favorites.
               </p>
             </div>
             
             <div className="text-center">
-              <div className="bg-festival-blue/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Clock className="h-8 w-8 text-festival-blue" />
+              <div className="bg-festival-blue/20 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
+                <Clock className="h-5 w-5 text-festival-blue" />
               </div>
-              <h4 className="text-xl font-semibold text-white mb-2">Export & Share</h4>
-              <p className="text-white/70">
-                Export your schedule as an image for your phone lock screen or share with friends.
+              <h4 className="text-sm font-semibold text-white mb-1">Export & Share</h4>
+              <p className="text-white/60 text-xs">
+                Export schedules to your phone.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/10">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-white/60">
-            © 2024 Festi Besti. Making festival planning effortless.
+      {/* Footer - Compact */}
+      <footer className="py-4 px-4 border-t border-white/10">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-white/50 text-xs">
+            © 2024 Festi Besti
           </p>
         </div>
       </footer>

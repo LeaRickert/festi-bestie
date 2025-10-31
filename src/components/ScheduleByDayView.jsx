@@ -45,19 +45,19 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
 
   if (days.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Music className="h-16 w-16 text-white/40 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-white/80 mb-2">No schedule information available</h3>
-        <p className="text-white/60">Day assignments coming soon.</p>
+      <div className="text-center py-8">
+        <Music className="h-12 w-12 text-white/40 mx-auto mb-3" />
+        <h3 className="text-lg font-semibold text-white/80 mb-1.5">No schedule information available</h3>
+        <p className="text-white/60 text-sm">Day assignments coming soon.</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Festival Schedule</h2>
-        <p className="text-white/70">Times and detailed schedule coming soon</p>
+    <div className="space-y-4">
+      <div className="text-center mb-4">
+        <h2 className="text-xl font-bold text-white mb-1">Festival Schedule</h2>
+        <p className="text-white/70 text-sm">Times and detailed schedule coming soon</p>
       </div>
 
       {/* Day Selector */}
@@ -66,7 +66,7 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
           <button
             key={day}
             onClick={() => setSelectedDay(day)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-md font-medium transition-colors text-sm ${
               selectedDay === day
                 ? 'bg-festival-purple text-white'
                 : 'bg-white/10 text-white/80 hover:bg-white/20'
@@ -79,32 +79,32 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
 
       {/* Selected Day Content */}
       {selectedDay && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-center mb-6">
-            <Calendar className="h-6 w-6 text-festival-purple mr-3" />
-            <h3 className="text-2xl font-bold text-white">{selectedDay}</h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-center mb-3">
+            <Calendar className="h-5 w-5 text-festival-purple mr-2" />
+            <h3 className="text-lg font-bold text-white">{selectedDay}</h3>
           </div>
 
           {stages.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-white/60">No stage information available for {selectedDay}</p>
+            <div className="text-center py-4">
+              <p className="text-white/60 text-sm">No stage information available for {selectedDay}</p>
             </div>
           ) : (
             stages.map(stage => (
-              <div key={stage} className="bg-white/5 rounded-xl p-6">
-                <div className="flex items-center mb-6">
-                  <MapPin className="h-6 w-6 text-festival-purple mr-3" />
-                  <h4 className="text-xl font-bold text-white">{stage}</h4>
+              <div key={stage} className="bg-white/5 rounded-lg p-3">
+                <div className="flex items-center mb-3">
+                  <MapPin className="h-4 w-4 text-festival-purple mr-2" />
+                  <h4 className="text-base font-bold text-white">{stage}</h4>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
                   {actsByStage[stage].map(act => (
                     <div
                       key={act.id}
                       onClick={() => onActClick(act)}
-                      className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-all duration-300 cursor-pointer"
+                      className="bg-white/10 backdrop-blur-sm rounded-md p-2.5 hover:bg-white/20 transition-all duration-200 cursor-pointer"
                     >
-                      <div className="space-y-2">
+                      <div className="space-y-1.5">
                         <h5 className="text-white font-medium text-sm truncate">
                           {act.artist}
                         </h5>
@@ -116,7 +116,7 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
                         )}
                         
                         {act.category && (
-                          <p className="text-white/50 text-xs truncate">
+                          <p className="text-white/50 text-[10px] truncate">
                             {act.category}
                           </p>
                         )}
@@ -130,9 +130,9 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
         </div>
       )}
 
-      <div className="text-center mt-8">
-        <div className="bg-festival-blue/20 border border-festival-blue/30 rounded-lg p-4 inline-block">
-          <p className="text-festival-blue font-medium">
+      <div className="text-center mt-4">
+        <div className="bg-festival-blue/20 border border-festival-blue/30 rounded-md p-3 inline-block">
+          <p className="text-festival-blue font-medium text-sm">
             Set times and detailed schedule coming soon!
           </p>
         </div>

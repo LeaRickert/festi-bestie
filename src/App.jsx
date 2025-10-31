@@ -7,7 +7,7 @@ import { AuthProvider } from './hooks/useAuth'
 function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      <div className="min-h-screen bg-gray-900">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/festival/:id" element={<FestivalDetailPage />} />

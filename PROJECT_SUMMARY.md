@@ -221,3 +221,4 @@ The application supports importing festival data via CSV files with standardized
 ---
 
 **Festi Besti** represents a modern approach to festival planning, combining intuitive user experience with robust technical architecture to create a platform that serves both festival organizers and attendees effectively.
+
