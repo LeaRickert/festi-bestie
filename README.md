@@ -29,8 +29,10 @@ See [ROADMAP.md](ROADMAP.md) for the planned work.
 The specs in [specs/](specs/) describe what the app must do. They are the
 source of truth.
 
-- [festivals.spec.md](specs/festivals.spec.md): festival list, status views, schedule grid
-- [ratings.spec.md](specs/ratings.spec.md): 1 to 5 star ratings
+- [festivals.spec.md](specs/festivals.spec.md): welcome view, festival list, status views, theme
+- [schedule-grid.spec.md](specs/schedule-grid.spec.md): time grid, day control, time helpers
+- [act-sheet.spec.md](specs/act-sheet.spec.md): act details and YouTube video
+- [ratings.spec.md](specs/ratings.spec.md): 1 to 5 star ratings and how they look
 - [auth.spec.md](specs/auth.spec.md): sign-in, roles, database access rules
 - [export.spec.md](specs/export.spec.md): PNG export of one day
 - [data-import.spec.md](specs/data-import.spec.md): master data in `data/` and the import and export scripts

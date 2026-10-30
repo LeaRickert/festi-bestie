@@ -15,7 +15,7 @@ Phases 1 and 2 are the gate for real users.
 - [x] Move the master data to `data/` (CSV and YAML for each festival)
 - [x] Fix the env var name: use `VITE_SUPABASE_PUBLISHABLE_KEY` in code, README and `.env.example`
 - [x] Add TypeScript with `allowJs`. Write all new files as `.ts` or `.tsx`. Convert old files only when you change them.
-- [x] Add Vitest. Start with `scheduleUtils` (festivals FR-7). Put the `[TC-XXXX]` tag in each test name.
+- [x] Add Vitest. Start with `scheduleUtils` (schedule-grid FR-3). Put the `[TC-XXXX]` tag in each test name.
 - [x] Add a CI job: `lint`, `build`, `test`, `spec-md lint specs`
 
 ## Phase 1: Fix correctness and security
@@ -53,24 +53,34 @@ Needs Phase 0 (TypeScript and tests). Needs Phase 1 before the deploy.
 
 ## Phase 4: Schedule UI and mobile
 
-- [ ] Drop the act and festival images from the UI (landing, detail, export). They add nothing. Remove `data/edc-orlando-2026/_images` if nothing else uses it.
-- [ ] Show a festival logo as a small extra mark next to the name, from one optimized sprite sheet (one file, one request)
-- [ ] Clean up the overall design, starting with the schedule: spacing, type, color and contrast
-- [ ] Design the time grid for a 375 px wide screen (festivals FR-4)
-- [ ] Make the day and stage filters easy to use with a thumb
-- [ ] Make the act popup a bottom sheet on a phone
-- [ ] Check every page at 375 px and 768 px
-- [ ] Support a festival that runs past midnight and does not start at 1 PM
+The design decisions are in `festivals.spec.md` (theme, FR-1, FR-7 to FR-9), `schedule-grid.spec.md`, `act-sheet.spec.md`, `ratings.spec.md` (FR-2, FR-8 to FR-10) and `export.spec.md` (FR-1, FR-8 to FR-14).
+
+- [ ] Drop the act and festival images from the UI (landing, detail, export). Remove `image_url` from `festival.yaml`, Keep the column for now (festivals FR-9)
+- [ ] Apply the theme: teal page and surfaces, magenta only for ratings, neon only for links, white and neutral controls, system font (festivals theme)
+- [ ] Fix the old "Festi Besti" name and text in `public/manifest.json`
+- [ ] Add the welcome view on `/` and move the festival list to `/festivals`, as compact rows with status labels and a collapsed "Past festivals" section (festivals FR-1, FR-7, FR-8)
+- [ ] Change the rating labels and show the rating style on every act, through one style function shared with the export (ratings FR-2, FR-10, export FR-8)
+- [ ] Add the "My picks" toggle (schedule-grid FR-6)
+- [ ] Design the time grid for a 375 px wide screen: sideways scroll, pinned stage names and hours, 4 px column gap, short act times like "1-1:50" (schedule-grid FR-1, FR-7)
+- [ ] Fit the grid to the acts of each day, also past midnight, in the app and the export (schedule-grid FR-5, export FR-9)
+- [ ] Make the day control full width, sticky and kept in `?day=` (schedule-grid FR-2)
+- [ ] Rename `acts.youtube_url` to `youtube_video_id` with an id check, in a new migration, in `scripts/data` and in the `data/` CSV header. Check first that no act in production has a URL (act-editing FR-6, data-import FR-12)
+- [ ] Make the act popup a bottom sheet on a phone, with larger stars, the closing rules and the YouTube thumbnail and search link (act-sheet FR-2 to FR-4, ratings FR-8, FR-9)
+- [ ] Rebuild the export as a lock screen wallpaper: image size of the phone, empty clock zone, one-line header above the stages, theme colors. Remove the tablet layout (export FR-9 to FR-14)
+- [ ] Rebuild the export page for a phone: shared day control, stage chips, full-width preview, sticky download button, no summary panel (export FR-1, FR-13)
+- [ ] Check every page at 375 px and 768 px. At 768 px the grid should show 4 stages with no sideways scroll
 - [ ] Add the times for each festival to `data/` when the organizers publish them
 
 ## Phase 5: Edit acts
 
 Needs Phase 1. Write `act-editing.spec.md` first (draft exists).
 
-- [ ] Let an editor or admin set the start time, length, genre and YouTube URL of an act
+- [ ] Let an editor or admin set the start time, length, genre, YouTube video and caption of an act
 - [ ] Let an editor or admin add an act
 - [ ] Let an admin delete an act
 - [ ] Show the edit controls only when `canEditActs` is true (the database still enforces the role)
+- [ ] Add the table `youtube_recommendations`, with RLS and a video id check, and the recommend action in the act sheet (act-editing FR-9 to FR-12)
+- [ ] Add the review list on `/review` for editors (act-editing FR-13, FR-14)
 - [ ] Decide how edits in the app and the files in `data/` stay in step. Export from the database to `data/` is the way back. ??
 
 ## Phase 6: Friend groups
@@ -106,6 +116,17 @@ Needs Phase 4. A festival has weak signal, so the app must work without it. Writ
 ## Phase 9: Dev Tools
 
 - [ ] Rebuild `supabase/seed.sql` (or derive it from `data/edc-orlando-2025`) as a small but complete dev set: every day, every stage, and a spread of start times (early, late, past midnight), with a few acts with no time and a few with a special note
+
+## Phase 10: Rate mode
+
+Needs Phase 4. Write `rate-mode.spec.md` first.
+
+- [ ] Add a rate mode that shows one act at a time, with its YouTube video and the stars, and moves to the next unrated act after a rating
+- [ ] Let the user pick the day or stage to rate, and show how many acts are left
+
+## Later
+
+- [ ] Show a festival logo as a small mark next to the name. Use one SVG for each festival with an initials fallback, and a sprite sheet only when there are many festivals
 
 ## Open questions
 

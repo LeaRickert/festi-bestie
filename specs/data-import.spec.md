@@ -48,6 +48,7 @@ edit the files with Excel or other tools.
 | FR-9 | Write the database to the same files, with acts sorted by day and then by artist |
 | FR-10 | Target the local database or the production database with `--env`, and ask for a confirmation before a write to production |
 | FR-11 | Run an import that was written by an export, and make no change |
+| FR-12 | Accept `youtube_video_id` only as a YouTube video id (11 characters of `A-Z`, `a-z`, `0-9`, `_` and `-`), or empty. Do not accept a URL |
 
 ### QA Test Cases
 
@@ -67,6 +68,8 @@ edit the files with Excel or other tools.
 | TC-WYOX | FR-9 | The database has the acts "Zeds Dead" (Friday) and "Adam Beyer" (Friday) | The export writes "Adam Beyer" first |
 | TC-0WA1 | FR-10 | The user runs the import with `--env prod` and does not confirm | The database is unchanged |
 | TC-JOHL | FR-11 | The user exports a festival and imports the files again | The import reports no change |
+| TC-MU32 | FR-12 | The `youtube_video_id` is "dQw4w9WgXcQ" | The import stores the id |
+| TC-Y799 | FR-12 | The `youtube_video_id` is a full YouTube URL | The import stops and reports the row and the column `youtube_video_id` |
 
 ### Known Issues
 
