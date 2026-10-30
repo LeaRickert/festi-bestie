@@ -44,7 +44,7 @@ Check the specs with `npx @rosenjcb/spec-md lint specs`.
 
 ```
 src/pages/       WelcomePage, FestivalListPage, FestivalDetailPage, ExportPage
-src/components/  one view per festival status, ActDetailModal, StarRating, LoginModal, export/
+src/components/  one view per festival status, ActSheet, StarRating, LoginModal, export/
 src/hooks/       useAuth, useFestivalData
 src/export/      the HTML and PNG of the schedule image
 src/utils/       scheduleUtils, supabase

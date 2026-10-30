@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router'
+import { useParams, Link, useLocation, useNavigate } from 'react-router'
 import { ArrowLeft, Calendar, MapPin } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
 import { supabase } from '../utils/supabase'
 import { formatDateRange } from '../utils/dateUtils'
-import ActDetailModal from '../components/ActDetailModal'
+import ActSheet from '../components/ActSheet'
 import LoginModal from '../components/LoginModal'
 import ScheduleView from '../components/ScheduleView'
 import AnnouncedView from '../components/AnnouncedView'
@@ -22,8 +22,15 @@ const FestivalDetailPage = () => {
 
   const [debugStatus, setDebugStatus] = useState(null) // For debug mode
   const [showDebugControls, setShowDebugControls] = useState(false) // Toggle debug controls
-  const [selectedAct, setSelectedAct] = useState(null) // For act detail popup
   const [showLoginModal, setShowLoginModal] = useState(false) // For login modal
+
+  // The open act sheet is a history entry, so the browser back button closes
+  // only the sheet (act-sheet FR-2). Every other close path goes back too.
+  const location = useLocation()
+  const navigate = useNavigate()
+  const selectedAct = acts.find(act => act.id === location.state?.actId) ?? null
+  const openAct = (act) => navigate({ search: location.search }, { state: { actId: act.id } })
+  const closeAct = () => navigate(-1)
 
   // Debug mode keyboard shortcut (Ctrl/Cmd + D), development builds only
   useEffect(() => {
@@ -100,17 +107,17 @@ const FestivalDetailPage = () => {
         return <AnnouncedView festival={festival} />
       
       case 'lineup':
-        return <LineupView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={setSelectedAct} />
+        return <LineupView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={openAct} />
       
       case 'stages':
-        return <StagesView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={setSelectedAct} />
+        return <StagesView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={openAct} />
       
       case 'schedule':
-        return <ScheduleByDayView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={setSelectedAct} />
+        return <ScheduleByDayView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={openAct} />
       
       case 'times':
       case 'complete':
-        return <ScheduleView acts={acts} ratings={ratings} onActClick={setSelectedAct} />
+        return <ScheduleView acts={acts} ratings={ratings} onActClick={openAct} />
       
       default:
         return <AnnouncedView festival={festival} />
@@ -250,15 +257,16 @@ const FestivalDetailPage = () => {
         </div>
       </section>
 
-      {/* Act Detail Popup */}
+      {/* Act Sheet */}
       {selectedAct && (
-        <ActDetailModal
+        <ActSheet
+          key={selectedAct.id}
           act={selectedAct}
           rating={ratings[selectedAct.id] || 0}
           signedIn={Boolean(user)}
           onRate={(rating) => handleRatingChange(selectedAct.id, rating)}
           onSignIn={() => setShowLoginModal(true)}
-          onClose={() => setSelectedAct(null)}
+          onClose={closeAct}
         />
       )}
 

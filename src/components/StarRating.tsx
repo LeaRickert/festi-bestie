@@ -2,27 +2,16 @@ import { useState } from 'react'
 import { Star } from 'lucide-react'
 import { ratingLabel } from '../utils/ratingStyle'
 
-type StarSize = 'sm' | 'md' | 'lg' | 'xl'
-
 interface StarRatingProps {
   rating?: number
   onRatingChange: (rating: number) => void
-  size?: StarSize
   interactive?: boolean
   showValue?: boolean
-}
-
-const sizeClasses: Record<StarSize, string> = {
-  sm: 'w-4 h-4',
-  md: 'w-5 h-5',
-  lg: 'w-6 h-6',
-  xl: 'w-8 h-8'
 }
 
 const StarRating = ({
   rating = 0,
   onRatingChange,
-  size = 'md',
   interactive = true,
   showValue = true
 }: StarRatingProps) => {
@@ -33,6 +22,8 @@ const StarRating = ({
 
   const handleStarClick = (starValue: number) => {
     if (!interactive) return
+    // A tap also counts as hover on a phone; drop it so the saved rating shows.
+    setIsHovering(false)
     onRatingChange(starValue)
   }
 
@@ -52,9 +43,9 @@ const StarRating = ({
     currentRating >= starIndex + 1 ? 'fill-rating text-rating' : 'fill-transparent text-white/30'
 
   return (
-    <div className="flex flex-col items-start space-y-2">
+    <div className="flex flex-col items-start space-y-1">
       <div
-        className={`flex items-center space-x-1 ${interactive ? 'cursor-pointer' : ''}`}
+        className={`flex items-center -ml-1.5 ${interactive ? 'cursor-pointer' : ''}`}
         onMouseLeave={handleMouseLeave}
       >
         {Array.from({ length: 5 }, (_, index) => (
@@ -64,13 +55,14 @@ const StarRating = ({
             onClick={() => handleStarClick(index + 1)}
             onMouseEnter={() => handleStarHover(index + 1)}
             aria-label={`${index + 1} star${index === 0 ? '' : 's'}: ${ratingLabel(index + 1)}`}
-            className={`transition-all duration-150 hover:scale-110 ${
-              interactive ? 'hover:drop-shadow-lg' : ''
+            // Each star is a 44 by 44 px tap target (ratings FR-9).
+            className={`flex h-11 w-11 items-center justify-center transition-transform duration-150 ${
+              interactive ? 'hover:scale-110 active:scale-95' : ''
             }`}
             disabled={!interactive}
           >
             <Star
-              className={`${sizeClasses[size]} ${getStarFill(index)} transition-colors duration-150`}
+              className={`h-8 w-8 ${getStarFill(index)} transition-colors duration-150`}
             />
           </button>
         ))}

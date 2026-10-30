@@ -64,7 +64,7 @@ The design decisions are in `festivals.spec.md` (theme, FR-1, FR-7 to FR-9), `sc
 - [x] Fit the grid to the acts of each day, also past midnight, in the app and the export (schedule-grid FR-5, export FR-9)
 - [x] Make the day control full width, sticky and kept in `?day=` (schedule-grid FR-2)
 - [x] Rename `acts.youtube_url` to `youtube_video_id` with an id check, in a new migration, in `scripts/data` and in the `data/` CSV header. Check first that no act in production has a URL (act-editing FR-6, data-import FR-12)
-- [ ] Make the act popup a bottom sheet on a phone, with larger stars, the closing rules and the YouTube thumbnail and search link (act-sheet FR-2 to FR-4, ratings FR-8, FR-9)
+- [x] Make the act popup a bottom sheet on a phone, with larger stars, the closing rules, the recommended set link and the YouTube search link (act-sheet FR-2 to FR-4, ratings FR-8, FR-9)
 - [ ] Rebuild the export as a lock screen wallpaper: image size of the phone, empty clock zone, one-line header above the stages, theme colors. Remove the tablet layout (export FR-9 to FR-14)
 - [ ] Rebuild the export page for a phone: shared day control, stage chips, full-width preview, sticky download button, no summary panel (export FR-1, FR-13)
 - [ ] Check every page at 375 px and 768 px. At 768 px the grid should show 4 stages with no sideways scroll
