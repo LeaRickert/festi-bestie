@@ -67,8 +67,8 @@ The design decisions are in `festivals.spec.md` (theme, FR-1, FR-7 to FR-9), `sc
 - [x] Make the act popup a bottom sheet on a phone, with larger stars, the closing rules, the recommended set link and the YouTube search link (act-sheet FR-2 to FR-4, ratings FR-8, FR-9)
 - [x] Rebuild the export as a lock screen wallpaper: image size of the phone, empty clock zone, one-line header above the stages, theme colors. Remove the tablet layout (export FR-9 to FR-14)
 - [x] Rebuild the export page for a phone: shared day control, stage chips, full-width preview, download button in the header, no summary panel (export FR-1, FR-13)
-- [ ] Check every page at 375 px and 768 px. At 768 px the grid should show 4 stages with no sideways scroll
-- [ ] Add the times for each festival to `data/` when the organizers publish them
+- [x] Check every page at 375 px and 768 px. At 768 px the grid should show 4 stages with no sideways scroll
+- [x] Add the times for each festival to `data/` when the organizers publish them
 
 ## Phase 5: Edit acts
 
