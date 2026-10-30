@@ -155,7 +155,7 @@ const FestivalDetailPage = () => {
         <div className="max-w-4xl mx-auto px-4 py-2.5">
           <div className="flex items-center justify-between">
             <Link 
-              to="/" 
+              to="/festivals"
               className="flex items-center text-white/70 hover:text-white transition-colors text-sm"
             >
               <ArrowLeft className="h-4 w-4 mr-1.5" />

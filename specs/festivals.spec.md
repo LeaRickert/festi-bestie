@@ -1,9 +1,9 @@
 ---
 type: Spec
 title: "Spec: Festivals and App Flow"
-sources: [../src/pages/LandingPage.jsx, ../src/utils/dateUtils.ts, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../src/components, ../supabase/schemas]
+sources: [../src/pages/WelcomePage.tsx, ../src/pages/FestivalListPage.tsx, ../src/utils/festivalUtils.ts, ../src/utils/dateUtils.ts, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../src/components, ../supabase/schemas]
 description: The welcome view, the festival list and the festival page by status.
-tests: [../src/utils/dateUtils.test.ts]
+tests: [../src/utils/festivalUtils.test.ts, ../src/utils/dateUtils.test.ts]
 tags: [festivals]
 timestamp: 2026-10-30T00:00:00Z
 ---
@@ -20,11 +20,11 @@ acts, watches sets and compares stages.
 - Festival: A row in `festivals` with name, dates, location and `status`.
 - Act: One artist performance in `acts`. It has day, stage, `start_time`, `length_minutes`, genre and notes.
 - Status: One of `announced`, `lineup`, `stages`, `schedule`, `times`, `complete`, in that order.
-- Status label: The text the user sees for a status. `announced` "Lineup coming soon", `lineup` "Lineup out", `stages` "Stages out", `schedule` "Days and stages out", `times` and `complete` "Set times out".
+- Status badge: A small colored label for a status. `announced` "Announced" (gray), `lineup` "Lineup" (purple), `stages` "Stages" (orange), `schedule` "Schedule" (yellow), `times` "Times" (blue), `complete` "Complete" (green).
 - Welcome view: The page on `/` with the app logo, the name, Log in, Sign up and a smaller "View festivals as guest" link.
 - Festival list: The page on `/festivals`.
 - Phone: A screen 375 px wide. Tablet: a screen 768 px wide.
-- Theme: Page `#051721` (dark teal). Surface `#072230` (a teal slightly lighter than the page). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Link color `#d2e359` (neon), used only for text links. Buttons and selected controls are white or neutral. The font is the system font.
+- Theme: Page `#051721` (dark teal). Surface `#072230` (a teal slightly lighter than the page). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Link color `#d2e359` (neon), used only for text links. Buttons and selected controls are white or neutral. Status badges keep their own colors. The font is the system font.
 
 ## In Scope
 
@@ -54,7 +54,7 @@ acts, watches sets and compares stages.
 | FR-5 | Show an error message with a retry button when loading fails. Never show sample data |
 | FR-6 | Show the debug panel in development builds only |
 | FR-7 | Show the welcome view on `/` to every visitor who is not signed in, on every visit. Send a signed-in user from `/` to `/festivals`. Open a festival page link directly, with no welcome view. Keep the user on the same page after they sign in |
-| FR-8 | Show the status label of each festival in the festival list |
+| FR-8 | Show the status badge of each upcoming festival in the festival list. Show no badge for a past festival |
 | FR-9 | Show no festival or act images. Show the festival name, dates and location as text |
 | FR-10 | Show the festival dates the same way in the festival list and on the festival page, as "November 7-9, 2025". Name both months or both years only when the festival crosses them |
 
@@ -78,7 +78,8 @@ acts, watches sets and compares stages.
 | TC-084O | FR-7 | A visitor who chose guest before opens `/` again | The page shows the welcome view again |
 | TC-VEU7 | FR-7 | A visitor opens a link to `/festival/:id` | The festival page opens with no welcome view |
 | TC-PYK4 | FR-7 | A visitor signs in from the sheet on a festival page | The festival page stays open |
-| TC-2CXG | FR-8 | The festival status is `times` or `complete` | The festival list shows "Set times out" |
+| TC-2CXG | FR-8 | An upcoming festival has the status `times` | The festival list shows a blue "Times" badge |
+| TC-TM6M | FR-8 | A past festival has the status `complete` | Its row in "Past festivals" shows no badge |
 | TC-QIDT | FR-9 | The user opens the festival list and a festival page | No image loads. The festival page shows the name, dates and location as text |
 | TC-M0G6 | FR-10 | A festival runs from 2025-11-07 to 2025-11-09 | The festival list and the festival page show "November 7-9, 2025" |
 | TC-E5ZJ | FR-10 | A festival runs from 2025-10-31 to 2025-11-02 | The dates read "October 31 - November 2, 2025" |
@@ -86,6 +87,5 @@ acts, watches sets and compares stages.
 
 ### Known Issues
 
-- `LandingPage` text says "Filter by genre and time". No genre or time filter exists. FR-7 removes that text.
 - The festivals have no logos. Logos are deferred.
 - The column `festivals.image_url` is no longer read or written by the app or the data scripts (FR-9). It stays in the schema for now.

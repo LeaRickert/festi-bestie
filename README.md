@@ -43,7 +43,7 @@ Check the specs with `npx @rosenjcb/spec-md lint specs`.
 ## Layout
 
 ```
-src/pages/       LandingPage, FestivalDetailPage, ExportPage
+src/pages/       WelcomePage, FestivalListPage, FestivalDetailPage, ExportPage
 src/components/  one view per festival status, ActDetailModal, StarRating, LoginModal, export/
 src/hooks/       useAuth, useFestivalData
 src/export/      the HTML and PNG of the schedule image

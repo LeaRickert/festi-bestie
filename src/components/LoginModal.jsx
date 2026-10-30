@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { X, Mail, Lock, User } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
-const LoginModal = ({ isOpen, onClose }) => {
-  const [isLogin, setIsLogin] = useState(true)
+// initialMode is read when the modal mounts. Remount it (with a key) to change it.
+const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
+  const [isLogin, setIsLogin] = useState(initialMode === 'login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
