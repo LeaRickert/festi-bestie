@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router'
 import { 
   ArrowLeft, 
   Calendar, 
   Clock, 
   MapPin, 
   Music, 
-  Download,
   Play,
   Star
 } from 'lucide-react'
@@ -23,7 +22,6 @@ import ScheduleByDayView from '../components/ScheduleByDayView'
 
 const FestivalDetailPage = () => {
   const { id } = useParams()
-  const navigate = useNavigate()
   const { user } = useAuth()
 
   // Use the shared hook for festival data, acts, and ratings
@@ -154,7 +152,7 @@ const FestivalDetailPage = () => {
           alt={festival.name}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
         <div className="absolute bottom-3 left-3 right-3">
           <h1 className="text-xl font-bold text-white mb-1.5">{festival.name}</h1>
           <div className="flex items-center space-x-4 text-white/70 text-xs">

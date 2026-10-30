@@ -1,9 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Clock, Music, Calendar, Download } from 'lucide-react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Music, Calendar, Download } from 'lucide-react'
+import { useNavigate, useParams } from 'react-router'
 import {
-  timeToMinutes,
-  simpleTimeToMinutes,
   generateTimeSlots,
   getActsForStage,
   getActStyle,

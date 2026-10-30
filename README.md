@@ -3,21 +3,22 @@
 Plan a music festival: browse festivals, see the lineup and schedule, rate
 artists, and export a personal schedule as an image.
 
-Stack: React 18, Vite, Tailwind CSS, Supabase (Postgres, Auth, RLS), html2canvas.
+Stack: React 18, Vite, TypeScript, Vitest, Biome, Tailwind CSS, Supabase (Postgres, Auth, RLS), html2canvas.
 
 ## Setup
 
 1. Install packages: `npm install`
 2. Start local Supabase (needs Docker): `npx supabase start`, then `npx supabase db reset`. This applies the migrations and `supabase/seed.sql`.
    For a hosted project: `npx supabase link`, then `npx supabase db push`.
-3. Create `.env.local`:
+3. Copy `.env.example` to `.env.local` and fill in the values:
    ```env
    VITE_SUPABASE_URL=https://<project>.supabase.co
    VITE_SUPABASE_PUBLISHABLE_KEY=<publishable key>
    ```
 4. Start the app: `npm run dev` (http://localhost:3000)
 
-Other commands: `npm run build`, `npm run preview`, `npm run lint`.
+Other commands: `npm run build`, `npm run preview`, `npm run lint` (Biome, lint only; the formatter is off), `npm run typecheck`, `npm test`.
+CI runs lint, typecheck, build, test and the spec lint on every push and pull request.
 
 ## Roadmap
 

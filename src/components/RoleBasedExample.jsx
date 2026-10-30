@@ -7,8 +7,7 @@ const RoleBasedExample = () => {
     userRole, 
     canEditActs, 
     isAdmin, 
-    isEditor,
-    updateUsername 
+    isEditor
   } = useAuth()
 
   if (!user) {

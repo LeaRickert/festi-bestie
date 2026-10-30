@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Calendar, MapPin, Clock, Music, User, LogOut } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import LoginModal from '../components/LoginModal'
@@ -156,7 +156,7 @@ const LandingPage = () => {
                       alt={festival.name}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2">
                       <h4 className="text-base font-bold text-white mb-1.5">
                         {festival.name}

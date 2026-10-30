@@ -65,7 +65,6 @@ const PIXELS_PER_MINUTE = 90 / 60 // 1.5px per minute
 
 export const getActStyle = (act) => {
   const actStartMinutes = timeToMinutes(act.startTime)
-  const actEndMinutes = actStartMinutes + act.length
   
   // Calculate position relative to the start of the schedule (1 PM = 13:00)
   const scheduleStartMinutes = 13 * 60 // 1 PM in minutes

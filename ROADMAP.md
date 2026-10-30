@@ -13,10 +13,10 @@ Phases 1 and 2 are the gate for real users.
 
 - [x] Move the schema to `supabase/schemas/` (declarative) with a generated migration, and the sample data to `supabase/seed.sql`
 - [x] Move the master data to `data/` (CSV and YAML for each festival)
-- [ ] Fix the env var name: use `VITE_SUPABASE_PUBLISHABLE_KEY` in code, README and `.env.example`
-- [ ] Add TypeScript with `allowJs`. Write all new files as `.ts` or `.tsx`. Convert old files only when you change them.
-- [ ] Add Vitest. Start with `scheduleUtils` (festivals FR-7). Put the `[TC-XXXX]` tag in each test name.
-- [ ] Add a CI job: `lint`, `build`, `test`, `spec-md lint specs`
+- [x] Fix the env var name: use `VITE_SUPABASE_PUBLISHABLE_KEY` in code, README and `.env.example`
+- [x] Add TypeScript with `allowJs`. Write all new files as `.ts` or `.tsx`. Convert old files only when you change them.
+- [x] Add Vitest. Start with `scheduleUtils` (festivals FR-7). Put the `[TC-XXXX]` tag in each test name.
+- [x] Add a CI job: `lint`, `build`, `test`, `spec-md lint specs`
 
 ## Phase 1: Fix correctness and security
 

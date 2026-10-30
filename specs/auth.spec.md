@@ -63,4 +63,3 @@ Level Security (RLS). The frontend only hides controls.
 - The RLS policy "Users can update their own profile" lets a user change their own `role`. FR-8 fails today. The admin policy does not exist in `supabase/schemas`.
 - The sign-up trigger sets the username to the email. `signUp` then updates it. A duplicate username leaves an account with the email as username.
 - `RoleBasedExample.jsx` is demo code and no page uses it.
-- Environment variable names differ: `supabase.js` reads `VITE_SUPABASE_PUBLISHABLE_KEY`, but `CLAUDE.md` and the README say `VITE_SUPABASE_ANON_KEY`.

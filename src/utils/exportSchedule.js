@@ -1,3 +1,5 @@
+import html2canvas from 'html2canvas'
+
 // Legacy export function - now handled by ExportScheduleModal component
 // This function is kept for backward compatibility but should not be used
 export const exportScheduleToImage = async (acts, festivalName, ratings = {}) => {
@@ -156,7 +158,7 @@ export const exportScheduleToLockScreen = async (acts, festivalName, ratings = {
     return act.day === today || acts.length === 0
   }).slice(0, 8) // Limit to 8 acts for mobile
 
-  todayActs.forEach((act, index) => {
+  todayActs.forEach((act) => {
     const actDiv = document.createElement('div')
     actDiv.style.cssText = `
       background: rgba(255, 255, 255, 0.1);

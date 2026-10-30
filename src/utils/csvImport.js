@@ -3,7 +3,6 @@
 
 export const parseCSVLineup = (csvContent, festivalId) => {
   const lines = csvContent.split('\n')
-  const headers = lines[0].split(',').map(h => h.trim())
   
   const acts = []
   
