@@ -55,7 +55,7 @@ Needs Phase 0 (TypeScript and tests). Needs Phase 1 before the deploy.
 
 The design decisions are in `festivals.spec.md` (theme, FR-1, FR-7 to FR-9), `schedule-grid.spec.md`, `act-sheet.spec.md`, `ratings.spec.md` (FR-2, FR-8 to FR-10) and `export.spec.md` (FR-1, FR-8 to FR-14).
 
-- [ ] Drop the act and festival images from the UI (landing, detail, export). Remove `image_url` from `festival.yaml`, Keep the column for now (festivals FR-9)
+- [x] Drop the act and festival images from the UI (landing, detail, export). Remove `image_url` from `festival.yaml`, Keep the column for now (festivals FR-9)
 - [x] Apply the theme: teal page and surfaces, magenta only for ratings, neon only for links, white and neutral controls, system font (festivals theme)
 - [x] Fix the old "Festi Besti" name and text in `public/manifest.json`
 - [ ] Add the welcome view on `/` and move the festival list to `/festivals`, as compact rows with status labels and a collapsed "Past festivals" section (festivals FR-1, FR-7, FR-8)

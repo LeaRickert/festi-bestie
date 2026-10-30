@@ -165,14 +165,8 @@ const FestivalDetailPage = () => {
       </header>
 
       {/* Festival Hero */}
-      <section className="relative h-40 overflow-hidden">
-        <img
-          src={festival.image_url}
-          alt={festival.name}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
-        <div className="absolute bottom-3 left-3 right-3">
+      <section className="px-4 pt-4">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-xl font-bold text-white mb-1.5">{festival.name}</h1>
           <div className="flex items-center space-x-4 text-white/70 text-xs">
             <div className="flex items-center">

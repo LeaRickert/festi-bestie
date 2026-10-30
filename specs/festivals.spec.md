@@ -83,3 +83,4 @@ acts, watches sets and compares stages.
 
 - `LandingPage` text says "Filter by genre and time". No genre or time filter exists. FR-7 removes that text.
 - The festivals have no logos. Logos are deferred.
+- The column `festivals.image_url` is no longer read or written by the app or the data scripts (FR-9). It stays in the schema for now.

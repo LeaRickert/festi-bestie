@@ -7,7 +7,6 @@ export interface Festival {
   start_date: string
   end_date: string
   location: string
-  image_url: string
   description: string
   status: string
 }

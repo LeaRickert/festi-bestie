@@ -131,14 +131,8 @@ const LandingPage = () => {
                 className="group block"
               >
                 <div className="bg-surface rounded-lg overflow-hidden hover:bg-surface/80 transition-colors">
-                  <div className="relative h-32 overflow-hidden">
-                    <img
-                      src={festival.image_url}
-                      alt={festival.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-2 left-2 right-2">
+                  <div className="px-3 pt-3">
+                    <div>
                       <h4 className="text-base font-bold text-white mb-1.5">
                         {festival.name}
                       </h4>

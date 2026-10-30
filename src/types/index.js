@@ -5,7 +5,6 @@
  * @property {string} startDate
  * @property {string} endDate
  * @property {string} location
- * @property {string} image
  * @property {string} [description]
  * @property {'announced'|'lineup'|'stages'|'schedule'|'times'|'complete'} status
  */

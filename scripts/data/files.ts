@@ -33,7 +33,6 @@ export interface FestivalRow {
   start_date: string
   end_date: string
   location: string
-  image_url: string | null
   description: string | null
   status: (typeof STATUSES)[number]
 }
@@ -223,7 +222,6 @@ export function parseFestival(text: string, file = 'festival.yaml'): { festival:
       start_date: startDate,
       end_date: endDate,
       location,
-      image_url: text_('image_url', false),
       description: text_('description', false),
       status: status as FestivalRow['status'],
     },
@@ -265,9 +263,8 @@ export function serializeActs(acts: ActRow[], startDate: string): string {
 }
 
 export function serializeFestival(festival: FestivalRow): string {
-  const { name, start_date, end_date, location, image_url, description, status } = festival
+  const { name, start_date, end_date, location, description, status } = festival
   const ordered: Record<string, string> = { name, start_date, end_date, location }
-  if (image_url) ordered.image_url = image_url
   if (description) ordered.description = description
   ordered.status = status
   return stringify(ordered, { lineWidth: 0 })
