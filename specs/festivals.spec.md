@@ -1,8 +1,9 @@
 ---
 type: Spec
 title: "Spec: Festivals and App Flow"
-sources: [../src/pages/LandingPage.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../src/components, ../supabase/schemas]
+sources: [../src/pages/LandingPage.jsx, ../src/utils/dateUtils.ts, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../src/components, ../supabase/schemas]
 description: The welcome view, the festival list and the festival page by status.
+tests: [../src/utils/dateUtils.test.ts]
 tags: [festivals]
 timestamp: 2026-10-30T00:00:00Z
 ---
@@ -55,6 +56,7 @@ acts, watches sets and compares stages.
 | FR-7 | Show the welcome view on `/` to every visitor who is not signed in, on every visit. Send a signed-in user from `/` to `/festivals`. Open a festival page link directly, with no welcome view. Keep the user on the same page after they sign in |
 | FR-8 | Show the status label of each festival in the festival list |
 | FR-9 | Show no festival or act images. Show the festival name, dates and location as text |
+| FR-10 | Show the festival dates the same way in the festival list and on the festival page, as "November 7-9, 2025". Name both months or both years only when the festival crosses them |
 
 ### QA Test Cases
 
@@ -78,6 +80,9 @@ acts, watches sets and compares stages.
 | TC-PYK4 | FR-7 | A visitor signs in from the sheet on a festival page | The festival page stays open |
 | TC-2CXG | FR-8 | The festival status is `times` or `complete` | The festival list shows "Set times out" |
 | TC-QIDT | FR-9 | The user opens the festival list and a festival page | No image loads. The festival page shows the name, dates and location as text |
+| TC-M0G6 | FR-10 | A festival runs from 2025-11-07 to 2025-11-09 | The festival list and the festival page show "November 7-9, 2025" |
+| TC-E5ZJ | FR-10 | A festival runs from 2025-10-31 to 2025-11-02 | The dates read "October 31 - November 2, 2025" |
+| TC-TKTP | FR-10 | A festival runs from 2025-12-30 to 2026-01-01 | The dates read "December 30, 2025 - January 1, 2026" |
 
 ### Known Issues
 

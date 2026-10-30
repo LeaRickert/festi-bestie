@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, MapPin } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
 import { supabase } from '../utils/supabase'
+import { formatDateRange } from '../utils/dateUtils'
 import ActDetailModal from '../components/ActDetailModal'
 import LoginModal from '../components/LoginModal'
 import ScheduleView from '../components/ScheduleView'
@@ -171,7 +172,7 @@ const FestivalDetailPage = () => {
           <div className="flex items-center space-x-4 text-white/70 text-xs">
             <div className="flex items-center">
               <Calendar className="h-3 w-3 mr-1" />
-              <span>{festival.start_date} - {festival.end_date}</span>
+              <span>{formatDateRange(festival.start_date, festival.end_date)}</span>
             </div>
             <div className="flex items-center">
               <MapPin className="h-3 w-3 mr-1" />

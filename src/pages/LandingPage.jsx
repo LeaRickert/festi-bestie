@@ -4,6 +4,7 @@ import { Calendar, MapPin, Clock, Music, User, LogOut } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import LoginModal from '../components/LoginModal'
 import { supabase } from '../utils/supabase'
+import { formatDateRange } from '../utils/dateUtils'
 
 const LandingPage = () => {
   const [festivals, setFestivals] = useState([])
@@ -33,14 +34,6 @@ const LandingPage = () => {
     } finally {
       setLoading(false)
     }
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    })
   }
 
   if (loading) {
@@ -159,7 +152,7 @@ const LandingPage = () => {
                       <div className="flex items-center text-white/60">
                         <Calendar className="h-3 w-3 mr-1.5" />
                         <span className="text-xs">
-                          {formatDate(festival.start_date)} - {formatDate(festival.end_date)}
+                          {formatDateRange(festival.start_date, festival.end_date)}
                         </span>
                       </div>
                       <div className="flex items-center text-white/60">

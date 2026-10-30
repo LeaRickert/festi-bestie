@@ -1,14 +1,7 @@
 import { Calendar, MapPin, Clock } from 'lucide-react'
+import { formatDateRange } from '../utils/dateUtils'
 
 const AnnouncedView = ({ festival }) => {
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    })
-  }
-
   return (
     <div className="text-center py-8">
       <div className="max-w-2xl mx-auto">
@@ -18,7 +11,7 @@ const AnnouncedView = ({ festival }) => {
           <div className="flex items-center justify-center text-white/80 text-sm">
             <Calendar className="h-4 w-4 mr-2" />
             <span>
-              {formatDate(festival.start_date)} - {formatDate(festival.end_date)}
+              {formatDateRange(festival.start_date, festival.end_date)}
             </span>
           </div>
           
