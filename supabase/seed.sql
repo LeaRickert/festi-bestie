@@ -1,11 +1,11 @@
 -- Seed data for local development. Runs after migrations on `supabase db reset`.
 -- 2024 acts: sample data with times. 2025 acts: a few from data/edc-orlando-2025/acts.csv (no times yet). Full data: data:import.
 
-insert into public.festivals (id, name, start_date, end_date, location, image_url, description, status) values
-  ('00000000-0000-4000-8000-000000002024', 'EDC Orlando 2024', '2024-11-15', '2024-11-17', 'Orlando, FL', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop', 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience', 'complete'),
-  ('00000000-0000-4000-8000-000000002025', 'EDC Orlando 2025', '2025-11-07', '2025-11-09', 'Orlando, FL', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop', 'Electric Daisy Carnival Orlando - Lineup and stages announced, times to come', 'stages'),
-  ('00000000-0000-4000-8000-000000000042', 'Ultra Music Festival 2024', '2024-03-22', '2024-03-24', 'Miami, FL', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop', 'Ultra Music Festival - Where electronic music meets the ocean', 'lineup'),
-  ('00000000-0000-4000-8000-000000000043', 'Tomorrowland 2024', '2024-07-19', '2024-07-21', 'Boom, Belgium', 'https://images.unsplash.com/photo-1571266028243-e68c785c3b73?w=800&h=400&fit=crop', 'Tomorrowland - The magical electronic music festival', 'announced');
+insert into public.festivals (id, slug, name, start_date, end_date, location, image_url, description, status) values
+  ('00000000-0000-4000-8000-000000002024', 'edc-orlando-2024', 'EDC Orlando 2024', '2024-11-15', '2024-11-17', 'Orlando, FL', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop', 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience', 'complete'),
+  ('00000000-0000-4000-8000-000000002025', 'edc-orlando-2025', 'EDC Orlando 2025', '2025-11-07', '2025-11-09', 'Orlando, FL', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop', 'Electric Daisy Carnival Orlando - Lineup and stages announced, times to come', 'stages'),
+  ('00000000-0000-4000-8000-000000000042', 'ultra-miami-2024', 'Ultra Music Festival 2024', '2024-03-22', '2024-03-24', 'Miami, FL', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop', 'Ultra Music Festival - Where electronic music meets the ocean', 'lineup'),
+  ('00000000-0000-4000-8000-000000000043', 'tomorrowland-2024', 'Tomorrowland 2024', '2024-07-19', '2024-07-21', 'Boom, Belgium', 'https://images.unsplash.com/photo-1571266028243-e68c785c3b73?w=800&h=400&fit=crop', 'Tomorrowland - The magical electronic music festival', 'announced');
 
 insert into public.acts (festival_id, artist, day, start_time, length_minutes, stage, special_notes, genre, category, youtube_url, youtube_title, avg_rating) values
   ('00000000-0000-4000-8000-000000002024', 'Alex Kennon', 'Friday', '20:00', 60, 'Neon Garden', null, 'Tech House', 'Techno', 'https://youtube.com/watch?v=example1', 'Alex Kennon - Ibiza 2023', 3.6),

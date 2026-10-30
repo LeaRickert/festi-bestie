@@ -13,7 +13,8 @@ create table public.acts (
   youtube_title text,
   avg_rating numeric(3, 1),
   created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  updated_at timestamptz default now(),
+  constraint acts_festival_artist_day_key unique (festival_id, artist, day)
 );
 
 create index idx_acts_festival_id on public.acts (festival_id);

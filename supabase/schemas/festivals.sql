@@ -1,5 +1,6 @@
 create table public.festivals (
   id uuid primary key default gen_random_uuid(),
+  slug text not null unique check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
   name text not null,
   start_date date not null,
   end_date date not null,
