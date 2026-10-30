@@ -10,7 +10,7 @@ const SchedulePreview = ({ html }: { html: string }) => {
   }, [html])
 
   return (
-    <div className="bg-black/20 rounded-lg p-4 h-full">
+    <div className="bg-surface rounded-lg p-4 h-full">
       <h3 className="text-lg font-semibold text-white mb-4">Live Preview</h3>
       {html ? (
         <div ref={canvas} style={{ transform: 'scale(0.75)', transformOrigin: 'top left' }} />

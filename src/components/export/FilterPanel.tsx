@@ -18,7 +18,7 @@ const FilterPanel = ({ days, selectedDay, onDayChange, stages, selectedStages, o
     <div className="space-y-6">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-festival-purple" />
+          <Calendar className="h-5 w-5 text-white/60" />
           <h3 className="text-lg font-semibold text-white">Select Day</h3>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -28,7 +28,7 @@ const FilterPanel = ({ days, selectedDay, onDayChange, stages, selectedStages, o
               key={day}
               onClick={() => onDayChange(day)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                selectedDay === day ? 'bg-festival-purple text-white' : 'bg-white/10 text-white/80 hover:bg-white/20'
+                selectedDay === day ? 'bg-white text-page' : 'bg-white/10 text-white/80 hover:bg-white/20'
               }`}
             >
               {day}
@@ -41,14 +41,14 @@ const FilterPanel = ({ days, selectedDay, onDayChange, stages, selectedStages, o
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-festival-purple" />
+              <MapPin className="h-5 w-5 text-white/60" />
               <h3 className="text-lg font-semibold text-white">Select Stages</h3>
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => onStagesChange(stages)}
-                className="px-3 py-1 text-sm bg-festival-purple/20 text-festival-purple rounded hover:bg-festival-purple/30 transition-colors"
+                className="px-3 py-1 text-sm bg-white/10 text-white/80 rounded hover:bg-white/20 transition-colors"
               >
                 Select All
               </button>
@@ -68,7 +68,7 @@ const FilterPanel = ({ days, selectedDay, onDayChange, stages, selectedStages, o
                 key={stage}
                 onClick={() => toggleStage(stage)}
                 className={`p-3 rounded-lg font-medium transition-colors text-left ${
-                  selectedStages.includes(stage) ? 'bg-festival-purple text-white' : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  selectedStages.includes(stage) ? 'bg-white text-page' : 'bg-white/10 text-white/80 hover:bg-white/20'
                 }`}
               >
                 {stage}

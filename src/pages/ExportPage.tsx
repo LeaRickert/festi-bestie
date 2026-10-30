@@ -10,7 +10,7 @@ import FilterPanel from '../components/export/FilterPanel'
 import ExportSummary from '../components/export/ExportSummary'
 import SchedulePreview from '../components/export/SchedulePreview'
 
-const PAGE_BACKGROUND = 'min-h-screen bg-linear-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center'
+const PAGE_BACKGROUND = 'min-h-screen bg-page flex items-center justify-center'
 
 const ExportPage = () => {
   const { id } = useParams()
@@ -90,8 +90,8 @@ const ExportPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <div className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+    <div className="min-h-screen bg-page">
+      <div className="bg-page border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -110,11 +110,11 @@ const ExportPage = () => {
               type="button"
               onClick={handleExport}
               disabled={!exportable || isExporting}
-              className="px-6 py-2 bg-festival-purple text-white rounded-lg font-medium hover:bg-festival-purple/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              className="px-6 py-2 bg-white text-page rounded-lg font-medium hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
               {isExporting ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-page/30 border-t-page rounded-full animate-spin" />
                   Exporting...
                 </>
               ) : (

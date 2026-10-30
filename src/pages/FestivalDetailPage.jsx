@@ -99,17 +99,17 @@ const FestivalDetailPage = () => {
         return <AnnouncedView festival={festival} />
       
       case 'lineup':
-        return <LineupView acts={getAlphabeticallySortedActs()} onActClick={setSelectedAct} />
+        return <LineupView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={setSelectedAct} />
       
       case 'stages':
-        return <StagesView acts={getAlphabeticallySortedActs()} onActClick={setSelectedAct} />
+        return <StagesView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={setSelectedAct} />
       
       case 'schedule':
-        return <ScheduleByDayView acts={getAlphabeticallySortedActs()} onActClick={setSelectedAct} />
+        return <ScheduleByDayView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={setSelectedAct} />
       
       case 'times':
       case 'complete':
-        return <ScheduleView acts={acts} onActClick={setSelectedAct} />
+        return <ScheduleView acts={acts} ratings={ratings} onActClick={setSelectedAct} />
       
       default:
         return <AnnouncedView festival={festival} />
@@ -150,7 +150,7 @@ const FestivalDetailPage = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-sm border-b border-white/10">
+      <header className="sticky top-0 z-40 bg-page/95 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-4xl mx-auto px-4 py-2.5">
           <div className="flex items-center justify-between">
             <Link 

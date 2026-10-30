@@ -77,7 +77,6 @@ is in `data-import.spec.md`.
 
 - The image has a fixed size (393 by 852 at 2x, or a tablet by user agent), not the size of the screen. FR-10 replaces it.
 - The page has its own gradient and a desktop two-column layout. FR-13 replaces it.
-- The image has its own rating colors (red, pink and blue borders). FR-8 replaces them.
 - To fit fewer stages, the user drops stages with FR-1. The image never scrolls sideways.
 - An act without a start time or length is left out of the image.
 - TC-SKGA and TC-3NMG are checked by hand. The tests do not run a browser.

@@ -1,8 +1,9 @@
 ---
 type: Spec
 title: "Spec: Artist Ratings"
-sources: [../src/components/StarRating.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../supabase/schemas]
+sources: [../src/components/StarRating.tsx, ../src/utils/ratingStyle.ts, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../supabase/schemas]
 description: How a signed-in user rates an act.
+tests: [../src/utils/ratingStyle.test.ts]
 tags: [ratings]
 timestamp: 2026-10-30T00:00:00Z
 ---
@@ -78,4 +79,4 @@ rating for each act. A user sees only their own ratings.
 
 ### Known Issues
 
-- `StarRating.jsx` still uses "Not for Me" and "Must See!!". Phase 4 changes them to "Not for me" and "Must See!".
+- None.

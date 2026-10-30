@@ -7,7 +7,7 @@ import { AuthProvider } from './hooks/useAuth'
 function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-page">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/festival/:id" element={<FestivalDetailPage />} />

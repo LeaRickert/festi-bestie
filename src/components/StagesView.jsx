@@ -1,6 +1,7 @@
 import { Music, MapPin } from 'lucide-react'
+import { ratingStyle } from '../utils/ratingStyle'
 
-const StagesView = ({ acts, onActClick }) => {
+const StagesView = ({ acts, ratings, onActClick }) => {
   // Group acts by stage and sort artists alphabetically within each stage
   const actsByStage = acts.reduce((acc, act) => {
     if (act.stage) {
@@ -37,9 +38,9 @@ const StagesView = ({ acts, onActClick }) => {
       </div>
 
       {stages.map(stage => (
-        <div key={stage} className="bg-white/5 rounded-lg p-3">
+        <div key={stage} className="bg-surface rounded-lg p-3">
           <div className="flex items-center mb-3">
-            <MapPin className="h-4 w-4 text-festival-purple mr-2" />
+            <MapPin className="h-4 w-4 text-white/60 mr-2" />
             <h3 className="text-base font-bold text-white">{stage}</h3>
           </div>
           
@@ -48,7 +49,8 @@ const StagesView = ({ acts, onActClick }) => {
               <div
                 key={act.id}
                 onClick={() => onActClick(act)}
-                className="bg-white/10 backdrop-blur-sm rounded-md p-2.5 hover:bg-white/20 transition-all duration-200 cursor-pointer"
+                className="border rounded-md p-2.5 active:opacity-80 transition-opacity cursor-pointer"
+                style={ratingStyle(ratings[act.id] || 0)}
               >
                 <div className="space-y-1.5">
                   <h4 className="text-white font-medium text-sm truncate">
@@ -72,8 +74,8 @@ const StagesView = ({ acts, onActClick }) => {
       ))}
 
       <div className="text-center mt-4">
-        <div className="bg-festival-blue/20 border border-festival-blue/30 rounded-md p-3 inline-block">
-          <p className="text-festival-blue font-medium text-sm">
+        <div className="bg-surface rounded-md p-3 inline-block">
+          <p className="text-white/80 font-medium text-sm">
             Schedule and times coming soon!
           </p>
         </div>

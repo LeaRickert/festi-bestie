@@ -54,11 +54,11 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-sm border-b border-white/10">
+      <header className="sticky top-0 z-40 bg-page/95 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Music className="h-5 w-5 text-festival-purple" />
+              <Music className="h-5 w-5 text-white" />
               <h1 className="text-xl font-bold text-white">Festi Bestie</h1>
             </div>
             <div className="flex items-center space-x-2">
@@ -76,7 +76,7 @@ const LandingPage = () => {
               ) : (
                 <button
                   onClick={() => setShowLogin(true)}
-                  className="flex items-center px-3 py-1.5 bg-festival-purple/20 text-festival-purple rounded-md hover:bg-festival-purple/30 transition-colors text-sm"
+                  className="flex items-center px-3 py-1.5 bg-white text-page font-medium rounded-md hover:bg-white/90 transition-colors text-sm"
                 >
                   <User className="h-3.5 w-3.5 mr-1.5" />
                   Sign In
@@ -130,7 +130,7 @@ const LandingPage = () => {
                 to={`/festival/${festival.id}`}
                 className="group block"
               >
-                <div className="bg-white/5 backdrop-blur-sm rounded-lg overflow-hidden hover:bg-white/10 transition-all duration-200">
+                <div className="bg-surface rounded-lg overflow-hidden hover:bg-surface/80 transition-colors">
                   <div className="relative h-32 overflow-hidden">
                     <img
                       src={festival.image_url}
@@ -144,14 +144,7 @@ const LandingPage = () => {
                       </h4>
                       {/* Status Badge */}
                       <div className="inline-block">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                          festival.status === 'complete' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                          festival.status === 'times' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
-                          festival.status === 'schedule' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
-                          festival.status === 'stages' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
-                          festival.status === 'lineup' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
-                          'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                        }`}>
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/10 text-white/80">
                           {festival.status === 'complete' ? 'Complete' :
                            festival.status === 'times' ? 'Times' :
                            festival.status === 'schedule' ? 'Schedule' :
@@ -189,7 +182,7 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section - Compact */}
-      <section className="py-6 px-4 bg-white/5">
+      <section className="py-6 px-4 bg-surface">
         <div className="max-w-4xl mx-auto">
           <h3 className="text-base font-semibold text-white/90 mb-4 text-center">
             Why Choose Festi Bestie?
@@ -197,8 +190,8 @@ const LandingPage = () => {
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="bg-festival-purple/20 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
-                <Calendar className="h-5 w-5 text-festival-purple" />
+              <div className="bg-white/10 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
+                <Calendar className="h-5 w-5 text-white" />
               </div>
               <h4 className="text-sm font-semibold text-white mb-1">Smart Scheduling</h4>
               <p className="text-white/60 text-xs">
@@ -207,8 +200,8 @@ const LandingPage = () => {
             </div>
             
             <div className="text-center">
-              <div className="bg-festival-pink/20 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
-                <Music className="h-5 w-5 text-festival-pink" />
+              <div className="bg-white/10 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
+                <Music className="h-5 w-5 text-white" />
               </div>
               <h4 className="text-sm font-semibold text-white mb-1">Personal Preferences</h4>
               <p className="text-white/60 text-xs">
@@ -217,8 +210,8 @@ const LandingPage = () => {
             </div>
             
             <div className="text-center">
-              <div className="bg-festival-blue/20 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
-                <Clock className="h-5 w-5 text-festival-blue" />
+              <div className="bg-white/10 rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-2">
+                <Clock className="h-5 w-5 text-white" />
               </div>
               <h4 className="text-sm font-semibold text-white mb-1">Export & Share</h4>
               <p className="text-white/60 text-xs">

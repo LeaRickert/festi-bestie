@@ -32,10 +32,10 @@ const AnnouncedView = ({ festival }) => {
           <p className="text-white/70 text-sm mb-4">{festival.description}</p>
         )}
 
-        <div className="bg-festival-purple/20 border border-festival-purple/30 rounded-lg p-4">
+        <div className="bg-surface rounded-lg p-4">
           <div className="flex items-center justify-center mb-2">
-            <Clock className="h-5 w-5 text-festival-purple mr-2" />
-            <h3 className="text-lg font-bold text-festival-purple">Lineup Coming Soon!</h3>
+            <Clock className="h-5 w-5 text-white mr-2" />
+            <h3 className="text-lg font-bold text-white">Lineup Coming Soon!</h3>
           </div>
           <p className="text-white/80 text-sm">
             Stay tuned for artist announcements and schedule updates.

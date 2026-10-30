@@ -11,8 +11,9 @@ import {
   formatTime,
   calculateEndTime
 } from '../utils/scheduleUtils'
+import { ratingStyle } from '../utils/ratingStyle'
 
-const ScheduleView = ({ acts, onActClick }) => {
+const ScheduleView = ({ acts, ratings, onActClick }) => {
   const navigate = useNavigate()
   const { id } = useParams()
   const [selectedDay, setSelectedDay] = useState('')
@@ -54,7 +55,7 @@ const ScheduleView = ({ acts, onActClick }) => {
         <div className="mt-3">
           <button
             onClick={() => navigate(`/festival/${id}/export`)}
-            className="flex items-center px-4 py-2 bg-festival-purple/20 text-festival-purple rounded-md hover:bg-festival-purple/30 transition-colors mx-auto text-sm"
+            className="flex items-center px-4 py-2 bg-white text-page font-medium rounded-md hover:bg-white/90 transition-colors mx-auto text-sm"
           >
             <Download className="h-4 w-4 mr-1.5" />
             Export Schedule
@@ -70,7 +71,7 @@ const ScheduleView = ({ acts, onActClick }) => {
             onClick={() => setSelectedDay(day)}
             className={`px-3 py-1.5 rounded-md font-medium transition-colors text-sm ${
               selectedDay === day
-                ? 'bg-festival-purple text-white'
+                ? 'bg-white text-page'
                 : 'bg-white/10 text-white/80 hover:bg-white/20'
             }`}
           >
@@ -83,7 +84,7 @@ const ScheduleView = ({ acts, onActClick }) => {
       {selectedDay && (
         <div className="space-y-4">
           <div className="flex items-center justify-center mb-3">
-            <Calendar className="h-5 w-5 text-festival-purple mr-2" />
+            <Calendar className="h-5 w-5 text-white/60 mr-2" />
             <h3 className="text-lg font-bold text-white">{selectedDay}</h3>
           </div>
 
@@ -92,7 +93,7 @@ const ScheduleView = ({ acts, onActClick }) => {
               <p className="text-white/60">No stage information available for {selectedDay}</p>
             </div>
           ) : (
-            <div className="bg-white/5 rounded-xl overflow-hidden">
+            <div className="bg-surface rounded-xl overflow-hidden">
               <div className="overflow-x-auto">
                 <div className="min-w-full">
                   {/* Header Row */}
@@ -145,13 +146,13 @@ const ScheduleView = ({ acts, onActClick }) => {
                                   <div
                                     key={act.id}
                                     onClick={() => onActClick(act)}
-                                    className="bg-festival-purple/20 border border-festival-purple/30 rounded-md p-1.5 hover:bg-festival-purple/30 transition-colors cursor-pointer absolute left-0 right-0"
-                                    style={getActStyle(act)}
+                                    className="border rounded-md p-1.5 active:opacity-80 transition-opacity cursor-pointer absolute left-0 right-0"
+                                    style={{ ...getActStyle(act), ...ratingStyle(ratings[act.id] || 0) }}
                                   >
-                                    <div className="font-medium text-white text-xs truncate">
+                                    <div className="font-medium text-xs truncate">
                                       {act.artist}
                                     </div>
-                                    <div className="text-white/70 text-[10px] mt-0.5">
+                                    <div className="opacity-70 text-[10px] mt-0.5">
                                       {startTime} - {endTime}
                                     </div>
                                   </div>

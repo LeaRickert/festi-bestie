@@ -49,7 +49,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-800/95 backdrop-blur-md rounded-lg p-5 w-full max-w-sm border border-white/10">
+      <div className="bg-surface rounded-lg p-5 w-full max-w-sm border border-white/10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-white">
             {isLogin ? 'Sign In' : 'Sign Up'}
@@ -72,7 +72,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-md text-white text-sm placeholder-white/60 focus:ring-2 focus:ring-festival-purple focus:border-transparent"
+                  className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-md text-white text-sm placeholder-white/60 focus:ring-2 focus:ring-white focus:border-transparent"
                   placeholder="Choose a username"
                   required
                 />
@@ -88,7 +88,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-md text-white text-sm placeholder-white/60 focus:ring-2 focus:ring-festival-purple focus:border-transparent"
+                className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-md text-white text-sm placeholder-white/60 focus:ring-2 focus:ring-white focus:border-transparent"
                 placeholder="your@email.com"
                 required
               />
@@ -103,7 +103,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-md text-white text-sm placeholder-white/60 focus:ring-2 focus:ring-festival-purple focus:border-transparent"
+                className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-md text-white text-sm placeholder-white/60 focus:ring-2 focus:ring-white focus:border-transparent"
                 placeholder="••••••••"
                 required
               />
@@ -119,7 +119,7 @@ const LoginModal = ({ isOpen, onClose }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-festival-purple hover:bg-festival-purple/80 disabled:bg-festival-purple/50 text-white font-semibold rounded-md transition-colors text-sm"
+            className="w-full py-2 bg-white text-page hover:bg-white/90 disabled:opacity-50 font-semibold rounded-md transition-colors text-sm"
           >
             {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}
           </button>
@@ -128,7 +128,7 @@ const LoginModal = ({ isOpen, onClose }) => {
         <div className="mt-4 text-center">
           <button
             onClick={toggleMode}
-            className="text-festival-purple hover:text-festival-purple/80 text-xs"
+            className="text-link hover:underline text-xs"
           >
             {isLogin 
               ? "Don't have an account? Sign up" 

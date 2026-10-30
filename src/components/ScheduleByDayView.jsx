@@ -1,7 +1,8 @@
 import { Calendar, Music, MapPin } from 'lucide-react'
 import { useState, useMemo, useEffect } from 'react'
+import { ratingStyle } from '../utils/ratingStyle'
 
-const ScheduleByDayView = ({ acts, onActClick }) => {
+const ScheduleByDayView = ({ acts, ratings, onActClick }) => {
   const [selectedDay, setSelectedDay] = useState('')
 
   // Get unique days from acts
@@ -68,7 +69,7 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
             onClick={() => setSelectedDay(day)}
             className={`px-3 py-1.5 rounded-md font-medium transition-colors text-sm ${
               selectedDay === day
-                ? 'bg-festival-purple text-white'
+                ? 'bg-white text-page'
                 : 'bg-white/10 text-white/80 hover:bg-white/20'
             }`}
           >
@@ -81,7 +82,7 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
       {selectedDay && (
         <div className="space-y-4">
           <div className="flex items-center justify-center mb-3">
-            <Calendar className="h-5 w-5 text-festival-purple mr-2" />
+            <Calendar className="h-5 w-5 text-white/60 mr-2" />
             <h3 className="text-lg font-bold text-white">{selectedDay}</h3>
           </div>
 
@@ -91,9 +92,9 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
             </div>
           ) : (
             stages.map(stage => (
-              <div key={stage} className="bg-white/5 rounded-lg p-3">
+              <div key={stage} className="bg-surface rounded-lg p-3">
                 <div className="flex items-center mb-3">
-                  <MapPin className="h-4 w-4 text-festival-purple mr-2" />
+                  <MapPin className="h-4 w-4 text-white/60 mr-2" />
                   <h4 className="text-base font-bold text-white">{stage}</h4>
                 </div>
                 
@@ -102,7 +103,8 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
                     <div
                       key={act.id}
                       onClick={() => onActClick(act)}
-                      className="bg-white/10 backdrop-blur-sm rounded-md p-2.5 hover:bg-white/20 transition-all duration-200 cursor-pointer"
+                      className="border rounded-md p-2.5 active:opacity-80 transition-opacity cursor-pointer"
+                      style={ratingStyle(ratings[act.id] || 0)}
                     >
                       <div className="space-y-1.5">
                         <h5 className="text-white font-medium text-sm truncate">
@@ -131,8 +133,8 @@ const ScheduleByDayView = ({ acts, onActClick }) => {
       )}
 
       <div className="text-center mt-4">
-        <div className="bg-festival-blue/20 border border-festival-blue/30 rounded-md p-3 inline-block">
-          <p className="text-festival-blue font-medium text-sm">
+        <div className="bg-surface rounded-md p-3 inline-block">
+          <p className="text-white/80 font-medium text-sm">
             Set times and detailed schedule coming soon!
           </p>
         </div>

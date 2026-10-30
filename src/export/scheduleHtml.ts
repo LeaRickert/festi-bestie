@@ -1,4 +1,5 @@
 import type { Act } from '../hooks/useFestivalData'
+import { ratingStyle } from '../utils/ratingStyle'
 import { calculateEndTime, formatTime, generateTimeSlots, timeToMinutes } from '../utils/scheduleUtils'
 
 // The export image is built as one HTML string. The live preview shows the
@@ -41,47 +42,6 @@ export function filterExportActs(acts: Act[], day: string, stages: string[]): Ac
   return acts.filter((act) => act.day === day && act.stage !== null && stages.includes(act.stage))
 }
 
-export interface ActStyle {
-  background: string
-  border: string
-  boxShadow: string
-  fontWeight: string
-}
-
-// The higher the rating, the louder the act.
-export function ratingStyle(rating: number): ActStyle {
-  if (rating >= 5) {
-    return {
-      background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
-      border: '2px solid #ff4757',
-      boxShadow: '0 4px 20px rgba(255, 71, 87, 0.4)',
-      fontWeight: 'bold',
-    }
-  }
-  if (rating >= 4) {
-    return {
-      background: 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)',
-      border: '2px solid #ff9ff3',
-      boxShadow: '0 2px 10px rgba(255, 159, 243, 0.3)',
-      fontWeight: '600',
-    }
-  }
-  if (rating >= 3) {
-    return {
-      background: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
-      border: '2px solid #74b9ff',
-      boxShadow: '0 2px 8px rgba(116, 185, 255, 0.3)',
-      fontWeight: '600',
-    }
-  }
-  return {
-    background: 'rgba(139, 92, 246, 0.2)',
-    border: '1px solid rgba(139, 92, 246, 0.3)',
-    boxShadow: 'none',
-    fontWeight: 'normal',
-  }
-}
-
 const GRID_START_MINUTES = 13 * 60
 const MIN_ACT_HEIGHT = 20
 
@@ -117,12 +77,10 @@ function actHtml(act: Act & { startTime: string; length: number }, rating: numbe
       padding: ${compact ? '2px 3px' : '4px 6px'};
       border-radius: ${compact ? '3px' : '4px'};
       font-size: ${compact ? '7px' : '9px'};
-      font-weight: ${style.fontWeight};
+      box-sizing: border-box;
       background: ${style.background};
-      border: ${style.border};
-      box-shadow: ${style.boxShadow};
-      color: white;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      border: 1px solid ${style.borderColor};
+      color: ${style.color};
       overflow: visible;
       white-space: normal;
       line-height: 1.1;
@@ -201,7 +159,7 @@ export function buildScheduleHtml(input: ScheduleHtmlInput): string {
       height: ${height}px;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       padding: ${padding};
-      font-family: 'Inter', sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       color: white;
       border-radius: 12px;
       overflow: hidden;

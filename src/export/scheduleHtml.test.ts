@@ -49,11 +49,24 @@ describe('export page (export FR-1 to FR-4)', () => {
   it('[TC-5VLI] shows the act and styles a 5 star rating', () => {
     const output = html([act({})], { a1: 5 })
     expect(output).toContain('Hedex')
-    expect(output).toContain('#ee5a24')
+    expect(output).toContain('background: rgba(158, 31, 179, 0.7)')
   })
 
   it('[TC-BL3F] names the file EDC_Orlando_2024_Friday_schedule.png', () => {
     expect(exportFileName('EDC Orlando 2024', 'Friday')).toBe('EDC_Orlando_2024_Friday_schedule.png')
+  })
+})
+
+describe('rating style in the image (export FR-8)', () => {
+  // The act block is the last absolutely positioned element before the artist name.
+  const actBlock = (output: string, artist: string) => output.slice(0, output.indexOf(artist)).split('position: absolute;').pop() ?? ''
+
+  it('[TC-12UL] draws a 5 with a magenta border and fill, and a 1 with a faint border and no fill', () => {
+    const output = html([act({ id: 'a1', artist: 'Five' }), act({ id: 'a2', artist: 'One', startTime: '22:00' })], { a1: 5, a2: 1 })
+    expect(actBlock(output, 'Five')).toContain('border: 1px solid #9e1fb3')
+    expect(actBlock(output, 'Five')).toContain('background: rgba(158, 31, 179, 0.7)')
+    expect(actBlock(output, 'One')).toContain('border: 1px solid rgba(255, 255, 255, 0.4)')
+    expect(actBlock(output, 'One')).toContain('background: transparent')
   })
 })
 

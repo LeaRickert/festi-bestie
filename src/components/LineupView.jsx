@@ -1,6 +1,7 @@
 import { Music } from 'lucide-react'
+import { ratingStyle } from '../utils/ratingStyle'
 
-const LineupView = ({ acts, onActClick }) => {
+const LineupView = ({ acts, ratings, onActClick }) => {
   if (acts.length === 0) {
     return (
       <div className="text-center py-8">
@@ -26,7 +27,8 @@ const LineupView = ({ acts, onActClick }) => {
           <div
             key={act.id}
             onClick={() => onActClick(act)}
-            className="bg-white/10 backdrop-blur-sm rounded-lg p-3 hover:bg-white/20 transition-all duration-200 text-center cursor-pointer"
+            className="border rounded-lg p-3 active:opacity-80 transition-opacity text-center cursor-pointer"
+            style={ratingStyle(ratings[act.id] || 0)}
           >
             <div className="space-y-1.5">
               <h3 className="text-white font-medium text-sm truncate">
@@ -48,8 +50,8 @@ const LineupView = ({ acts, onActClick }) => {
       </div>
 
       <div className="text-center mt-4">
-        <div className="bg-festival-blue/20 border border-festival-blue/30 rounded-md p-3 inline-block">
-          <p className="text-festival-blue font-medium text-sm">
+        <div className="bg-surface rounded-md p-3 inline-block">
+          <p className="text-white/80 font-medium text-sm">
             Schedule and stage information coming soon!
           </p>
         </div>

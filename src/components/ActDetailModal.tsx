@@ -14,7 +14,7 @@ interface ActDetailModalProps {
 
 const ActDetailModal = ({ act, rating, signedIn, onRate, onSignIn, onClose }: ActDetailModalProps) => (
   <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div className="bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 max-w-md w-full max-h-[80vh] overflow-y-auto border border-white/10">
+    <div className="bg-surface rounded-lg p-4 max-w-md w-full max-h-[80vh] overflow-y-auto border border-white/10">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-bold text-white">{act.artist}</h3>
         <button type="button" onClick={onClose} aria-label="Close" className="text-white/60 hover:text-white transition-colors">
@@ -59,13 +59,13 @@ const ActDetailModal = ({ act, rating, signedIn, onRate, onSignIn, onClose }: Ac
         )}
 
         {act.specialNotes && (
-          <div className="bg-festival-purple/20 border border-festival-purple/30 rounded-md p-2">
-            <p className="text-festival-purple font-medium text-xs">{act.specialNotes}</p>
+          <div className="bg-white/10 rounded-md p-2">
+            <p className="text-white font-medium text-xs">{act.specialNotes}</p>
           </div>
         )}
 
         {act.avgRating !== null && act.avgRating > 0 && (
-          <div className="flex items-center text-festival-purple text-sm">
+          <div className="flex items-center text-rating text-sm">
             <Star className="h-3.5 w-3.5 mr-1.5" />
             <span className="font-medium">Avg: {act.avgRating.toFixed(1)}</span>
           </div>
@@ -78,12 +78,12 @@ const ActDetailModal = ({ act, rating, signedIn, onRate, onSignIn, onClose }: Ac
           ) : (
             <div className="space-y-2">
               <StarRating rating={0} onRatingChange={() => {}} size="md" showValue={false} />
-              <div className="bg-festival-purple/10 border border-festival-purple/30 rounded-md p-2.5">
+              <div className="bg-white/10 rounded-md p-2.5">
                 <p className="text-white/70 text-xs mb-2">Sign in to rate this artist</p>
                 <button
                   type="button"
                   onClick={onSignIn}
-                  className="w-full py-1.5 bg-festival-purple hover:bg-festival-purple/80 text-white font-medium rounded-md transition-colors text-sm"
+                  className="w-full py-1.5 bg-white text-page font-medium rounded-md hover:bg-white/90 transition-colors text-sm"
                 >
                   Sign In to Rate
                 </button>
@@ -98,7 +98,7 @@ const ActDetailModal = ({ act, rating, signedIn, onRate, onSignIn, onClose }: Ac
               href={act.youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-3 py-1.5 bg-festival-blue/20 text-festival-blue rounded-md hover:bg-festival-blue/30 transition-colors text-sm"
+              className="inline-flex items-center text-link hover:underline text-sm"
             >
               <Play className="h-3.5 w-3.5 mr-1.5" />
               {act.youtubeTitle || 'Watch Set'}

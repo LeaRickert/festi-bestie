@@ -23,7 +23,7 @@ acts, watches sets and compares stages.
 - Welcome view: The page on `/` with the app logo, the name, Log in, Sign up and a smaller "View festivals as guest" link.
 - Festival list: The page on `/festivals`.
 - Phone: A screen 375 px wide. Tablet: a screen 768 px wide.
-- Theme: Page `#051721` (dark teal). Surface `#05334b` (medium teal). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Link color `#d2e359` (neon), used only for text links. Buttons and selected controls are white or neutral. The font is the system font.
+- Theme: Page `#051721` (dark teal). Surface `#072230` (a teal slightly lighter than the page). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Link color `#d2e359` (neon), used only for text links. Buttons and selected controls are white or neutral. The font is the system font.
 
 ## In Scope
 

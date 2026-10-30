@@ -12,7 +12,7 @@ const ExportSummary = ({ day, stages, acts, ratings }: ExportSummaryProps) => {
   return (
     <div className="space-y-3">
       <h3 className="text-lg font-semibold text-white">Preview Info</h3>
-      <div className="bg-white/5 rounded-xl p-4 text-white/80 text-sm">
+      <div className="bg-surface rounded-xl p-4 text-white/80 text-sm">
         <p><strong>Day:</strong> {day}</p>
         <p><strong>Stages:</strong> {stages.join(', ')}</p>
         <p><strong>Total Acts:</strong> {acts.length}</p>
