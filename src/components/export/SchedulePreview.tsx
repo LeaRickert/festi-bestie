@@ -1,26 +1,38 @@
-import { useEffect, useRef } from 'react'
-import { Calendar } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import type { ImageSize } from '../../export/scheduleHtml'
 
-// Shows the same HTML that the PNG is made from. buildScheduleHtml escapes all festival data.
-const SchedulePreview = ({ html }: { html: string }) => {
-  const canvas = useRef<HTMLDivElement>(null)
+interface SchedulePreviewProps {
+  html: string
+  size: ImageSize
+}
+
+// Shows the same HTML that the PNG is made from, scaled down to the page width
+// (export FR-7, FR-13). buildScheduleHtml escapes all festival data.
+const SchedulePreview = ({ html, size }: SchedulePreviewProps) => {
+  const frame = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(0)
 
   useEffect(() => {
-    if (canvas.current) canvas.current.innerHTML = html
-  }, [html])
+    if (!frame.current) return
+    const observer = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width))
+    observer.observe(frame.current)
+    return () => observer.disconnect()
+  }, [])
+
+  const scale = width ? Math.min(1, width / size.width) : 0
 
   return (
-    <div className="bg-surface rounded-lg p-4 h-full">
-      <h3 className="text-lg font-semibold text-white mb-4">Live Preview</h3>
+    <div ref={frame} className="w-full">
       {html ? (
-        <div ref={canvas} style={{ transform: 'scale(0.75)', transformOrigin: 'top left' }} />
-      ) : (
-        <div className="flex items-center justify-center h-64 text-white/60">
-          <div className="text-center">
-            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Select a day and stages to see preview</p>
-          </div>
+        <div className="mx-auto overflow-hidden rounded-lg" style={{ width: size.width * scale, height: size.height * scale }}>
+          <div
+            style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: the HTML is built by buildScheduleHtml, which escapes all data
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
         </div>
+      ) : (
+        <p className="py-16 text-center text-white/60 text-sm">Choose a stage to see the wallpaper.</p>
       )}
     </div>
   )

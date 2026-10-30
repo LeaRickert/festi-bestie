@@ -70,7 +70,7 @@ const ScheduleView = ({ acts, ratings, onActClick }: ScheduleViewProps) => {
       <div className="flex justify-end py-2">
         <button
           type="button"
-          onClick={() => navigate(`/festival/${id}/export`)}
+          onClick={() => navigate(`/festival/${id}/export?day=${encodeURIComponent(selectedDay)}`)}
           className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
         >
           <Download className="h-4 w-4 mr-1.5" />

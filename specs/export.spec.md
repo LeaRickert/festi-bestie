@@ -1,9 +1,9 @@
 ---
 type: Spec
 title: "Spec: Schedule Export"
-sources: [../src/pages/ExportPage.tsx, ../src/export, ../src/components/export]
+sources: [../src/pages/ExportPage.tsx, ../src/export, ../src/components/export, ../src/utils/dateUtils.ts]
 description: Export one day of a schedule as a PNG lock screen wallpaper.
-tests: [../src/export/scheduleHtml.test.ts]
+tests: [../src/export/scheduleHtml.test.ts, ../src/utils/dateUtils.test.ts]
 tags: [export]
 timestamp: 2026-10-30T00:00:00Z
 ---
@@ -17,8 +17,8 @@ is in `data-import.spec.md`.
 
 ### Definitions
 
-- Clock zone: The top 30% of the image. The phone draws the clock and widgets over it, so the image leaves it empty.
-- Header: One line, "<date> - <festival>", for example "Fri, Nov 6 - EDC Orlando 2026". The date is the date of the chosen day, found from the festival dates.
+- Clock zone: The top 25% of the image. The phone draws the clock and widgets over it, so the image leaves it empty.
+- Header: One line, "<date> - <festival>", for example "Fri, Nov 6 - EDC Orlando 2026". The date is the date of the chosen day, found from the festival dates. When no festival date falls on that day, the header shows the day name.
 - Image size: The CSS size of the phone screen (`screen.width` by `screen.height`) times `devicePixelRatio`. On a desktop browser, 393 by 852 times 3.
 
 ## In Scope
@@ -48,7 +48,7 @@ is in `data-import.spec.md`.
 | FR-10 | Make the PNG the image size, so the wallpaper matches the phone screen pixel for pixel |
 | FR-11 | Leave the clock zone empty. Draw the header directly above the stage names, and fill the rest of the image to the bottom with the grid. The hour height follows from the time range |
 | FR-12 | Show the clock zone as a faint outline in the preview only, not in the PNG |
-| FR-13 | Lay out the page for a phone: the theme and header of the other pages, the day control of schedule-grid FR-2, the stage chips, the preview at full width, and a download button that stays at the bottom of the screen. Show no summary panel |
+| FR-13 | Lay out the page for a phone: the theme and header of the other pages, the day control of schedule-grid FR-2, the stage chips, the preview at full width, and a download button in the header. Show no summary panel |
 | FR-14 | Draw the image on the page color `#051721` with the system font. The stage names (about 8 px) and the time column have no background |
 
 ### QA Test Cases
@@ -68,15 +68,13 @@ is in `data-import.spec.md`.
 | TC-J3IS | FR-9 | An act starts at 2:30 PM and ends at 3:00 PM | The act shows "2:30-3" |
 | TC-NETT | FR-10 | A phone with a 390 by 844 screen and a device pixel ratio of 3 exports | The PNG is 1170 by 2532 pixels |
 | TC-JNGC | FR-10 | A desktop browser exports | The PNG is 1179 by 2556 pixels |
-| TC-18TU | FR-11 | The user exports Friday of EDC Orlando 2026, which starts on 2026-11-06 | The top 30% is empty, and the header "Fri, Nov 6 - EDC Orlando 2026" is directly above the stage names |
+| TC-18TU | FR-11 | The user exports Friday of EDC Orlando 2026, which starts on 2026-11-06 | The top 25% is empty, and the header "Fri, Nov 6 - EDC Orlando 2026" is directly above the stage names |
 | TC-5D4V | FR-12 | The preview shows the clock zone | The preview has the outline and the PNG does not |
-| TC-FRTO | FR-13 | The screen is 375 px wide and the user scrolls the export page | The download button stays at the bottom of the screen, and no summary panel shows |
+| TC-FRTO | FR-13 | The screen is 375 px wide and the user opens the export page | The download button is in the header, the preview fills the width, and no summary panel shows |
 | TC-0TDL | FR-14 | The user exports a day with 4 stages | The stage names and the time column have no background, on a `#051721` image |
 
 ### Known Issues
 
-- The image has a fixed size (393 by 852 at 2x, or a tablet by user agent), not the size of the screen. FR-10 replaces it.
-- The page has its own gradient and a desktop two-column layout. FR-13 replaces it.
 - To fit fewer stages, the user drops stages with FR-1. The image never scrolls sideways.
 - An act without a start time or length is left out of the image.
 - TC-SKGA and TC-3NMG are checked by hand. The tests do not run a browser.

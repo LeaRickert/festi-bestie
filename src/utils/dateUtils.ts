@@ -25,3 +25,23 @@ export function formatDateRange(startDate: string, endDate: string): string {
   if (start.day !== end.day) return `${start.month} ${start.day}-${end.day}, ${end.year}`
   return `${start.month} ${start.day}, ${start.year}`
 }
+
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+// The date of a festival day name, for example "Friday" of 2026-11-06 to
+// 2026-11-08 is 2026-11-06. Null when no festival date falls on that day.
+export function festivalDayDate(startDate: string, endDate: string, day: string): string | null {
+  const end = Date.parse(endDate)
+  for (let time = Date.parse(startDate); time <= end; time += 24 * 60 * 60 * 1000) {
+    const date = new Date(time)
+    if (WEEKDAYS[date.getUTCDay()].toLowerCase() === day.trim().toLowerCase()) return date.toISOString().slice(0, 10)
+  }
+  return null
+}
+
+// "Fri, Nov 6".
+export function formatShortDate(date: string): string {
+  const { month, day } = parts(date)
+  const weekday = WEEKDAYS[new Date(Date.parse(date)).getUTCDay()]
+  return `${weekday.slice(0, 3)}, ${month.slice(0, 3)} ${day}`
+}

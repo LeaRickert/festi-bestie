@@ -2,28 +2,38 @@ import type { Act } from '../hooks/useFestivalData'
 import { ratingStyle } from '../utils/ratingStyle'
 import { type GridRange, formatShortRange, getActPosition, getGridRange, getHourLines, hourLabel } from '../utils/scheduleUtils'
 
-// The export image is built as one HTML string. The live preview shows the
-// same string, so the preview and the PNG always match.
+// The export image is a lock screen wallpaper, built as one HTML string. The
+// live preview shows the same string, so the preview and the PNG always match.
 
-export interface ExportLayout {
+// The page color of the theme (export FR-14).
+export const IMAGE_BACKGROUND = '#051721'
+
+// CSS size of the image and the device pixel ratio to draw it at (export FR-10).
+export interface ImageSize {
   width: number
   height: number
-  fontSize: string
-  padding: string
-  timeColumnWidth: string
-  compact: boolean
+  scale: number
 }
 
-const PHONE: ExportLayout = { width: 393, height: 852, fontSize: '11px', padding: '15px', timeColumnWidth: '20px', compact: true }
-const TABLET: ExportLayout = { width: 768, height: 1024, fontSize: '14px', padding: '30px', timeColumnWidth: '35px', compact: false }
-// A desktop browser gets the phone size, since the image is made for a phone.
-const DESKTOP: ExportLayout = { ...PHONE, compact: false }
+// A desktop browser gets a common phone size, since the image is made for a phone.
+const DESKTOP_SIZE: ImageSize = { width: 393, height: 852, scale: 3 }
 
-export function getExportLayout(userAgent: string, innerWidth: number): ExportLayout {
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
-  const isTablet = /iPad|Android/i.test(userAgent) && innerWidth >= 768
-  if (isTablet) return TABLET
-  return isMobile ? PHONE : DESKTOP
+export interface ScreenInfo {
+  userAgent: string
+  screenWidth: number
+  screenHeight: number
+  devicePixelRatio: number
+}
+
+export function getImageSize({ userAgent, screenWidth, screenHeight, devicePixelRatio }: ScreenInfo): ImageSize {
+  const isPhone = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+  if (!isPhone || !screenWidth || !screenHeight) return DESKTOP_SIZE
+  // A wallpaper is portrait, also when the phone is turned sideways.
+  return {
+    width: Math.min(screenWidth, screenHeight),
+    height: Math.max(screenWidth, screenHeight),
+    scale: devicePixelRatio || 1,
+  }
 }
 
 export function escapeHtml(text: string): string {
@@ -42,150 +52,140 @@ export function filterExportActs(acts: Act[], day: string, stages: string[]): Ac
   return acts.filter((act) => act.day === day && act.stage !== null && stages.includes(act.stage))
 }
 
-const MIN_ACT_HEIGHT = 20
+// The phone draws the clock and widgets over the top 25% (export FR-11).
+export const CLOCK_ZONE = 0.25
+
+const SIDE_PADDING = 6
+const HEADER_HEIGHT = 20
+const STAGE_ROW_HEIGHT = 20
+const TIME_COLUMN_WIDTH = 12
+const COLUMN_GAP = 3
+// Room under the last hour line for its number.
+const BOTTOM_LABEL_SPACE = 12
+const MIN_ACT_HEIGHT = 12
+const LINE_COLOR = 'rgba(255, 255, 255, 0.15)'
 
 export interface ScheduleHtmlInput {
   festivalName: string
-  day: string
+  // The header date, for example "Fri, Nov 6".
+  dateLabel: string
   stages: string[]
   acts: Act[]
   ratings: Record<string, number>
-  layout: ExportLayout
-  generatedOn: string
+  size: ImageSize
+  // Outline the clock zone. Only the preview does this (export FR-12).
+  preview?: boolean
 }
 
-function actHtml(act: Act & { startTime: string; length: number }, rating: number, layout: ExportLayout, range: GridRange, rowHeight: number): string {
-  const { compact } = layout
+type TimedAct = Act & { startTime: string; length: number }
+
+function actHtml(act: TimedAct, rating: number, range: GridRange, pixelsPerHour: number): string {
   const style = ratingStyle(rating)
-  const position = getActPosition(act, range, rowHeight)
-  const top = position.top
+  const position = getActPosition(act, range, pixelsPerHour)
   const height = Math.max(position.height, MIN_ACT_HEIGHT)
   return `
     <div style="
       position: absolute;
       left: 0;
       width: 100%;
-      top: ${top}px;
+      top: ${position.top}px;
       height: ${height}px;
-      padding: ${compact ? '2px 3px' : '4px 6px'};
-      border-radius: ${compact ? '3px' : '4px'};
-      font-size: ${compact ? '7px' : '9px'};
+      padding: 1px 2px;
+      border-radius: 3px;
       box-sizing: border-box;
       background: ${style.background};
       border: 1px solid ${style.borderColor};
       color: ${style.color};
-      overflow: visible;
-      white-space: normal;
-      line-height: 1.1;
-      word-wrap: break-word;
-      z-index: 10;
+      overflow: hidden;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
     ">
-      <div style="display: flex; flex-direction: column; gap: 1px;">
-        <div style="font-weight: bold; font-size: ${compact ? '7px' : '8px'};">${escapeHtml(act.artist)}</div>
-        <div style="font-size: ${compact ? '6px' : '7px'}; opacity: 0.9;">${formatShortRange(act.startTime, act.length)}</div>
-      </div>
-    </div>
-  `
+      <div style="font-weight: bold; font-size: 7px;">${escapeHtml(act.artist)}</div>
+      <div style="font-size: 6px; opacity: 0.9;">${formatShortRange(act.startTime, act.length)}</div>
+    </div>`
 }
 
 export function buildScheduleHtml(input: ScheduleHtmlInput): string {
-  const { festivalName, day, stages, acts, ratings, layout, generatedOn } = input
-  const { compact, width, height, fontSize, padding, timeColumnWidth } = layout
-  const rowHeight = compact ? 50 : 60
-  // The grid fits the chosen acts (schedule-grid FR-5). Each row is one hour, labeled with its hour number.
-  const range = getGridRange(acts) ?? { startMinutes: 0, endMinutes: 0 }
-  const slots = getHourLines(range).slice(0, -1).map(hourLabel)
+  const { festivalName, dateLabel, stages, acts, ratings, size, preview = false } = input
+  const { width, height } = size
 
-  const stageHeaders = stages
+  // The grid fits the chosen acts (schedule-grid FR-5) and fills the image
+  // from the stage names to the bottom, so the hour height follows from it.
+  const range = getGridRange(acts) ?? { startMinutes: 0, endMinutes: 60 }
+  const hours = (range.endMinutes - range.startMinutes) / 60
+  const clockZoneHeight = Math.round(height * CLOCK_ZONE)
+  const gridHeight = height - clockZoneHeight - HEADER_HEIGHT - STAGE_ROW_HEIGHT - BOTTOM_LABEL_SPACE
+  const pixelsPerHour = gridHeight / hours
+  const lineTop = (minutes: number) => ((minutes - range.startMinutes) * pixelsPerHour) / 60
+  const hourLines = getHourLines(range)
+
+  const lines = hourLines
+    .map((minutes) => `<div style="position: absolute; left: 0; right: 0; top: ${lineTop(minutes)}px; height: 1px; background: ${LINE_COLOR};"></div>`)
+    .join('')
+
+  const labels = hourLines
+    .map(
+      (minutes) =>
+        `<div style="position: absolute; left: 0; top: ${lineTop(minutes) + 2}px; font-size: 8px; line-height: 1; color: rgba(255, 255, 255, 0.6);">${hourLabel(minutes)}</div>`,
+    )
+    .join('')
+
+  const stageNames = stages
     .map(
       (stage) => `
         <div style="
           flex: 1;
-          padding: ${compact ? '8px' : '12px'};
-          border-right: 1px solid rgba(255, 255, 255, 0.1);
-          font-weight: bold;
+          min-width: 0;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
           text-align: center;
-          background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
-          font-size: ${compact ? '10px' : '12px'};
-        ">${escapeHtml(stage)}</div>`,
-    )
-    .join('')
-
-  const timeCells = slots
-    .map(
-      (slot) => `
-        <div style="
-          height: ${rowHeight}px;
-          box-sizing: border-box;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          padding: ${compact ? '4px 1px 2px 2px' : '6px 2px 3px 3px'};
+          font-size: 8px;
+          line-height: 9px;
           font-weight: 600;
-          font-size: ${compact ? '8px' : '10px'};
-        ">${slot}</div>`,
-    )
-    .join('')
-
-  const hourLines = slots
-    .map(
-      (_, index) => `
-        <div style="position: absolute; left: 0; right: 0; top: ${index * rowHeight}px; height: ${rowHeight}px; box-sizing: border-box; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
-          <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(255, 255, 255, 0.05);"></div>
-        </div>`,
+          overflow: hidden;
+        ">${escapeHtml(stage)}</div>`,
     )
     .join('')
 
   const stageColumns = stages
     .map((stage) => {
-      const stageActs = acts.filter(
-        (act): act is Act & { startTime: string; length: number } =>
-          act.stage === stage && Boolean(act.startTime) && Boolean(act.length),
-      )
+      const stageActs = acts.filter((act): act is TimedAct => act.stage === stage && Boolean(act.startTime) && Boolean(act.length))
       return `
-        <div style="flex: 1; position: relative; height: ${slots.length * rowHeight}px; border-right: 1px solid rgba(255, 255, 255, 0.1);">
-          ${hourLines}
-          ${stageActs.map((act) => actHtml(act, ratings[act.id] || 0, layout, range, rowHeight)).join('')}
+        <div style="flex: 1; min-width: 0; position: relative; height: ${gridHeight}px;">
+          ${stageActs.map((act) => actHtml(act, ratings[act.id] || 0, range, pixelsPerHour)).join('')}
         </div>`
     })
     .join('')
 
+  const clockZoneOutline = preview
+    ? `<div style="position: absolute; left: 4px; right: 4px; top: 4px; height: ${clockZoneHeight - 8}px; box-sizing: border-box; border: 1px dashed rgba(255, 255, 255, 0.25); border-radius: 8px;"></div>`
+    : ''
+
   return `
     <div style="
+      position: relative;
       width: ${width}px;
       height: ${height}px;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      padding: ${padding};
+      box-sizing: border-box;
+      padding: ${clockZoneHeight}px ${SIDE_PADDING}px ${BOTTOM_LABEL_SPACE}px;
+      background: ${IMAGE_BACKGROUND};
       font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       color: white;
-      border-radius: 12px;
       overflow: hidden;
-      margin: 0 auto;
     ">
-      <div style="margin-bottom: 15px;">
-        <h1 style="font-size: ${compact ? '16px' : '18px'}; font-weight: bold; margin-bottom: 8px; text-align: center;">
-          ${escapeHtml(day.toUpperCase())} - ${escapeHtml(festivalName)}
-        </h1>
-        <div style="text-align: center; font-size: ${compact ? '10px' : '12px'}; opacity: 0.8; margin-bottom: 15px;">
-          Generated on ${escapeHtml(generatedOn)} • ${stages.length} stages
-        </div>
+      ${clockZoneOutline}
+      <div style="height: ${HEADER_HEIGHT}px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden;">
+        ${escapeHtml(dateLabel)} - ${escapeHtml(festivalName)}
       </div>
-
-      <div style="
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: ${compact ? '8px' : '12px'};
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: ${fontSize};
-      ">
-        <div style="display: flex; border-bottom: 2px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.1);">
-          <div style="width: ${timeColumnWidth}; padding: ${compact ? '4px' : '8px'}; border-right: 1px solid rgba(255, 255, 255, 0.1);"></div>
-          ${stageHeaders}
-        </div>
-        <div style="display: flex;">
-          <div style="width: ${timeColumnWidth}; border-right: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.05);">
-            ${timeCells}
-          </div>
-          ${stageColumns}
-        </div>
+      <div style="display: flex; gap: ${COLUMN_GAP}px; height: ${STAGE_ROW_HEIGHT}px; padding-bottom: 2px; box-sizing: border-box;">
+        <div style="width: ${TIME_COLUMN_WIDTH}px; flex-shrink: 0;"></div>
+        ${stageNames}
+      </div>
+      <div style="position: relative; display: flex; gap: ${COLUMN_GAP}px; height: ${gridHeight}px;">
+        <div style="position: absolute; left: 0; right: 0; top: 0; bottom: 0;">${lines}</div>
+        <div style="position: relative; width: ${TIME_COLUMN_WIDTH}px; flex-shrink: 0;">${labels}</div>
+        ${stageColumns}
       </div>
     </div>
   `
