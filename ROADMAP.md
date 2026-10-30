@@ -60,10 +60,9 @@ The design decisions are in `festivals.spec.md` (theme, FR-1, FR-7 to FR-9), `sc
 - [x] Fix the old "Festi Besti" name and text in `public/manifest.json`
 - [x] Add the welcome view on `/` and move the festival list to `/festivals`, as compact rows with status badges on upcoming festivals and a collapsed "Past festivals" section (festivals FR-1, FR-7, FR-8)
 - [x] Change the rating labels and show the rating style on every act, through one style function shared with the export (ratings FR-2, FR-10, export FR-8)
-- [ ] Add the "My picks" toggle (schedule-grid FR-6)
-- [ ] Design the time grid for a 375 px wide screen: sideways scroll, pinned stage names and hours, 4 px column gap, short act times like "1-1:50" (schedule-grid FR-1, FR-7)
-- [ ] Fit the grid to the acts of each day, also past midnight, in the app and the export (schedule-grid FR-5, export FR-9)
-- [ ] Make the day control full width, sticky and kept in `?day=` (schedule-grid FR-2)
+- [x] Design the time grid for a 375 px wide screen: sideways scroll, pinned stage names and hours, 4 px column gap, short act times like "1-1:50" (schedule-grid FR-1, FR-7)
+- [x] Fit the grid to the acts of each day, also past midnight, in the app and the export (schedule-grid FR-5, export FR-9)
+- [x] Make the day control full width, sticky and kept in `?day=` (schedule-grid FR-2)
 - [ ] Rename `acts.youtube_url` to `youtube_video_id` with an id check, in a new migration, in `scripts/data` and in the `data/` CSV header. Check first that no act in production has a URL (act-editing FR-6, data-import FR-12)
 - [ ] Make the act popup a bottom sheet on a phone, with larger stars, the closing rules and the YouTube thumbnail and search link (act-sheet FR-2 to FR-4, ratings FR-8, FR-9)
 - [ ] Rebuild the export as a lock screen wallpaper: image size of the phone, empty clock zone, one-line header above the stages, theme colors. Remove the tablet layout (export FR-9 to FR-14)
@@ -126,6 +125,7 @@ Needs Phase 4. Write `rate-mode.spec.md` first.
 
 ## Later
 
+- [ ] Add the "My picks" toggle (schedule-grid FR-6)
 - [ ] Show a festival logo as a small mark next to the name. Use one SVG for each festival with an initials fallback, and a sprite sheet only when there are many festivals
 
 ## Open questions

@@ -1,21 +1,12 @@
-import { Calendar, Music, MapPin } from 'lucide-react'
-import { useState, useMemo, useEffect } from 'react'
+import { Music, MapPin } from 'lucide-react'
+import { useMemo } from 'react'
 import { ratingStyle } from '../utils/ratingStyle'
+import { getUniqueDays } from '../utils/scheduleUtils'
+import DayControl, { useSelectedDay } from './DayControl'
 
 const ScheduleByDayView = ({ acts, ratings, onActClick }) => {
-  const [selectedDay, setSelectedDay] = useState('')
-
-  // Get unique days from acts
-  const days = useMemo(() => {
-    return [...new Set(acts.filter(act => act.day).map(act => act.day))].sort()
-  }, [acts])
-
-  // Set default selected day
-  useEffect(() => {
-    if (days.length > 0 && !selectedDay) {
-      setSelectedDay(days[0])
-    }
-  }, [days, selectedDay])
+  const days = useMemo(() => getUniqueDays(acts), [acts])
+  const [selectedDay, setSelectedDay] = useSelectedDay(days)
 
   // Filter acts by selected day
   const dayActs = useMemo(() => {
@@ -56,35 +47,10 @@ const ScheduleByDayView = ({ acts, ratings, onActClick }) => {
 
   return (
     <div className="space-y-4">
-      <div className="text-center mb-4">
-        <h2 className="text-xl font-bold text-white mb-1">Festival Schedule</h2>
-        <p className="text-white/70 text-sm">Times and detailed schedule coming soon</p>
-      </div>
+      <DayControl days={days} selectedDay={selectedDay} onChange={setSelectedDay} />
 
-      {/* Day Selector */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        {days.map(day => (
-          <button
-            key={day}
-            onClick={() => setSelectedDay(day)}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors text-sm ${
-              selectedDay === day
-                ? 'bg-white text-page'
-                : 'bg-white/10 text-white/80 hover:bg-white/20'
-            }`}
-          >
-            {day}
-          </button>
-        ))}
-      </div>
-
-      {/* Selected Day Content */}
       {selectedDay && (
         <div className="space-y-4">
-          <div className="flex items-center justify-center mb-3">
-            <Calendar className="h-5 w-5 text-white/60 mr-2" />
-            <h3 className="text-lg font-bold text-white">{selectedDay}</h3>
-          </div>
 
           {stages.length === 0 ? (
             <div className="text-center py-4">

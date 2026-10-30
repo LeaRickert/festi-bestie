@@ -151,7 +151,7 @@ const FestivalDetailPage = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-page/95 backdrop-blur-sm border-b border-white/10">
+      <header className="border-b border-white/10">
         <div className="max-w-4xl mx-auto px-4 py-2.5">
           <div className="flex items-center justify-between">
             <Link 

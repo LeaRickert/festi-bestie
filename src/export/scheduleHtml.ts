@@ -1,6 +1,6 @@
 import type { Act } from '../hooks/useFestivalData'
 import { ratingStyle } from '../utils/ratingStyle'
-import { calculateEndTime, formatTime, generateTimeSlots, timeToMinutes } from '../utils/scheduleUtils'
+import { type GridRange, formatShortRange, getActPosition, getGridRange, getHourLines, hourLabel } from '../utils/scheduleUtils'
 
 // The export image is built as one HTML string. The live preview shows the
 // same string, so the preview and the PNG always match.
@@ -42,15 +42,7 @@ export function filterExportActs(acts: Act[], day: string, stages: string[]): Ac
   return acts.filter((act) => act.day === day && act.stage !== null && stages.includes(act.stage))
 }
 
-const GRID_START_MINUTES = 13 * 60
 const MIN_ACT_HEIGHT = 20
-
-// Minutes from the grid start (1 PM). Times after midnight count past 24:00.
-function minutesFromGridStart(startTime: string): number {
-  const minutes = timeToMinutes(startTime)
-  const afterMidnight = minutes < 6 * 60 ? minutes + 24 * 60 : minutes
-  return Math.max(0, afterMidnight - GRID_START_MINUTES)
-}
 
 export interface ScheduleHtmlInput {
   festivalName: string
@@ -62,11 +54,12 @@ export interface ScheduleHtmlInput {
   generatedOn: string
 }
 
-function actHtml(act: Act & { startTime: string; length: number }, rating: number, layout: ExportLayout, rowHeight: number): string {
+function actHtml(act: Act & { startTime: string; length: number }, rating: number, layout: ExportLayout, range: GridRange, rowHeight: number): string {
   const { compact } = layout
   const style = ratingStyle(rating)
-  const top = (minutesFromGridStart(act.startTime) * rowHeight) / 60
-  const height = Math.max((act.length * rowHeight) / 60, MIN_ACT_HEIGHT)
+  const position = getActPosition(act, range, rowHeight)
+  const top = position.top
+  const height = Math.max(position.height, MIN_ACT_HEIGHT)
   return `
     <div style="
       position: absolute;
@@ -89,7 +82,7 @@ function actHtml(act: Act & { startTime: string; length: number }, rating: numbe
     ">
       <div style="display: flex; flex-direction: column; gap: 1px;">
         <div style="font-weight: bold; font-size: ${compact ? '7px' : '8px'};">${escapeHtml(act.artist)}</div>
-        <div style="font-size: ${compact ? '6px' : '7px'}; opacity: 0.9;">${formatTime(act.startTime)} - ${calculateEndTime(act.startTime, act.length)}</div>
+        <div style="font-size: ${compact ? '6px' : '7px'}; opacity: 0.9;">${formatShortRange(act.startTime, act.length)}</div>
       </div>
     </div>
   `
@@ -99,7 +92,9 @@ export function buildScheduleHtml(input: ScheduleHtmlInput): string {
   const { festivalName, day, stages, acts, ratings, layout, generatedOn } = input
   const { compact, width, height, fontSize, padding, timeColumnWidth } = layout
   const rowHeight = compact ? 50 : 60
-  const slots = generateTimeSlots()
+  // The grid fits the chosen acts (schedule-grid FR-5). Each row is one hour, labeled with its hour number.
+  const range = getGridRange(acts) ?? { startMinutes: 0, endMinutes: 0 }
+  const slots = getHourLines(range).slice(0, -1).map(hourLabel)
 
   const stageHeaders = stages
     .map(
@@ -148,7 +143,7 @@ export function buildScheduleHtml(input: ScheduleHtmlInput): string {
       return `
         <div style="flex: 1; position: relative; height: ${slots.length * rowHeight}px; border-right: 1px solid rgba(255, 255, 255, 0.1);">
           ${hourLines}
-          ${stageActs.map((act) => actHtml(act, ratings[act.id] || 0, layout, rowHeight)).join('')}
+          ${stageActs.map((act) => actHtml(act, ratings[act.id] || 0, layout, range, rowHeight)).join('')}
         </div>`
     })
     .join('')

@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Schedule Grid"
-sources: [../src/components/ScheduleView.jsx, ../src/utils/scheduleUtils.ts]
+sources: [../src/components/ScheduleView.tsx, ../src/components/DayControl.tsx, ../src/utils/scheduleUtils.ts]
 tests: [../src/utils/scheduleUtils.test.ts]
 description: The time grid of the times view and its time helpers.
 tags: [schedule]
@@ -68,4 +68,5 @@ compares stages and sees the acts they rated. The export draws the same grid
 
 ### Known Issues
 
-- Time handling assumes a 1 PM to 12 AM festival. FR-5 replaces it.
+- TC-CILX, TC-I3EO and TC-L5HW are checked by hand. The tests do not run a browser.
+- My picks (FR-6) is deferred to the "Later" section of the roadmap.

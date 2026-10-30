@@ -70,11 +70,17 @@ describe('rating style in the image (export FR-8)', () => {
   })
 })
 
+describe('time range and act times (export FR-9)', () => {
+  it('[TC-J3IS] shows a set from 2:30 PM to 3:00 PM as "2:30-3"', () => {
+    expect(html([act({ startTime: '14:30', length: 30 })])).toContain('2:30-3<')
+  })
+})
+
 describe('schedule image (export FR-7)', () => {
-  it('[TC-HCJ0] draws a set that starts at 12:30 AM once, 575 px below the 1 PM line', () => {
-    const output = html([act({ startTime: '00:30', length: 60 })])
+  it('[TC-HCJ0] draws a set that starts at 12:30 AM once, 11.5 hours below a 1 PM grid top', () => {
+    const output = html([act({ id: 'a0', artist: 'Opener', startTime: '13:00' }), act({ startTime: '00:30', length: 60 })])
     expect(output.match(/Hedex/g)).toHaveLength(1)
-    expect(output).toContain('top: 575px')
+    expect(output).toContain(`top: ${11.5 * 50}px`)
   })
 
   it('[TC-HCJ0] draws a set that crosses an hour once', () => {
