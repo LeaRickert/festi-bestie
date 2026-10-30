@@ -18,6 +18,10 @@ Stack: React 18, Vite, Tailwind CSS, Supabase (Postgres, Auth, RLS), html2canvas
 
 Other commands: `npm run build`, `npm run preview`, `npm run lint`.
 
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the planned work.
+
 ## Specs
 
 The specs in [specs/](specs/) describe what the app must do. They are the
@@ -27,6 +31,7 @@ source of truth.
 - [ratings.spec.md](specs/ratings.spec.md): 1 to 5 star ratings
 - [auth.spec.md](specs/auth.spec.md): sign-in, roles, database access rules
 - [export.spec.md](specs/export.spec.md): PNG export, CSV import and export
+- Drafts, not built yet: [act-editing](specs/act-editing.spec.md), [groups](specs/groups.spec.md), [group-heatmap](specs/group-heatmap.spec.md)
 
 Check the specs with `npx @rosenjcb/spec-md lint specs`.
 
