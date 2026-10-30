@@ -1,4 +1,4 @@
-# Festi Besti
+# Festi Bestie
 
 Plan a music festival: browse festivals, see the lineup and schedule, rate
 artists, and export a personal schedule as an image.

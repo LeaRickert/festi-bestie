@@ -1,6 +1,6 @@
 # Roadmap
 
-Order of work for Festi Besti. The specs in [specs/](specs/) say what the app
+Order of work for Festi Bestie. The specs in [specs/](specs/) say what the app
 must do. This file says what to do first. Each item points to a spec or a
 Known Issue instead of repeating it. Tick an item when it is merged.
 

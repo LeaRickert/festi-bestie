@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Festi Besti is a festival planning app (React 18, Vite, Tailwind, Supabase). Behavior is defined in `specs/*.spec.md`; read the relevant spec before changing a feature and update it (and run `npx @rosenjcb/spec-md lint specs`) when behavior changes. Setup and commands are in `README.md`.
+Festi Bestie is a festival planning app (React 18, Vite, Tailwind, Supabase). Behavior is defined in `specs/*.spec.md`; read the relevant spec before changing a feature and update it (and run `npx @rosenjcb/spec-md lint specs`) when behavior changes. Setup and commands are in `README.md`.
 
 ## Conventions
 

@@ -59,7 +59,7 @@ const LandingPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Music className="h-5 w-5 text-festival-purple" />
-              <h1 className="text-xl font-bold text-white">Festi Besti</h1>
+              <h1 className="text-xl font-bold text-white">Festi Bestie</h1>
             </div>
             <div className="flex items-center space-x-2">
               {user ? (
@@ -192,7 +192,7 @@ const LandingPage = () => {
       <section className="py-6 px-4 bg-white/5">
         <div className="max-w-4xl mx-auto">
           <h3 className="text-base font-semibold text-white/90 mb-4 text-center">
-            Why Choose Festi Besti?
+            Why Choose Festi Bestie?
           </h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -233,7 +233,7 @@ const LandingPage = () => {
       <footer className="py-4 px-4 border-t border-white/10">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-white/50 text-xs">
-            © 2024 Festi Besti
+            © 2026 Festi Bestie
           </p>
         </div>
       </footer>

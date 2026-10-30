@@ -1,4 +1,4 @@
-// CSV Import Utility for Festi Besti
+// CSV Import Utility for Festi Bestie
 // This utility helps import festival lineup data from CSV files
 
 export const parseCSVLineup = (csvContent, festivalId) => {
