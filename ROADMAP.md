@@ -36,9 +36,10 @@ Needs Phase 0 (TypeScript and tests). Needs Phase 1 before the deploy.
 
 - [ ] Add `festivals.slug` (unique) and a unique key on `acts (festival_id, artist, day)`. Generate the migration. (data-import)
 - [ ] Write `data:import` and `data:export` in TypeScript, with tests (data-import FR-1 to FR-11)
-- [ ] Trim `supabase/seed.sql` to a small set for dev
+- [ ] Rebuild `supabase/seed.sql` (or derive it from `data/edc-orlando-2025`) as a small but complete dev set: every day, every stage, and a spread of start times (early, late, past midnight), with a few acts with no time and a few with a special note
 - [ ] Create the production Supabase project and push the migrations
-- [ ] Import `data/edc-orlando-2024` and `data/edc-orlando-2025` into production
+- [ ] Import `data/edc-orlando-2025` into production as the full past-festival test set (all set times, except the Bacardi stage which is left out). Use it to check the time grid and exports. `data/edc-orlando-2024` has no times, so it is not imported.
+- [ ] Import `data/edc-orlando-2026` into production. This is the festival that is used and rated, and it is next week.
 - [ ] Make the first admin user
 - [ ] Deploy the frontend
 
@@ -52,6 +53,9 @@ Needs Phase 0 (TypeScript and tests). Needs Phase 1 before the deploy.
 
 ## Phase 4: Schedule UI and mobile
 
+- [ ] Drop the act and festival images from the UI (landing, detail, export). They add nothing. Remove `data/edc-orlando-2026/_images` if nothing else uses it.
+- [ ] Show a festival logo as a small extra mark next to the name, from one optimized sprite sheet (one file, one request)
+- [ ] Clean up the overall design, starting with the schedule: spacing, type, color and contrast
 - [ ] Design the time grid for a 375 px wide screen (festivals FR-4)
 - [ ] Make the day and stage filters easy to use with a thumb
 - [ ] Make the act popup a bottom sheet on a phone
@@ -88,8 +92,20 @@ Needs Phases 4 and 6. Write `group-heatmap.spec.md` first (draft exists).
 - [ ] Show the overlap: acts that many members rate 4 or 5
 - [ ] Let the user pick the group and the day
 
+## Phase 8: Offline
+
+Needs Phase 4. A festival has weak signal, so the app must work without it. Write `offline.spec.md` first.
+
+- [ ] Explore first, then decide: service worker with precached app shell, cached schedule data, local store (IndexedDB) for ratings
+- [ ] Open the app and read the schedule with no connection after one online visit
+- [ ] Save a rating offline and sync it when the connection returns (keep the upsert on `user_id,act_id`)
+- [ ] Decide how to resolve a conflict when the same rating changed on two devices ??
+- [ ] Show the user when they are offline and when a rating is waiting to sync
+- [ ] Test on a throttled and a fully offline connection
+
 ## Open questions
 
 - Is a group private by invite only, or can anyone find it?
 - Does a member share all ratings, or one festival at a time?
+- Does offline need group ratings too, or only the user's own?
 - Does the heatmap use the average rating or the count of high ratings?
