@@ -1,19 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router'
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Music, 
-  Play,
-  Star
-} from 'lucide-react'
+import { ArrowLeft, Calendar, MapPin } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { formatTime } from '../utils/scheduleUtils'
 import { useFestivalData } from '../hooks/useFestivalData'
 import { supabase } from '../utils/supabase'
-import StarRating from '../components/StarRating'
+import ActDetailModal from '../components/ActDetailModal'
 import LoginModal from '../components/LoginModal'
 import ScheduleView from '../components/ScheduleView'
 import AnnouncedView from '../components/AnnouncedView'
@@ -118,7 +109,7 @@ const FestivalDetailPage = () => {
       
       case 'times':
       case 'complete':
-        return <ScheduleView acts={acts} onActClick={setSelectedAct} festivalName={festival.name} ratings={ratings} />
+        return <ScheduleView acts={acts} onActClick={setSelectedAct} />
       
       default:
         return <AnnouncedView festival={festival} />
@@ -266,127 +257,14 @@ const FestivalDetailPage = () => {
 
       {/* Act Detail Popup */}
       {selectedAct && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 max-w-md w-full max-h-[80vh] overflow-y-auto border border-white/10">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-bold text-white">{selectedAct.artist}</h3>
-              <button
-                onClick={() => setSelectedAct(null)}
-                className="text-white/60 hover:text-white transition-colors"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              {/* Basic Info */}
-              <div className="space-y-1.5">
-                {selectedAct.day && (
-                  <div className="flex items-center text-white/80 text-sm">
-                    <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                    <span>{selectedAct.day}</span>
-                  </div>
-                )}
-                {selectedAct.stage && (
-                  <div className="flex items-center text-white/80 text-sm">
-                    <MapPin className="h-3.5 w-3.5 mr-1.5" />
-                    <span>{selectedAct.stage}</span>
-                  </div>
-                )}
-                {selectedAct.startTime && selectedAct.length && (
-                  <div className="flex items-center text-white/80 text-sm">
-                    <Clock className="h-3.5 w-3.5 mr-1.5" />
-                    <span>{formatTime(selectedAct.startTime)} • {selectedAct.length}min</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Genre and Category */}
-              {(selectedAct.genre || selectedAct.category) && (
-                <div className="space-y-1.5">
-                  {selectedAct.genre && (
-                    <div className="flex items-center text-white/70 text-sm">
-                      <Music className="h-3.5 w-3.5 mr-1.5" />
-                      <span>{selectedAct.genre}</span>
-                    </div>
-                  )}
-                  {selectedAct.category && (
-                    <div className="text-white/60 text-xs">
-                      {selectedAct.category}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Special Notes */}
-              {selectedAct.specialNotes && (
-                <div className="bg-festival-purple/20 border border-festival-purple/30 rounded-md p-2">
-                  <p className="text-festival-purple font-medium text-xs">
-                    {selectedAct.specialNotes}
-                  </p>
-                </div>
-              )}
-
-              {/* Average Rating */}
-              {selectedAct.avgRating > 0 && (
-                <div className="flex items-center text-festival-purple text-sm">
-                  <Star className="h-3.5 w-3.5 mr-1.5" />
-                  <span className="font-medium">Avg: {selectedAct.avgRating.toFixed(1)}</span>
-                </div>
-              )}
-
-              {/* User Rating */}
-              <div className="border-t border-white/10 pt-3">
-                <div className="text-white/70 text-xs mb-2">Your Rating:</div>
-                {user ? (
-                  <StarRating
-                    rating={ratings[selectedAct.id] || 0}
-                    onRatingChange={(rating) => handleRatingChange(selectedAct.id, rating)}
-                    size="md"
-                    showValue={true}
-                  />
-                ) : (
-                  <div className="space-y-2">
-                    <StarRating
-                      rating={0}
-                      onRatingChange={() => {}}
-                      size="md"
-                      showValue={false}
-                    />
-                    <div className="bg-festival-purple/10 border border-festival-purple/30 rounded-md p-2.5">
-                      <p className="text-white/70 text-xs mb-2">
-                        Sign in to rate this artist
-                      </p>
-                      <button
-                        onClick={() => setShowLoginModal(true)}
-                        className="w-full py-1.5 bg-festival-purple hover:bg-festival-purple/80 text-white font-medium rounded-md transition-colors text-sm"
-                      >
-                        Sign In to Rate
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* YouTube Link */}
-              {selectedAct.youtubeUrl && (
-                <div className="border-t border-white/10 pt-3">
-                  <a
-                    href={selectedAct.youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-3 py-1.5 bg-festival-blue/20 text-festival-blue rounded-md hover:bg-festival-blue/30 transition-colors text-sm"
-                  >
-                    <Play className="h-3.5 w-3.5 mr-1.5" />
-                    {selectedAct.youtubeTitle || 'Watch Set'}
-                  </a>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <ActDetailModal
+          act={selectedAct}
+          rating={ratings[selectedAct.id] || 0}
+          signedIn={Boolean(user)}
+          onRate={(rating) => handleRatingChange(selectedAct.id, rating)}
+          onSignIn={() => setShowLoginModal(true)}
+          onClose={() => setSelectedAct(null)}
+        />
       )}
 
       {/* Login Modal */}

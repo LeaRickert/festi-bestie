@@ -12,7 +12,7 @@ import {
   calculateEndTime
 } from '../utils/scheduleUtils'
 
-const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
+const ScheduleView = ({ acts, onActClick }) => {
   const navigate = useNavigate()
   const { id } = useParams()
   const [selectedDay, setSelectedDay] = useState('')
@@ -53,9 +53,7 @@ const ScheduleView = ({ acts, onActClick, festivalName, ratings = {} }) => {
         <p className="text-white/70 text-sm">Complete schedule with set times</p>
         <div className="mt-3">
           <button
-            onClick={() => navigate(`/festival/${id}/export`, { 
-              state: { festival: { name: festivalName }, acts, ratings } 
-            })}
+            onClick={() => navigate(`/festival/${id}/export`)}
             className="flex items-center px-4 py-2 bg-festival-purple/20 text-festival-purple rounded-md hover:bg-festival-purple/30 transition-colors mx-auto text-sm"
           >
             <Download className="h-4 w-4 mr-1.5" />

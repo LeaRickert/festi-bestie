@@ -32,8 +32,8 @@ source of truth.
 - [festivals.spec.md](specs/festivals.spec.md): festival list, status views, schedule grid
 - [ratings.spec.md](specs/ratings.spec.md): 1 to 5 star ratings
 - [auth.spec.md](specs/auth.spec.md): sign-in, roles, database access rules
-- [export.spec.md](specs/export.spec.md): PNG export, CSV import and export
-- [data-import.spec.md](specs/data-import.spec.md): master data in `data/` (draft, scripts not built yet)
+- [export.spec.md](specs/export.spec.md): PNG export of one day
+- [data-import.spec.md](specs/data-import.spec.md): master data in `data/` and the import and export scripts
 - Drafts, not built yet: [act-editing](specs/act-editing.spec.md), [groups](specs/groups.spec.md), [group-heatmap](specs/group-heatmap.spec.md)
 
 Check the specs with `npx @rosenjcb/spec-md lint specs`.
@@ -42,9 +42,11 @@ Check the specs with `npx @rosenjcb/spec-md lint specs`.
 
 ```
 src/pages/       LandingPage, FestivalDetailPage, ExportPage
-src/components/  one view per festival status, StarRating, LoginModal
+src/components/  one view per festival status, ActDetailModal, StarRating, LoginModal, export/
 src/hooks/       useAuth, useFestivalData
-src/utils/       scheduleUtils, csvImport, exportSchedule, supabase
+src/export/      the HTML and PNG of the schedule image
+src/utils/       scheduleUtils, supabase
+scripts/         data:import and data:export
 supabase/schemas/    schema source of truth (tables, RLS, functions)
 supabase/migrations/ generated migrations
 supabase/seed.sql    small sample data for dev

@@ -1,7 +1,8 @@
 ---
 type: Spec
 title: "Spec: Festivals and Schedule Views"
-sources: [../src/pages/LandingPage.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../src/components, ../src/utils/scheduleUtils.js, ../supabase/schemas]
+sources: [../src/pages/LandingPage.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../src/components, ../src/utils/scheduleUtils.ts, ../supabase/schemas]
+tests: [../src/utils/scheduleUtils.test.ts]
 description: How the app lists festivals and shows a festival by status.
 tags: [festivals, schedule]
 timestamp: 2026-10-29T00:00:00Z
@@ -24,7 +25,7 @@ public to read.
 - The festival list on `/`.
 - The festival page on `/festival/:id`.
 - The five views and the act detail popup.
-- Time and position helpers in `scheduleUtils.js`.
+- Time and position helpers in `scheduleUtils.ts`.
 
 ## Out of Scope
 
@@ -42,7 +43,7 @@ public to read.
 | FR-4 | Show a time grid with one column for each stage in the times view |
 | FR-5 | Let the user filter the schedule by day |
 | FR-6 | Show act details in a popup when the user selects an act |
-| FR-7 | Convert 12-hour and 24-hour time text to minutes since midnight |
+| FR-7 | Convert 12-hour and 24-hour time text to minutes since midnight, and calculate the end time of a set, also past midnight |
 | FR-8 | Show a "Festival not found" message when the festival id does not exist |
 | FR-9 | Show an error message with a retry button when loading fails. Never show sample data |
 | FR-10 | Use the stored `day`, `stage`, `start_time` and `length_minutes` of an act. Leave an act without a start time out of the time grid |
@@ -65,6 +66,7 @@ public to read.
 | TC-RNP0 | FR-7 | The input is "8:00 PM" | `timeToMinutes` returns 1200 |
 | TC-PIKX | FR-7 | The input is "12:30 AM" | `timeToMinutes` returns 30 |
 | TC-0W65 | FR-7 | The input is "20:00" | `timeToMinutes` returns 1200 |
+| TC-EK11 | FR-7 | A set starts at 11:00 PM and lasts 90 minutes | `calculateEndTime` returns "12:30 AM" |
 | TC-UIU6 | FR-8 | The festival id matches no festival | The page shows "Festival not found" |
 | TC-I17V | FR-9 | Supabase returns an error for the festival list | The page shows the error and a retry button, and no festival cards |
 | TC-OUI8 | FR-10 | An act has the stage "Stage-1" and `start_time` 20:00:00 | The act shows under "Stage-1" at 8:00 PM |

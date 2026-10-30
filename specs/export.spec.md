@@ -1,26 +1,26 @@
 ---
 type: Spec
 title: "Spec: Schedule Export"
-sources: [../src/pages/ExportPage.jsx, ../src/utils/exportSchedule.js, ../src/utils/csvImport.js]
-description: Export one day of a schedule as a PNG image, and import and export acts as CSV.
-tags: [export, csv]
+sources: [../src/pages/ExportPage.tsx, ../src/export, ../src/components/export]
+description: Export one day of a schedule as a PNG image.
+tests: [../src/export/scheduleHtml.test.ts]
+tags: [export]
 timestamp: 2026-10-29T00:00:00Z
 ---
 
 # Schedule Export
 
-A user exports one day of a festival schedule as a PNG image to share. An
-organizer can import and export acts as CSV.
+A user exports one day of a festival schedule as a PNG image to share. The
+CSV import and export of acts is in `data-import.spec.md`.
 
 ## In Scope
 
 - The page `/festival/:id/export`.
-- The CSV helpers in `csvImport.js`.
+- The preview and the PNG made from it.
 
 ## Out of Scope
 
 - PDF output. The app does not make PDFs.
-- A lock-screen image. The code exists in `exportSchedule.js` but nothing calls it.
 
 ### Functional Requirements
 
@@ -31,8 +31,8 @@ organizer can import and export acts as CSV.
 | FR-3 | Download a PNG that shows the chosen acts and the ratings of the user |
 | FR-4 | Name the file `<festival>_<day>_schedule.png` with underscores for spaces |
 | FR-5 | Show an error message when the image cannot be made |
-| FR-6 | Read an act row from a CSV line, with the columns in a fixed order |
-| FR-7 | Write acts to a CSV file |
+| FR-6 | Load the festival, acts and ratings by the festival id, so a reload of the page keeps working |
+| FR-7 | Draw each act once, at its start time, also when it starts after midnight, and show a preview built from the same HTML as the PNG |
 
 ### QA Test Cases
 
@@ -43,13 +43,12 @@ organizer can import and export acts as CSV.
 | TC-5VLI | FR-3 | The user exports Friday with one rated act | The PNG contains that act and its rating |
 | TC-BL3F | FR-4 | The festival is "EDC Orlando 2024" and the day is "Friday" | The file is `EDC_Orlando_2024_Friday_schedule.png` |
 | TC-SKGA | FR-5 | `html2canvas` throws an error | The page shows an alert and the button is enabled again |
-| TC-GFLF | FR-6 | A CSV line has an artist, a day and a stage | `parseCSVLineup` returns an act with those values |
-| TC-878G | FR-7 | The user exports two acts | The CSV has a header line and two data lines |
+| TC-3NMG | FR-6 | The user opens `/festival/:id/export` directly or reloads it | The page shows the same day and stage choices as before |
+| TC-HCJ0 | FR-7 | An act starts at 12:30 AM | The image draws the act once, 575 px below the 1 PM line |
+| TC-YCYQ | FR-7 | An artist name contains an HTML tag | The tag is shown as text and does not run |
 
 ### Known Issues
 
-- `parseCSVLineup` gives each act a random start time. It also splits on commas, so a quoted comma breaks the row. FR-6 is partial.
-- `exportActsToCSV` does not quote values.
-- `ExportPage.jsx` has 834 lines. It copies `timeToMinutes` and the position helpers from `scheduleUtils.js`.
-- `ExportPage` gets `acts` and `ratings` through router `state`. A page reload loses them. ??
-- `exportSchedule.js` is legacy code.
+- The image has a fixed size (a phone, or a tablet by user agent), not the size of the screen. Phase 4 revisits it.
+- An act without a start time or length is left out of the image.
+- TC-SKGA and TC-3NMG are checked by hand. The tests do not run a browser.

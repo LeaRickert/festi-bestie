@@ -10,7 +10,7 @@ Festi Bestie is a festival planning app (React 18, Vite, Tailwind, Supabase). Be
 
 - Test IDs (`TC-XXXX`) are stable. Generate new ones with `npx @rosenjcb/spec-md id`; never renumber. FR ids stay contiguous.
 - Ratings: whole stars 1-5, always saved with an upsert on `user_id,act_id`.
-- Time: DB `start_time` is TIME; the UI uses 12-hour text. Use `timeToMinutes()` from `src/utils/scheduleUtils.js`; the schedule grid starts at 1 PM and uses 90 px per hour.
+- Time: DB `start_time` is TIME; the UI uses 12-hour text. Use `timeToMinutes()` from `src/utils/scheduleUtils.ts`; the schedule grid starts at 1 PM and uses 90 px per hour.
 - Roles: the database enforces access with RLS (`can_edit_acts()`, `get_user_role()`). Frontend checks (`canEditActs`, `isAdmin`) only hide UI.
 - TypeScript is on with `allowJs`. Write new files as `.ts` or `.tsx`; convert old files only when you change them. Check with `npm run typecheck`.
 - Lint is Biome (`npm run lint`, config in `biome.json`). The formatter is off, so keep the existing style: 2 spaces, single quotes, no semicolons. Old a11y and hooks findings are warnings, not errors; do not add new ones.

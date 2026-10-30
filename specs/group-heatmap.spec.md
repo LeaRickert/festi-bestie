@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Group Heatmap"
-sources: [../src/components/ScheduleView.jsx, ../src/utils/scheduleUtils.js]
+sources: [../src/components/ScheduleView.jsx, ../src/utils/scheduleUtils.ts]
 tests: []
 description: DRAFT. A schedule view that shows where the ratings of a group overlap.
 tags: [groups, schedule, draft]

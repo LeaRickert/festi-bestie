@@ -74,4 +74,3 @@ edit the files with Excel or other tools.
 - `--prune` removes the ratings of a removed act (cascade).
 - A renamed artist is a new act under the act key. The dry run shows it as one add and one missing act.
 - The times of 2024 and 2026 are empty in the files. 2025 has all times except two acts (Annicka, AR/CO) and the Bacardi stage, which is left out.
-- The app has an older CSV helper, `src/utils/csvImport.js`. See `export.spec.md`. The two must share one parser or one must go. ??

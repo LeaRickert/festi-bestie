@@ -45,12 +45,11 @@ Needs Phase 0 (TypeScript and tests). Needs Phase 1 before the deploy.
 
 ## Phase 3: Refactor
 
-- [ ] Rebuild `supabase/seed.sql` (or derive it from `data/edc-orlando-2025`) as a small but complete dev set: every day, every stage, and a spread of start times (early, late, past midnight), with a few acts with no time and a few with a special note
-- [ ] Remove the copied time helpers from `ExportPage.jsx`. Import `scheduleUtils`.
-- [ ] Split `ExportPage.jsx` into a preview, a filter panel and an export function
-- [ ] Move the act popup out of `FestivalDetailPage.jsx`
-- [ ] Delete `RoleBasedExample.jsx`, the legacy `exportSchedule.js` and `csvImport.js`. The data scripts replace the CSV code. (export Known Issues)
-- [ ] Remove the router-state hand-off to the export page. Load data by festival id. (export Known Issues)
+- [x] Remove the copied time helpers from `ExportPage.jsx`. Import `scheduleUtils`.
+- [x] Split `ExportPage.jsx` into a preview, a filter panel and an export function
+- [x] Move the act popup out of `FestivalDetailPage.jsx`
+- [x] Delete `RoleBasedExample.jsx`, the legacy `exportSchedule.js` and `csvImport.js`. The data scripts replace the CSV code. (export Known Issues)
+- [x] Remove the router-state hand-off to the export page. Load data by festival id. (export Known Issues)
 
 ## Phase 4: Schedule UI and mobile
 
@@ -103,6 +102,10 @@ Needs Phase 4. A festival has weak signal, so the app must work without it. Writ
 - [ ] Decide how to resolve a conflict when the same rating changed on two devices ??
 - [ ] Show the user when they are offline and when a rating is waiting to sync
 - [ ] Test on a throttled and a fully offline connection
+
+## Phase 9: Dev Tools
+
+- [ ] Rebuild `supabase/seed.sql` (or derive it from `data/edc-orlando-2025`) as a small but complete dev set: every day, every stage, and a spread of start times (early, late, past midnight), with a few acts with no time and a few with a special note
 
 ## Open questions
 
