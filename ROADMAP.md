@@ -36,7 +36,7 @@ Needs Phase 0 (TypeScript and tests). Needs Phase 1 before the deploy.
 
 - [x] Add `festivals.slug` (unique) and a unique key on `acts (festival_id, artist, day)`. Generate the migration. (data-import)
 - [x] Write `data:import` and `data:export` in TypeScript, with tests (data-import FR-1 to FR-11)
-- [ ] Rebuild `supabase/seed.sql` (or derive it from `data/edc-orlando-2025`) as a small but complete dev set: every day, every stage, and a spread of start times (early, late, past midnight), with a few acts with no time and a few with a special note
+- [ ] Squash the migrations into one initial migration (done before the first push; never after)
 - [ ] Create the production Supabase project and push the migrations
 - [ ] Import `data/edc-orlando-2025` into production as the full past-festival test set (all set times, except the Bacardi stage which is left out). Use it to check the time grid and exports. `data/edc-orlando-2024` has no times, so it is not imported.
 - [ ] Import `data/edc-orlando-2026` into production. This is the festival that is used and rated, and it is next week.
@@ -45,6 +45,7 @@ Needs Phase 0 (TypeScript and tests). Needs Phase 1 before the deploy.
 
 ## Phase 3: Refactor
 
+- [ ] Rebuild `supabase/seed.sql` (or derive it from `data/edc-orlando-2025`) as a small but complete dev set: every day, every stage, and a spread of start times (early, late, past midnight), with a few acts with no time and a few with a special note
 - [ ] Remove the copied time helpers from `ExportPage.jsx`. Import `scheduleUtils`.
 - [ ] Split `ExportPage.jsx` into a preview, a filter panel and an export function
 - [ ] Move the act popup out of `FestivalDetailPage.jsx`

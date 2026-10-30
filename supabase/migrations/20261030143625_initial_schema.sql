@@ -16,6 +16,7 @@ CREATE TABLE "public"."acts" (
   "avg_rating"     numeric(3,1),
   "created_at"     timestamp with time zone DEFAULT now(),
   "updated_at"     timestamp with time zone DEFAULT now(),
+  CONSTRAINT "acts_festival_artist_day_key" UNIQUE (festival_id, artist, day),
   CONSTRAINT "acts_pkey" PRIMARY KEY (id)
 );
 
@@ -24,13 +25,16 @@ ALTER TABLE "public"."acts"
 
 CREATE TABLE "public"."festivals" (
   "id"          uuid NOT NULL DEFAULT gen_random_uuid(),
+  "slug"        text NOT NULL,
   "name"        text NOT NULL,
   "start_date"  date NOT NULL,
   "end_date"    date NOT NULL,
   "location"    text NOT NULL,
   "image_url"   text,
   "description" text,
-  CONSTRAINT "festivals_pkey" PRIMARY KEY (id)
+  CONSTRAINT "festivals_pkey" PRIMARY KEY (id),
+  CONSTRAINT "festivals_slug_check" CHECK ((slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'::text)),
+  CONSTRAINT "festivals_slug_key" UNIQUE (slug)
 );
 
 ALTER TABLE "public"."festivals"
@@ -128,9 +132,24 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
   AS $function$
 begin
   insert into public.user_profiles (id, username, role)
-  values (new.id, new.email, 'viewer');
+  values (
+    new.id,
+    coalesce(nullif(trim(new.raw_user_meta_data ->> 'username'), ''), new.email),
+    'viewer'
+  );
   return new;
 end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.is_username_available (
+  name text
+)
+  RETURNS boolean
+  LANGUAGE sql
+  SECURITY DEFINER
+  SET search_path TO 'public'
+  AS $function$
+  select not exists (select 1 from public.user_profiles where username = trim(name));
 $function$;
 
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
@@ -217,10 +236,22 @@ CREATE POLICY "Festivals are viewable by everyone" ON "public"."festivals"
   TO PUBLIC
   USING (true);
 
+CREATE POLICY "Admins can update any profile" ON "public"."user_profiles"
+  FOR UPDATE
+  TO PUBLIC
+  USING ((public.get_user_role(auth.uid()) = 'admin'::public.user_role))
+  WITH CHECK ((public.get_user_role(auth.uid()) = 'admin'::public.user_role));
+
+CREATE POLICY "Admins can view all profiles" ON "public"."user_profiles"
+  FOR SELECT
+  TO PUBLIC
+  USING ((public.get_user_role(auth.uid()) = 'admin'::public.user_role));
+
 CREATE POLICY "Users can update their own profile" ON "public"."user_profiles"
   FOR UPDATE
   TO PUBLIC
-  USING ((auth.uid() = id));
+  USING ((auth.uid() = id))
+  WITH CHECK (((auth.uid() = id) AND (role = public.get_user_role(auth.uid()))));
 
 CREATE POLICY "Users can view their own profile" ON "public"."user_profiles"
   FOR SELECT
@@ -247,3 +278,74 @@ CREATE POLICY "Users can view their own ratings" ON "public"."user_ratings"
   TO PUBLIC
   USING ((auth.uid() = user_id));
 
+GRANT EXECUTE ON FUNCTION "public"."can_edit_acts"(uuid) TO PUBLIC, "anon", "authenticated";
+
+REVOKE ALL ON FUNCTION "public"."can_edit_acts"(uuid) FROM "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."can_edit_acts"(uuid) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."can_edit_acts"(uuid) TO "service_role";
+
+GRANT EXECUTE ON FUNCTION "public"."get_user_role"(uuid) TO PUBLIC, "anon", "authenticated";
+
+REVOKE ALL ON FUNCTION "public"."get_user_role"(uuid) FROM "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."get_user_role"(uuid) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."get_user_role"(uuid) TO "service_role";
+
+GRANT EXECUTE ON FUNCTION "public"."handle_new_user"() TO PUBLIC, "anon", "authenticated";
+
+REVOKE ALL ON FUNCTION "public"."handle_new_user"() FROM "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."handle_new_user"() TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."handle_new_user"() TO "service_role";
+
+GRANT EXECUTE ON FUNCTION "public"."is_username_available"(text) TO PUBLIC, "anon", "authenticated";
+
+REVOKE ALL ON FUNCTION "public"."is_username_available"(text) FROM "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."is_username_available"(text) TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."is_username_available"(text) TO "service_role";
+
+GRANT EXECUTE ON FUNCTION "public"."update_updated_at_column"() TO PUBLIC, "anon", "authenticated";
+
+REVOKE ALL ON FUNCTION "public"."update_updated_at_column"() FROM "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."update_updated_at_column"() TO "postgres";
+
+GRANT EXECUTE ON FUNCTION "public"."update_updated_at_column"() TO "service_role";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."acts" TO "anon", "authenticated";
+
+REVOKE ALL ON TABLE "public"."acts" FROM "postgres";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."acts" TO "postgres";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."acts" TO "service_role";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."festivals" TO "anon", "authenticated";
+
+REVOKE ALL ON TABLE "public"."festivals" FROM "postgres";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."festivals" TO "postgres";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."festivals" TO "service_role";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."user_profiles" TO "anon", "authenticated";
+
+REVOKE ALL ON TABLE "public"."user_profiles" FROM "postgres";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."user_profiles" TO "postgres";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."user_profiles" TO "service_role";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."user_ratings" TO "anon", "authenticated";
+
+REVOKE ALL ON TABLE "public"."user_ratings" FROM "postgres";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."user_ratings" TO "postgres";
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."user_ratings" TO "service_role";
