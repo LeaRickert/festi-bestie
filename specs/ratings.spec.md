@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Artist Ratings"
-sources: [../src/components/StarRating.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.jsx, ../supabase/schemas]
+sources: [../src/components/StarRating.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../supabase/schemas]
 description: How a signed-in user rates an act.
 tags: [ratings]
 timestamp: 2026-10-29T00:00:00Z
@@ -38,6 +38,7 @@ rating for each act. A user sees only their own ratings.
 | FR-4 | Load the ratings of the signed-in user when the acts load |
 | FR-5 | Ask a user who is not signed in to sign in before they rate |
 | FR-6 | Let a user read and write only their own ratings |
+| FR-7 | Show the previous rating again when a save fails |
 
 ### QA Test Cases
 
@@ -51,8 +52,8 @@ rating for each act. A user sees only their own ratings.
 | TC-TR50 | FR-4 | A user with ratings for two acts opens the festival | The two acts show the saved ratings |
 | TC-XL9D | FR-5 | A visitor opens an act popup | The popup shows "Sign In to Rate" and the stars do nothing |
 | TC-6Q8C | FR-6 | User A requests the ratings of user B | The database returns no rows |
+| TC-16K9 | FR-7 | A user changes a rating from 3 to 5 and the save fails | The act shows 3 stars again |
 
 ### Known Issues
 
-- On a save error, `handleRatingChange` does not revert the rating. The "revert" code sets the value to itself.
-- `avg_rating` in the mock data has values above 5.
+- None.

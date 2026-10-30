@@ -8,65 +8,29 @@ import { supabase } from '../utils/supabase'
 const LandingPage = () => {
   const [festivals, setFestivals] = useState([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(null)
   const [showLogin, setShowLogin] = useState(false)
   const { user, signOut } = useAuth()
 
   useEffect(() => {
-    console.log('LandingPage useEffect');
     fetchFestivals()
   }, [])
 
   const fetchFestivals = async () => {
+    setLoading(true)
+    setLoadError(null)
     try {
-      // Try to fetch from Supabase first
       const { data, error } = await supabase
         .from('festivals')
         .select('*')
         .order('start_date')
 
-      if (error || !data || data.length === 0) {
-        // Fallback to mock data if Supabase is not configured
-        const mockFestivals = [
-          {
-            id: '1',
-            name: 'EDC Orlando 2024',
-            start_date: '2024-11-15',
-            end_date: '2024-11-17',
-            location: 'Orlando, FL',
-            image_url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop',
-            description: 'Electric Daisy Carnival Orlando - The ultimate electronic dance music experience',
-            status: 'complete'
-          },
-          {
-            id: '2',
-            name: 'Ultra Music Festival 2024',
-            start_date: '2024-03-22',
-            end_date: '2024-03-24',
-            location: 'Miami, FL',
-            image_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop',
-            description: 'Ultra Music Festival - Where electronic music meets the ocean',
-            status: 'lineup'
-          },
-          {
-            id: '3',
-            name: 'Tomorrowland 2024',
-            start_date: '2024-07-19',
-            end_date: '2024-07-21',
-            location: 'Boom, Belgium',
-            image_url: 'https://images.unsplash.com/photo-1571266028243-e68c785c3b73?w=800&h=400&fit=crop',
-            description: 'Tomorrowland - The magical electronic music festival',
-            status: 'announced'
-          }
-        ]
-        setFestivals(mockFestivals)
-      } else {
-        console.log('LandingPage useEffect setFestivals', data);
-        setFestivals(data)
-      }
+      if (error) throw error
+      setFestivals(data ?? [])
     } catch (error) {
       console.error('Error fetching festivals:', error)
+      setLoadError(error.message || 'Could not load festivals')
     } finally {
-      console.log('LandingPage useEffect finally');
       setLoading(false)
     }
   }
@@ -142,6 +106,23 @@ const LandingPage = () => {
             Upcoming Festivals
           </h3>
           
+          {loadError && (
+            <div className="text-center py-6">
+              <p className="text-red-400 text-sm mb-3">Could not load festivals: {loadError}</p>
+              <button
+                type="button"
+                onClick={fetchFestivals}
+                className="px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
+          {!loadError && festivals.length === 0 && (
+            <p className="text-white/60 text-sm text-center py-6">No festivals yet.</p>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {festivals.map((festival) => (
               <Link

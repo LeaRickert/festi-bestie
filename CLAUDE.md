@@ -20,4 +20,4 @@ Festi Besti is a festival planning app (React 18, Vite, Tailwind, Supabase). Beh
 
 ## Known issues
 
-See the "Known Issues" section of each spec. Biggest: `useAuth.jsx` bypasses profile fetching, and profile policies let a user change their own role.
+See the "Known Issues" section of each spec. Phase 1 closed the auth and mock-data issues; check each spec for what remains.

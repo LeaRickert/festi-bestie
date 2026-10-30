@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Festivals and Schedule Views"
-sources: [../src/pages/LandingPage.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.jsx, ../src/components, ../src/utils/scheduleUtils.js, ../supabase/schemas]
+sources: [../src/pages/LandingPage.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../src/components, ../src/utils/scheduleUtils.js, ../supabase/schemas]
 description: How the app lists festivals and shows a festival by status.
 tags: [festivals, schedule]
 timestamp: 2026-10-29T00:00:00Z
@@ -44,6 +44,9 @@ public to read.
 | FR-6 | Show act details in a popup when the user selects an act |
 | FR-7 | Convert 12-hour and 24-hour time text to minutes since midnight |
 | FR-8 | Show a "Festival not found" message when the festival id does not exist |
+| FR-9 | Show an error message with a retry button when loading fails. Never show sample data |
+| FR-10 | Use the stored `day`, `stage`, `start_time` and `length_minutes` of an act. Leave an act without a start time out of the time grid |
+| FR-11 | Show the debug panel in development builds only |
 
 ### QA Test Cases
 
@@ -63,11 +66,13 @@ public to read.
 | TC-PIKX | FR-7 | The input is "12:30 AM" | `timeToMinutes` returns 30 |
 | TC-0W65 | FR-7 | The input is "20:00" | `timeToMinutes` returns 1200 |
 | TC-UIU6 | FR-8 | The festival id matches no festival | The page shows "Festival not found" |
+| TC-I17V | FR-9 | Supabase returns an error for the festival list | The page shows the error and a retry button, and no festival cards |
+| TC-OUI8 | FR-10 | An act has the stage "Stage-1" and `start_time` 20:00:00 | The act shows under "Stage-1" at 8:00 PM |
+| TC-WRQY | FR-10 | An act has no `start_time` | The act is missing from the time grid and no time is shown for it |
+| TC-61J9 | FR-11 | A production build opens a festival page | The DEBUG button does not show and Ctrl/Cmd + D does nothing |
 
 ### Known Issues
 
-- If Supabase returns an error or no festivals, the app shows hard-coded mock festivals and acts. This hides real errors. ??
-- `useFestivalData` rebuilds `day` and `stage` by splitting a `day-stage` key on `-`. A stage name that has a hyphen breaks.
-- `useFestivalData` makes up a start time for an act that has none. Time handling assumes a 1 PM to 12 AM festival.
-- The act popup is in `FestivalDetailPage.jsx`. A debug panel (Ctrl/Cmd + D) ships in production.
+- Time handling assumes a 1 PM to 12 AM festival.
+- The act popup is in `FestivalDetailPage.jsx`.
 - `LandingPage` text says "Filter by genre and time". No genre or time filter exists.

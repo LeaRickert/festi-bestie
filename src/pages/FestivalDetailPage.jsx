@@ -10,6 +10,7 @@ import {
   Star
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { formatTime } from '../utils/scheduleUtils'
 import { useFestivalData } from '../hooks/useFestivalData'
 import { supabase } from '../utils/supabase'
 import StarRating from '../components/StarRating'
@@ -25,15 +26,17 @@ const FestivalDetailPage = () => {
   const { user } = useAuth()
 
   // Use the shared hook for festival data, acts, and ratings
-  const { festival, acts, ratings, loading, setRatings } = useFestivalData(id, user)
+  const { festival, acts, ratings, loading, error, retry, setRatings } = useFestivalData(id, user)
 
   const [debugStatus, setDebugStatus] = useState(null) // For debug mode
   const [showDebugControls, setShowDebugControls] = useState(false) // Toggle debug controls
   const [selectedAct, setSelectedAct] = useState(null) // For act detail popup
   const [showLoginModal, setShowLoginModal] = useState(false) // For login modal
 
-  // Debug mode keyboard shortcut (Ctrl/Cmd + D)
+  // Debug mode keyboard shortcut (Ctrl/Cmd + D), development builds only
   useEffect(() => {
+    if (!import.meta.env.DEV) return
+
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
         e.preventDefault()
@@ -53,11 +56,24 @@ const FestivalDetailPage = () => {
   const handleRatingChange = async (actId, rating) => {
     if (!user) return
     
+    const previous = ratings[actId]
+    const restorePrevious = () => {
+      setRatings(prev => {
+        const next = { ...prev }
+        if (previous === undefined) {
+          delete next[actId]
+        } else {
+          next[actId] = previous
+        }
+        return next
+      })
+    }
+
     setRatings(prev => ({
       ...prev,
       [actId]: rating
     }))
-    
+
     try {
       // Save to Supabase using upsert with proper conflict resolution
       const { error } = await supabase
@@ -69,17 +85,14 @@ const FestivalDetailPage = () => {
         }, {
           onConflict: 'user_id,act_id'
         })
-      
+
       if (error) {
         console.error('Error saving rating:', error)
-        // Revert the local state on error
-        setRatings(prev => ({
-          ...prev,
-          [actId]: prev[actId] // Keep previous value
-        }))
+        restorePrevious()
       }
     } catch (error) {
       console.error('Error saving rating:', error)
+      restorePrevious()
     }
   }
 
@@ -116,6 +129,21 @@ const FestivalDetailPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3">
+        <div className="text-red-400 text-sm">Could not load the festival: {error}</div>
+        <button
+          type="button"
+          onClick={retry}
+          className="px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
+        >
+          Try again
+        </button>
       </div>
     )
   }
@@ -169,7 +197,7 @@ const FestivalDetailPage = () => {
       </section>
 
       {/* Debug Controls */}
-      {showDebugControls && (
+      {import.meta.env.DEV && showDebugControls && (
         <section className="py-2.5 px-4 bg-red-500/10 border-b border-red-500/20">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between flex-wrap gap-2">
@@ -212,6 +240,7 @@ const FestivalDetailPage = () => {
       )}
 
       {/* Debug Toggle Button */}
+      {import.meta.env.DEV && (
       <div className="fixed top-3 right-3 z-50">
         <button
           onClick={() => setShowDebugControls(prev => !prev)}
@@ -225,6 +254,7 @@ const FestivalDetailPage = () => {
           DEBUG
         </button>
       </div>
+      )}
 
 
       {/* Content Display */}
@@ -268,7 +298,7 @@ const FestivalDetailPage = () => {
                 {selectedAct.startTime && selectedAct.length && (
                   <div className="flex items-center text-white/80 text-sm">
                     <Clock className="h-3.5 w-3.5 mr-1.5" />
-                    <span>{selectedAct.startTime} • {selectedAct.length}min</span>
+                    <span>{formatTime(selectedAct.startTime)} • {selectedAct.length}min</span>
                   </div>
                 )}
               </div>

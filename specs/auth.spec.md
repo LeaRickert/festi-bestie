@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Authentication and Roles"
-sources: [../src/hooks/useAuth.jsx, ../src/components/LoginModal.jsx, ../supabase/schemas]
+sources: [../src/hooks/useAuth.tsx, ../src/components/LoginModal.jsx, ../supabase/schemas]
 description: Sign-in, profiles and the viewer, editor and admin roles.
 tags: [auth, roles, rls]
 timestamp: 2026-10-29T00:00:00Z
@@ -39,7 +39,7 @@ Level Security (RLS). The frontend only hides controls.
 | FR-5 | Let anyone read acts and festivals |
 | FR-6 | Let only an editor or an admin create or change an act |
 | FR-7 | Let only an admin delete an act |
-| FR-8 | Let only an admin change the role of a user |
+| FR-8 | Let only an admin change the role of a user. A user can still edit their own username |
 | FR-9 | Load the role of the signed-in user and expose `canEditActs`, `isAdmin` and `isEditor` |
 
 ### QA Test Cases
@@ -50,16 +50,15 @@ Level Security (RLS). The frontend only hides controls.
 | TC-125V | FR-2 | The user signs up with username "lea" | A profile exists with username "lea" |
 | TC-5R53 | FR-3 | A new account is created | The profile role is `viewer` |
 | TC-YF4Q | FR-4 | Two users choose the username "lea" | The second sign-up fails |
+| TC-RAM6 | FR-4 | A user signs up with the username "lea" and it is taken | The form shows "That username is already taken" and no account is created |
 | TC-8AK8 | FR-5 | A visitor who is not signed in requests the acts | The database returns the acts |
 | TC-6FKK | FR-6 | A `viewer` updates an act | The database rejects the update |
 | TC-ED7F | FR-6 | An `editor` updates an act | The database accepts the update |
 | TC-LIGW | FR-7 | An `editor` deletes an act | The database rejects the delete |
-| TC-Y6AC | FR-8 | A `viewer` sets their own role to `admin` | The role stays `viewer` |
+| TC-Y6AC | FR-8 | A `viewer` sets their own role to `admin` | The database rejects the update and the role stays `viewer` |
+| TC-S419 | FR-8 | An `admin` sets the role of another user to `editor` | The role of that user is `editor` |
 | TC-S4V9 | FR-9 | An `editor` signs in | `canEditActs` is true and `isAdmin` is false |
 
 ### Known Issues
 
-- `useAuth` skips the profile fetch and returns `{ username: 'temp_user', role: 'viewer' }` for every user. FR-9 fails today.
-- The RLS policy "Users can update their own profile" lets a user change their own `role`. FR-8 fails today. The admin policy does not exist in `supabase/schemas`.
-- The sign-up trigger sets the username to the email. `signUp` then updates it. A duplicate username leaves an account with the email as username.
 - `RoleBasedExample.jsx` is demo code and no page uses it.

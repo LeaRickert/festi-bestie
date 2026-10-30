@@ -20,15 +20,15 @@ Phases 1 and 2 are the gate for real users.
 
 ## Phase 1: Fix correctness and security
 
-- [ ] Remove the profile bypass in `useAuth` (auth FR-9)
-- [ ] Stop users from changing their own role in RLS (auth FR-8)
-- [ ] Add the admin policy to change roles (auth FR-8)
-- [ ] Remove the mock-data fallbacks. Show an error state instead. (festivals Known Issues)
-- [ ] Revert the displayed rating when a save fails (ratings Known Issues)
-- [ ] Stop building the act key from `day-stage`. Use the fields directly. (festivals Known Issues)
-- [ ] Use the stored start time. Do not make up times. (festivals Known Issues)
-- [ ] Handle a duplicate username at sign-up (auth Known Issues)
-- [ ] Hide the debug panel in production builds
+- [x] Remove the profile bypass in `useAuth` (auth FR-9)
+- [x] Stop users from changing their own role in RLS (auth FR-8)
+- [x] Add the admin policy to change roles (auth FR-8)
+- [x] Remove the mock-data fallbacks. Show an error state instead. (festivals Known Issues)
+- [x] Revert the displayed rating when a save fails (ratings Known Issues)
+- [x] Stop building the act key from `day-stage`. Use the fields directly. (festivals Known Issues)
+- [x] Use the stored start time. Do not make up times. (festivals Known Issues)
+- [x] Handle a duplicate username at sign-up (auth Known Issues)
+- [x] Hide the debug panel in production builds
 
 ## Phase 2: Data and first deploy
 
