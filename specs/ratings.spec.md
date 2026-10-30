@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Artist Ratings"
-sources: [../src/components/StarRating.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.jsx, ../supabase-setup.sql]
+sources: [../src/components/StarRating.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.jsx, ../supabase/schemas]
 description: How a signed-in user rates an act.
 tags: [ratings]
 timestamp: 2026-10-29T00:00:00Z

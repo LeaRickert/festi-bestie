@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Friend Groups"
-sources: [../supabase-setup.sql]
+sources: [../supabase/schemas]
 tests: []
 description: DRAFT. Groups of friends who can see each other's ratings.
 tags: [groups, ratings, privacy, draft]

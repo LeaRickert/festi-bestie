@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Authentication and Roles"
-sources: [../src/hooks/useAuth.jsx, ../src/components/LoginModal.jsx, ../supabase-setup.sql]
+sources: [../src/hooks/useAuth.jsx, ../src/components/LoginModal.jsx, ../supabase/schemas]
 description: Sign-in, profiles and the viewer, editor and admin roles.
 tags: [auth, roles, rls]
 timestamp: 2026-10-29T00:00:00Z
@@ -60,7 +60,7 @@ Level Security (RLS). The frontend only hides controls.
 ### Known Issues
 
 - `useAuth` skips the profile fetch and returns `{ username: 'temp_user', role: 'viewer' }` for every user. FR-9 fails today.
-- The RLS policy "Users can update their own profile" lets a user change their own `role`. FR-8 fails today. The admin policy does not exist in `supabase-setup.sql`.
+- The RLS policy "Users can update their own profile" lets a user change their own `role`. FR-8 fails today. The admin policy does not exist in `supabase/schemas`.
 - The sign-up trigger sets the username to the email. `signUp` then updates it. A duplicate username leaves an account with the email as username.
 - `RoleBasedExample.jsx` is demo code and no page uses it.
 - Environment variable names differ: `supabase.js` reads `VITE_SUPABASE_PUBLISHABLE_KEY`, but `CLAUDE.md` and the README say `VITE_SUPABASE_ANON_KEY`.

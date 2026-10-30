@@ -8,7 +8,8 @@ Stack: React 18, Vite, Tailwind CSS, Supabase (Postgres, Auth, RLS), html2canvas
 ## Setup
 
 1. Install packages: `npm install`
-2. Create a Supabase project. Run `supabase-setup.sql` in the SQL editor.
+2. Start local Supabase (needs Docker): `npx supabase start`, then `npx supabase db reset`. This applies the migrations and `supabase/seed.sql`.
+   For a hosted project: `npx supabase link`, then `npx supabase db push`.
 3. Create `.env.local`:
    ```env
    VITE_SUPABASE_URL=https://<project>.supabase.co
@@ -31,6 +32,7 @@ source of truth.
 - [ratings.spec.md](specs/ratings.spec.md): 1 to 5 star ratings
 - [auth.spec.md](specs/auth.spec.md): sign-in, roles, database access rules
 - [export.spec.md](specs/export.spec.md): PNG export, CSV import and export
+- [data-import.spec.md](specs/data-import.spec.md): master data in `data/` (draft, scripts not built yet)
 - Drafts, not built yet: [act-editing](specs/act-editing.spec.md), [groups](specs/groups.spec.md), [group-heatmap](specs/group-heatmap.spec.md)
 
 Check the specs with `npx @rosenjcb/spec-md lint specs`.
@@ -42,8 +44,22 @@ src/pages/       LandingPage, FestivalDetailPage, ExportPage
 src/components/  one view per festival status, StarRating, LoginModal
 src/hooks/       useAuth, useFestivalData
 src/utils/       scheduleUtils, csvImport, exportSchedule, supabase
-supabase-setup.sql   schema, RLS policies, sample data
+supabase/schemas/    schema source of truth (tables, RLS, functions)
+supabase/migrations/ generated migrations
+supabase/seed.sql    small sample data for dev
+data/                master data for each festival (CSV and YAML)
 ```
+
+## Database changes
+
+The schema uses Supabase declarative schemas (`pg-delta`).
+
+1. Edit a file in `supabase/schemas/`. Do not change the database in Studio.
+2. Generate a migration: `npx supabase db schema declarative sync -f <name> --no-apply`
+3. Read the migration. Remove `GRANT`/`REVOKE` lines you did not write.
+4. Apply it: `npx supabase migration up`
+
+Do not use `db diff`. It ignores the schema files.
 
 ## Festival status
 

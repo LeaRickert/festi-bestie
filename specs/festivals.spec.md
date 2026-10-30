@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Festivals and Schedule Views"
-sources: [../src/pages/LandingPage.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.jsx, ../src/components, ../src/utils/scheduleUtils.js, ../supabase-setup.sql]
+sources: [../src/pages/LandingPage.jsx, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.jsx, ../src/components, ../src/utils/scheduleUtils.js, ../supabase/schemas]
 description: How the app lists festivals and shows a festival by status.
 tags: [festivals, schedule]
 timestamp: 2026-10-29T00:00:00Z

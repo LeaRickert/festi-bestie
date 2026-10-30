@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Act Editing"
-sources: [../src/hooks/useAuth.jsx, ../supabase-setup.sql]
+sources: [../src/hooks/useAuth.jsx, ../supabase/schemas]
 tests: []
 description: DRAFT. How an editor or an admin adds and changes acts.
 tags: [acts, roles, draft]
