@@ -9,7 +9,8 @@ create table public.acts (
   special_notes text,
   genre text,
   category text,
-  youtube_url text,
+  -- A YouTube video id, not a URL (act-editing FR-6, data-import FR-12).
+  youtube_video_id text constraint acts_youtube_video_id_check check (youtube_video_id ~ '^[A-Za-z0-9_-]{11}$'),
   youtube_title text,
   avg_rating numeric(3, 1),
   created_at timestamptz default now(),

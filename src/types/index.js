@@ -21,7 +21,7 @@
  * @property {string} [specialNotes]
  * @property {string} [genre]
  * @property {string} [category]
- * @property {string} [youtubeUrl]
+ * @property {string} [youtubeVideoId]
  * @property {string} [youtubeTitle]
  * @property {number} [avgRating]
  */

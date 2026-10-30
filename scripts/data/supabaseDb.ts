@@ -5,7 +5,7 @@ import type { ActRow, FestivalRow } from './files.ts'
 import { DataError, type Db, type Env } from './run.ts'
 
 const ACT_FIELDS =
-  'artist, day, stage, start_time, length_minutes, genre, category, special_notes, youtube_url, youtube_title'
+  'artist, day, stage, start_time, length_minutes, genre, category, special_notes, youtube_video_id, youtube_title'
 const FESTIVAL_FIELDS = 'name, start_date, end_date, location, description, status'
 
 function readEnvFile(path: string): Record<string, string> {

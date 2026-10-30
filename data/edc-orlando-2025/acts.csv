@@ -1,4 +1,4 @@
-artist,day,stage,start_time,length_minutes,genre,category,special_notes,youtube_url,youtube_title
+artist,day,stage,start_time,length_minutes,genre,category,special_notes,youtube_video_id,youtube_title
 Adam Beyer,Friday,Neon Garden,21:00,85,Techno,Techno,Adam Beyer presents Drumcode,,
 Annicka,Friday,,,,Techno,Techno,,,
 Argy,Friday,Kinetic Field,16:25,60,Techno,Techno,,,

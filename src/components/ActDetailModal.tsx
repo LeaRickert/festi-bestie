@@ -92,10 +92,10 @@ const ActDetailModal = ({ act, rating, signedIn, onRate, onSignIn, onClose }: Ac
           )}
         </div>
 
-        {act.youtubeUrl && (
+        {act.youtubeVideoId && (
           <div className="border-t border-white/10 pt-3">
             <a
-              href={act.youtubeUrl}
+              href={`https://www.youtube.com/watch?v=${act.youtubeVideoId}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center text-link hover:underline text-sm"

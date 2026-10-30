@@ -21,7 +21,7 @@ export interface Act {
   specialNotes: string | null
   genre: string | null
   category: string | null
-  youtubeUrl: string | null
+  youtubeVideoId: string | null
   youtubeTitle: string | null
   festivalId: string
   avgRating: number | null
@@ -78,7 +78,7 @@ export const useFestivalData = (festivalId: string | null, user: { id: string } 
           specialNotes: act.special_notes,
           genre: act.genre,
           category: act.category,
-          youtubeUrl: act.youtube_url,
+          youtubeVideoId: act.youtube_video_id,
           youtubeTitle: act.youtube_title,
           festivalId: act.festival_id,
           avgRating: act.avg_rating,

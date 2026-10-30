@@ -9,7 +9,7 @@ export const ACT_COLUMNS = [
   'genre',
   'category',
   'special_notes',
-  'youtube_url',
+  'youtube_video_id',
   'youtube_title',
 ] as const
 
@@ -24,7 +24,7 @@ export interface ActRow {
   genre: string | null
   category: string | null
   special_notes: string | null
-  youtube_url: string | null
+  youtube_video_id: string | null
   youtube_title: string | null
 }
 
@@ -99,6 +99,8 @@ export function parseCsv(input: string): string[][] {
 }
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/
+// The same check as acts_youtube_video_id_check in the database (data-import FR-12).
+const VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/
 
 export function parseActs(text: string, file = 'acts.csv'): { acts: ActRow[]; issues: Issue[] } {
   const issues: Issue[] = []
@@ -148,6 +150,11 @@ export function parseActs(text: string, file = 'acts.csv'): { acts: ActRow[]; is
       issue(row, 'length_minutes', `"${length}" is not a whole number of minutes`)
     }
 
+    const videoId = value('youtube_video_id')
+    if (videoId && !VIDEO_ID_PATTERN.test(videoId)) {
+      issue(row, 'youtube_video_id', `"${videoId}" is not a YouTube video id (11 letters, digits, _ or -), for example dQw4w9WgXcQ`)
+    }
+
     if (issues.length > before) return
 
     const act: ActRow = {
@@ -159,7 +166,7 @@ export function parseActs(text: string, file = 'acts.csv'): { acts: ActRow[]; is
       genre: orNull('genre'),
       category: orNull('category'),
       special_notes: orNull('special_notes'),
-      youtube_url: orNull('youtube_url'),
+      youtube_video_id: orNull('youtube_video_id'),
       youtube_title: orNull('youtube_title'),
     }
     const key = actKey(act)

@@ -21,7 +21,7 @@ const act = (overrides: Partial<Act>): Act => ({
   specialNotes: null,
   genre: null,
   category: null,
-  youtubeUrl: null,
+  youtubeVideoId: null,
   youtubeTitle: null,
   festivalId: 'f1',
   avgRating: null,

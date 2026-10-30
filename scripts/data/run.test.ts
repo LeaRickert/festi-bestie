@@ -47,7 +47,7 @@ end_date: 2025-11-09
 location: Orlando, FL
 status: schedule
 `
-const HEADER = 'artist,day,stage,start_time,length_minutes,genre,category,special_notes,youtube_url,youtube_title'
+const HEADER = 'artist,day,stage,start_time,length_minutes,genre,category,special_notes,youtube_video_id,youtube_title'
 
 function folder(acts: string[]): string {
   const dataDir = mkdtempSync(join(tmpdir(), 'festi-data-'))

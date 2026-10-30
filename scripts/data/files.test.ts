@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { type ActRow, formatIssue, parseActs, serializeActs } from './files.ts'
 
-const HEADER = 'artist,day,stage,start_time,length_minutes,genre,category,special_notes,youtube_url,youtube_title'
+const HEADER = 'artist,day,stage,start_time,length_minutes,genre,category,special_notes,youtube_video_id,youtube_title'
 
 describe('parseActs (data-import FR-2 to FR-5)', () => {
   it('[TC-Q291] reads a byte order mark and a quoted comma', () => {
@@ -40,6 +40,21 @@ describe('parseActs (data-import FR-2 to FR-5)', () => {
   })
 })
 
+describe('parseActs video id (data-import FR-12)', () => {
+  it('[TC-MU32] stores the video id dQw4w9WgXcQ', () => {
+    const { acts, issues } = parseActs(`${HEADER}\nDiplo,Friday,,,,,,,dQw4w9WgXcQ,\n`)
+    expect(issues).toEqual([])
+    expect(acts[0].youtube_video_id).toBe('dQw4w9WgXcQ')
+  })
+
+  it('[TC-Y799] rejects a full YouTube URL and reports the row and the column', () => {
+    const { acts, issues } = parseActs(`${HEADER}\nDiplo,Friday,,,,,,,https://www.youtube.com/watch?v=dQw4w9WgXcQ,\n`)
+    expect(acts).toEqual([])
+    expect(issues).toHaveLength(1)
+    expect(issues[0]).toMatchObject({ row: 2, column: 'youtube_video_id' })
+  })
+})
+
 describe('serializeActs (data-import FR-9)', () => {
   const act = (artist: string, day: string): ActRow => ({
     artist,
@@ -50,7 +65,7 @@ describe('serializeActs (data-import FR-9)', () => {
     genre: null,
     category: null,
     special_notes: null,
-    youtube_url: null,
+    youtube_video_id: null,
     youtube_title: null,
   })
 
