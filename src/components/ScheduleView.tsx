@@ -28,7 +28,7 @@ interface ScheduleViewProps {
 const TIME_COLUMN = 'w-6'
 const STAGE_COLUMN = 'flex-1 min-w-[120px]'
 
-// The time grid of the times view (schedule-grid FR-1, FR-2, FR-5, FR-7).
+// The time grid of the times view (schedule-grid FR-1, FR-2, FR-5, FR-6).
 const ScheduleView = ({ acts, ratings, onActClick }: ScheduleViewProps) => {
   const navigate = useNavigate()
   const { id } = useParams()

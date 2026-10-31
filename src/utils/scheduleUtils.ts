@@ -36,7 +36,7 @@ export const getActsForStage = (acts: Act[], stage: string): Act[] => {
   })
 }
 
-// The time grid (schedule-grid FR-1, FR-5, FR-7). Each hour is 90 px high.
+// The time grid (schedule-grid FR-1, FR-5, FR-6). Each hour is 90 px high.
 export const PIXELS_PER_HOUR = 90
 
 // A time before 6 AM belongs to the night of the day before, so it counts past 24:00.

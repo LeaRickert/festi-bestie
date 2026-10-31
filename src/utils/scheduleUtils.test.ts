@@ -87,7 +87,7 @@ describe('grid range (schedule-grid FR-5)', () => {
   })
 })
 
-describe('act times (schedule-grid FR-7)', () => {
+describe('act times (schedule-grid FR-6)', () => {
   it('[TC-6A6R] shows a set from 1:00 PM to 1:50 PM as "1-1:50"', () => {
     expect(formatShortRange('13:00', 50)).toBe('1-1:50')
   })

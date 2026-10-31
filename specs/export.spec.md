@@ -44,7 +44,7 @@ is in `data-import.spec.md`.
 | FR-6 | Load the festival, acts and ratings by the festival id, so a reload of the page keeps working |
 | FR-7 | Draw each act once, at its start time, also when it starts after midnight, and show a preview built from the same HTML as the PNG |
 | FR-8 | Draw each act with the rating style of `ratings.spec.md`, from the same style function as the time grid |
-| FR-9 | Fit all chosen stages into the image width. Fit the time range to the chosen acts as in schedule-grid FR-5, and label each hour with the hour number only. Show act times as in schedule-grid FR-7 |
+| FR-9 | Fit all chosen stages into the image width. Fit the time range to the chosen acts as in schedule-grid FR-5, and label each hour with the hour number only. Show act times as in schedule-grid FR-6 |
 | FR-10 | Make the PNG the image size, so the wallpaper matches the phone screen pixel for pixel |
 | FR-11 | Leave the clock zone empty. Draw the header directly above the stage names, and fill the rest of the image to the bottom with the grid. The hour height follows from the time range |
 | FR-12 | Show the clock zone as a faint outline in the preview only, not in the PNG |

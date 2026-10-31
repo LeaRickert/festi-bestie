@@ -37,6 +37,7 @@ acts, watches sets and compares stages.
 
 - The time grid of the times view (see `schedule-grid.spec.md`).
 - The act sheet (see `act-sheet.spec.md`).
+- Heatmap mode of the act views (see `heatmap.spec.md`).
 - The rating scale, save and style (see `ratings.spec.md`).
 - Image export (see `export.spec.md`).
 - Role checks (see `auth.spec.md`).
