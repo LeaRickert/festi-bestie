@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useLocation, useNavigate, useSearchParams } from 'react-router'
-import { ArrowLeft, Calendar, Download, MapPin, Users } from 'lucide-react'
+import { ArrowLeft, Calendar, Download, HeartHandshake, MapPin, Users } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
 import { useActHeat } from '../hooks/useActHeat'
@@ -10,6 +10,7 @@ import { formatDateRange } from '../utils/dateUtils'
 import { ratingStyle } from '../utils/ratingStyle'
 import { heatStyle } from '../utils/heatStyle'
 import ActSheet from '../components/ActSheet'
+import BestieSheet from '../components/BestieSheet'
 import LoginModal from '../components/LoginModal'
 import ModeControl, { useMode } from '../components/ModeControl'
 import ScheduleView from '../components/ScheduleView'
@@ -25,7 +26,7 @@ const FestivalDetailPage = () => {
   // Use the shared hook for festival data, acts, and ratings
   const { festival, acts, ratings, loading, error, retry, setRatings } = useFestivalData(id, user)
   // The groups of the user for this festival make the ratings slider (groups FR-21).
-  const { groups } = useMyGroups(id ?? null, user?.id ?? null)
+  const { groups, reload: reloadGroups } = useMyGroups(id ?? null, user?.id ?? null)
 
   const [debugStatus, setDebugStatus] = useState(null) // For debug mode
   const [showDebugControls, setShowDebugControls] = useState(false) // Toggle debug controls
@@ -44,6 +45,13 @@ const FestivalDetailPage = () => {
   const selectedAct = acts.find(act => act.id === location.state?.actId) ?? null
   const openAct = (act) => navigate({ search: location.search }, { state: { actId: act.id } })
   const closeAct = () => navigate(-1)
+  // The bestie scores close the same way. Reload the groups so the list has
+  // the current members (bestie FR-9, FR-12).
+  const bestieOpen = Boolean(location.state?.bestie) && Boolean(user) && groups.length > 0
+  const openBestie = () => {
+    reloadGroups()
+    navigate({ search: location.search }, { state: { bestie: true } })
+  }
 
   // Debug mode keyboard shortcut (Ctrl/Cmd + D), development builds only
   useEffect(() => {
@@ -181,14 +189,27 @@ const FestivalDetailPage = () => {
               <ArrowLeft className="h-4 w-4 mr-1.5" />
               Back
             </Link>
-            {/* The groups page (groups FR-19). */}
-            <Link
-              to={`/festival/${id}/groups`}
-              className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
-            >
-              <Users className="h-4 w-4 mr-1.5" />
-              Groups
-            </Link>
+            <div className="flex items-center gap-2">
+              {/* Only for a user in a group for this festival (bestie FR-11). */}
+              {user && groups.length > 0 && (
+                <button
+                  type="button"
+                  onClick={openBestie}
+                  className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
+                >
+                  <HeartHandshake className="h-4 w-4 mr-1.5" />
+                  Bestie Scores
+                </button>
+              )}
+              {/* The groups page (groups FR-19). */}
+              <Link
+                to={`/festival/${id}/groups`}
+                className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
+              >
+                <Users className="h-4 w-4 mr-1.5" />
+                Groups
+              </Link>
+            </div>
           </div>
         </div>
       </header>
@@ -313,6 +334,18 @@ const FestivalDetailPage = () => {
           userId={user?.id ?? null}
           onRate={(rating) => handleRatingChange(selectedAct.id, rating)}
           onSignIn={() => setShowLoginModal(true)}
+          onClose={closeAct}
+        />
+      )}
+
+      {/* Bestie Scores */}
+      {bestieOpen && (
+        <BestieSheet
+          festivalId={festival.id}
+          acts={acts}
+          myRatings={ratings}
+          myId={user.id}
+          groups={groups}
           onClose={closeAct}
         />
       )}

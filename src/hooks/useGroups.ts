@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../utils/supabase'
 import type { GroupMember } from '../utils/groups'
+import { ratingsByUser } from '../utils/bestie'
+import type { Ratings } from '../utils/bestie'
 
 // Friend groups (groups.spec.md). The database enforces every rule; these
 // calls return its error so the page can show groupErrorMessage().
@@ -221,6 +223,42 @@ export const useActRatings = (actId: string, enabled: boolean) => {
       cancelled = true
     }
   }, [actId, enabled])
+
+  return { ratings, loading, error }
+}
+
+/**
+ * The ratings for the acts of one festival that the user can read, by user id
+ * and act id (bestie FR-1). Loads again when the component mounts, so each
+ * open of the bestie scores has fresh ratings (bestie FR-14).
+ */
+export const useFestivalRatings = (festivalId: string, actIds: Set<string>) => {
+  const [ratings, setRatings] = useState<Record<string, Ratings>>({})
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    supabase
+      .from('user_ratings')
+      .select('user_id, act_id, rating, acts!inner(festival_id)')
+      .eq('acts.festival_id', festivalId)
+      .then(({ data, error: ratingsError }) => {
+        if (cancelled) return
+        if (ratingsError) {
+          console.error('Error loading group ratings:', ratingsError)
+          setError(ratingsError.message)
+        } else {
+          setRatings(ratingsByUser(data ?? [], actIds))
+        }
+        setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [festivalId, actIds])
 
   return { ratings, loading, error }
 }

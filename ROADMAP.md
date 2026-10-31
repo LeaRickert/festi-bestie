@@ -99,8 +99,8 @@ only their own ratings" in `ratings.spec.md` (FR-6).
 
 Needs Phase 6. Spec: `bestie.spec.md`.
 
-- [ ] Add the match score, the sort, the bestie mark and the percent format as pure helpers in `src/utils`, with tests (bestie FR-1 to FR-7, FR-11)
-- [ ] Add the "Bestie Scores" button and popup: the matches of the user across their groups for the festival, the bestie mark, and the shared acts and clashes (bestie FR-5 to FR-15)
+- [x] Add the match score, the sort and the score format as pure helpers in `src/utils`, with tests (bestie FR-1 to FR-6, FR-10)
+- [x] Add the "Bestie Scores" button and popup: the matches of the user across their groups for the festival, and the shared acts and clashes (bestie FR-5 to FR-14)
 
 ## Phase 8: Group heatmap
 
