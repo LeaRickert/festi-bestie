@@ -29,6 +29,33 @@ create trigger update_user_profiles_updated_at
   before update on public.user_profiles
   for each row execute function public.update_updated_at_column();
 
+-- The username rule (auth FR-10), the same as src/utils/username.ts. It trims
+-- the name, then allows 1 to 20 letters A-Z, digits and single spaces. It runs
+-- only when a username is set or changed, so older usernames stay.
+create or replace function public.check_username()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  new.username := trim(new.username);
+  if tg_op = 'UPDATE' and new.username = old.username then
+    return new;
+  end if;
+  if new.username = '' then
+    raise exception 'Choose a username' using errcode = 'check_violation';
+  end if;
+  if char_length(new.username) > 20 or new.username !~ '^[A-Za-z0-9]+( [A-Za-z0-9]+)*$' then
+    raise exception 'Use up to 20 letters (A-Z), numbers and single spaces' using errcode = 'check_violation';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger check_user_profiles_username
+  before insert or update of username on public.user_profiles
+  for each row execute function public.check_username();
+
 create or replace function public.get_user_role(user_id uuid)
 returns public.user_role
 language plpgsql
@@ -52,7 +79,7 @@ end;
 $$;
 
 -- Creates a profile for each new account. The username comes from the sign-up
--- metadata and falls back to the email. A duplicate username fails the sign-up.
+-- metadata. A missing, invalid or duplicate username fails the sign-up.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -63,7 +90,7 @@ begin
   insert into public.user_profiles (id, username, role)
   values (
     new.id,
-    coalesce(nullif(trim(new.raw_user_meta_data ->> 'username'), ''), new.email),
+    coalesce(new.raw_user_meta_data ->> 'username', ''),
     'viewer'
   );
   return new;

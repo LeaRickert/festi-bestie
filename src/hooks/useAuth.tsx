@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '../utils/supabase'
+import { usernameError } from '../utils/username'
 
 type UserRole = 'viewer' | 'editor' | 'admin'
 
@@ -89,6 +90,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // reads it, and the unique constraint rejects a duplicate.
   const signUp = async (email: string, password: string, username: string) => {
     const name = username.trim()
+    const invalid = usernameError(name)
+    if (invalid) return { data: null, error: new Error(invalid) }
+
     const { data: available, error: checkError } = await supabase.rpc('is_username_available', {
       name,
     })
@@ -113,10 +117,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const updateUsername = async (newUsername: string) => {
     if (!user) return { error: new Error('No user logged in') }
+    const name = newUsername.trim()
+    const invalid = usernameError(name)
+    if (invalid) return { error: new Error(invalid) }
 
     const { error } = await supabase
       .from('user_profiles')
-      .update({ username: newUsername })
+      .update({ username: name })
       .eq('id', user.id)
 
     if (!error) {

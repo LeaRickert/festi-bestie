@@ -1,9 +1,17 @@
 import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { X, Mail, Lock, User } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { USERNAME_MAX } from '../utils/username'
+
+interface LoginModalProps {
+  isOpen: boolean
+  onClose: () => void
+  initialMode?: 'login' | 'signup'
+}
 
 // initialMode is read when the modal mounts. Remount it (with a key) to change it.
-const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
+const LoginModal = ({ isOpen, onClose, initialMode = 'login' }: LoginModalProps) => {
   const [isLogin, setIsLogin] = useState(initialMode === 'login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,7 +21,7 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
   
   const { signIn, signUp } = useAuth()
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError('')
@@ -28,7 +36,7 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
       }
       onClose()
     } catch (error) {
-      setError(error.message)
+      setError((error as Error).message)
     } finally {
       setLoading(false)
     }
@@ -75,6 +83,7 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 bg-white/10 border border-white/20 rounded-md text-white text-sm placeholder-white/60 focus:ring-2 focus:ring-white focus:border-transparent"
                   placeholder="Choose a username"
+                  maxLength={USERNAME_MAX}
                   required
                 />
               </div>
