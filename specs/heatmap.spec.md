@@ -31,7 +31,7 @@ needs no groups, so it ships before them.
 - Score: The sum of the weights of all ratings of one act, from the source.
 - Rater: A user who rated an act.
 - Heat: A number from 0 to 1 that sets the color of an act.
-- Global heat: `ln(1 + score) / ln(1 + max score)`. The max score is the highest score of an act in the same festival that has 5 raters or more.
+- Global heat: `ln(1 + score) / ln(1 + max score)`. The max score is the highest score of an act in the same festival that has 1 rater or more.
 - Group heat: `score / (2 × number of members)`.
 - Heat step: Heat in 5 steps. Step 1 is heat below 0.2, step 5 is heat 0.8 or more.
 - Heat green: `#107435`. Used only in Heatmap mode. Each step has its own fill alpha.
@@ -63,13 +63,14 @@ The act sheet shows the ratings of the members in the ratings slider of
 | FR-4 | Keep the act order, the day control and the act positions of the act view in Heatmap mode |
 | FR-5 | Calculate the score of an act from the weights of its ratings |
 | FR-6 | Calculate global heat for each act of a festival from the scores of that festival |
-| FR-7 | Store no heat for an act with fewer than 5 raters, and show the act with no green tint |
+| FR-7 | Store no heat for an act with no raters, and show the act with no green tint |
 | FR-8 | Calculate global heat again every 15 minutes |
 | FR-9 | In the "Global" source, do not show the ratings, the raters or the number of raters of an act to other users |
 | FR-10 | Calculate group heat from the ratings of the members of the chosen group |
 | FR-11 | Color each act with the heat green in 5 heat steps. Show no legend |
 | FR-12 | Show an act that no member rated with no green tint. Show no label for it |
 | FR-13 | Use the same view on a phone with no horizontal page scroll |
+| FR-14 | In Heatmap mode, show an info button next to the mode control. It opens an explanation of the heatmap as a bottom sheet on a phone and a dialog on a wider screen, with the closing rules of the act sheet |
 
 ### QA Test Cases
 
@@ -86,8 +87,8 @@ The act sheet shows the ratings of the members in the ratings slider of
 | TC-4HKC | FR-5 | Five users rated an act 1, 2, 3, 4 and 5 | The score is 3.5 |
 | TC-416B | FR-6 | The max score of the festival is 40 and an act has the score 10 | The global heat of the act is 0.65 |
 | TC-EJ37 | FR-6 | An act has the max score of the festival | The global heat of the act is 1 |
-| TC-V948 | FR-6 | The act with the highest score has 4 raters | The max score comes from the acts with 5 raters or more |
-| TC-I43Q | FR-7 | An act has 4 raters | `act_stats.heat` is null and the act has no green tint and no label |
+| TC-4VDF | FR-6 | The act with the highest score has 1 rater | The max score comes from that act |
+| TC-L8RD | FR-7 | An act has 1 rater, who rated it 5 | `act_stats.heat` is greater than 0 and the act has a green tint |
 | TC-7MJ0 | FR-7 | An act has no raters | The act has no green tint and no label |
 | TC-TMYT | FR-8 | A user rates an act at 10:00 | The global heat includes the rating at 10:15 or before |
 | TC-KLCA | FR-9 | A visitor reads `act_stats` for an act with 23 raters | The row shows only the act id, the heat and the time of the calculation. It shows no user id, rating or number of raters |
@@ -100,9 +101,12 @@ The act sheet shows the ratings of the members in the ratings slider of
 | TC-JW28 | FR-11 | Acts have the heat 0.1, 0.3, 0.5, 0.7 and 0.9 | Each act has a different heat step, and the fill gets stronger from 0.1 to 0.9 |
 | TC-SMBZ | FR-12 | No member of the group rated an act | The act has no green tint and no label |
 | TC-83P4 | FR-13 | The screen is 375 px wide | The page has no horizontal scroll |
+| TC-H8VP | FR-14 | The user taps the info button in Heatmap mode on a phone | A bottom sheet opens with the explanation of the heatmap |
+| TC-J3NM | FR-14 | The user is in "My picks" mode | The mode control shows no info button |
 
 ### Known Issues
 
-- A user can compare two runs of the job to guess a new rating. The 5-rater floor and the 15-minute batch make this hard.
+- Global heat has no rater floor, so the heat of an act with one rater shows how high that user rated it. A user can also compare two runs of the job to guess a new rating. Only the 15-minute batch makes this hard.
+- The explanation in the heatmap info popup (FR-14) is a placeholder.
 - A group of one member gives a heatmap of one color.
 - Until group heat exists (Phase 8), Heatmap mode uses "Global" and hides the source choice (FR-2).

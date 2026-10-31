@@ -37,7 +37,7 @@ compares stages and sees the acts they rated. The heatmap is a mode of this view
 
 | ID   | Requirement |
 |------|-------------|
-| FR-1 | Show a time grid with one column for each stage in the times view. On a phone each column has a fixed width and the grid scrolls sideways, with the stage names and the time column pinned. Put a 4 px gap between stage columns. The stage names and the time column have no background. The time column shows the hour number only, at its hour line |
+| FR-1 | Show a time grid with one column for each stage in the times view. On a phone each column has a fixed width and the grid scrolls sideways, with the stage names and the time column pinned. Put a 2 px gap between stage columns. The stage names and the time column have no background. The time column shows the hour number only, at its hour line |
 | FR-2 | Let the user filter the schedule by day with a full-width day control that stays at the top while the page scrolls. Keep the chosen day in the URL as `?day=` |
 | FR-3 | Convert 12-hour and 24-hour time text to minutes since midnight, and calculate the end time of a set, also past midnight |
 | FR-4 | Use the stored `day`, `stage`, `start_time` and `length_minutes` of an act. Leave an act without a start time out of the time grid |

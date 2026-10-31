@@ -295,7 +295,7 @@ const FestivalDetailPage = () => {
 
 
       {/* Content Display */}
-      <section className="py-4 px-4">
+      <section className="py-4 px-2">
         <div className="max-w-4xl mx-auto">
           {/* Every act view has the mode control; the announced view has no acts (heatmap FR-1). */}
           {currentStatus && currentStatus !== 'announced' && (

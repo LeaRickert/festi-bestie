@@ -69,7 +69,7 @@ describe('rating style in the image (export FR-8)', () => {
     const output = html([act({ id: 'a1', artist: 'Five' }), act({ id: 'a2', artist: 'One', startTime: '22:00' })], { a1: 5, a2: 1 })
     expect(actBlock(output, 'Five')).toContain('border: 1px solid #9e1fb3')
     expect(actBlock(output, 'Five')).toContain('background: rgba(158, 31, 179, 0.7)')
-    expect(actBlock(output, 'One')).toContain('border: 1px solid rgba(255, 255, 255, 0.4)')
+    expect(actBlock(output, 'One')).toContain('border: 1px solid rgba(170, 170, 170, 0.4)')
     expect(actBlock(output, 'One')).toContain('background: transparent')
   })
 })

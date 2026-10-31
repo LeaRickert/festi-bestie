@@ -16,17 +16,17 @@ describe('rating labels (ratings FR-2)', () => {
 })
 
 describe('rating style (ratings FR-10)', () => {
-  it('[TC-YBFW] shows a rating of 2 like no rating: white 70% border, no fill', () => {
-    const expected = { borderColor: 'rgba(255, 255, 255, 0.7)', background: 'transparent', color: '#ffffff' }
+  it('[TC-YBFW] shows a rating of 2 like no rating: gray 70% border, no fill', () => {
+    const expected = { borderColor: 'rgba(170, 170, 170, 0.7)', background: 'transparent', color: '#ffffff' }
     expect(ratingStyle(2)).toEqual(expected)
     expect(ratingStyle(0)).toEqual(expected)
   })
 
-  it('[TC-CC2Q] shows a rating of 1 with a white 40% border, no fill and white 80% text', () => {
+  it('[TC-CC2Q] shows a rating of 1 with a gray 40% border, no fill and gray 80% text', () => {
     expect(ratingStyle(1)).toEqual({
-      borderColor: 'rgba(255, 255, 255, 0.4)',
+      borderColor: 'rgba(170, 170, 170, 0.4)',
       background: 'transparent',
-      color: 'rgba(255, 255, 255, 0.8)',
+      color: 'rgba(170, 170, 170, 0.8)',
     })
   })
 

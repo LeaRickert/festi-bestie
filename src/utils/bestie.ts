@@ -7,7 +7,7 @@ import { festivalMinutes, getUniqueDays } from './scheduleUtils'
 export type Ratings = Record<string, number>
 
 export const EXPLANATION =
-  'Your score is how closely your ratings match theirs. Acts you both love count most, and their 1 on an act you rated 4 or 5 counts against you.'
+  'Your score is how closely your ratings match theirs. Acts you both love count most, but a clash brings down the score.'
 export const NOT_ENOUGH = 'Not enough ratings yet'
 export const RATE_MORE = 'Rate 5 acts with 3 stars or more to see your matches'
 export const NO_MEMBERS = 'No one in your groups yet. Share an invite link from Groups.'

@@ -17,9 +17,9 @@ revoke insert, update, delete, truncate on public.act_stats from anon, authentic
 create schema if not exists private;
 
 -- Global heat (heatmap FR-5 to FR-7). Weights: 1 and 2 are 0, 3 is 0.5, 4 is 1,
--- 5 is 2. Heat is ln(1 + score) / ln(1 + max score), where the max score comes
--- from the acts of the same festival with 5 raters or more. An act with fewer
--- than 5 raters gets no heat.
+-- 5 is 2. Heat is ln(1 + score) / ln(1 + max score), where the max score is the
+-- highest score of an act in the same festival with 1 rater or more. An act with
+-- no raters gets no heat.
 create or replace function private.refresh_act_stats()
 returns void
 language sql
@@ -38,14 +38,14 @@ as $$
   festival_max as (
     select festival_id, max(score) as max_score
     from scores
-    where raters >= 5
+    where raters >= 1
     group by festival_id
   )
   insert into public.act_stats (act_id, heat, computed_at)
   select
     s.act_id,
     case
-      when s.raters < 5 then null
+      when s.raters < 1 then null
       when m.max_score = 0 then 0
       else ln(1 + s.score) / ln(1 + m.max_score)
     end,

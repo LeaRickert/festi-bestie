@@ -41,7 +41,7 @@ ratings of the group (see `groups.spec.md`).
 | FR-1 | Show act details in the act sheet when the user selects an act |
 | FR-2 | Close the act sheet when the user taps outside it, taps the close button, presses Escape, swipes it down or goes back in the browser. Going back closes only the sheet |
 | FR-3 | When an act has a video, show a link to it on YouTube with the text "Recommended Set: [caption]", or "Recommended Set" when the act has no caption |
-| FR-4 | Always show a link to a YouTube search for "[artist] live set". When an act has no video, also show the text "Have a good example set for [artist]?" |
+| FR-4 | Always show a link to a YouTube search for "[artist] live set" |
 
 ### QA Test Cases
 
@@ -53,9 +53,10 @@ ratings of the group (see `groups.spec.md`).
 | TC-PCZP | FR-2 | The screen is 375 px wide and the user selects an act | The act details open as a bottom sheet |
 | TC-FR7I | FR-3 | The act has the video id `dQw4w9WgXcQ` | The link opens `https://www.youtube.com/watch?v=dQw4w9WgXcQ` |
 | TC-4O8O | FR-3 | The act has a video and the caption "Live at EDC Las Vegas 2025" | The link reads "Recommended Set: Live at EDC Las Vegas 2025" |
-| TC-RBKH | FR-4 | The user opens the act "Sota", which has no video | The sheet links to a YouTube search for "Sota live set" and shows "Have a good example set for Sota?" |
-| TC-0WII | FR-4 | The user opens an act that has a video | The sheet shows the "Recommended Set" link and the YouTube search link, and not "Have a good example set" |
+| TC-RBKH | FR-4 | The user opens the act "Sota", which has no video | The sheet links to a YouTube search for "Sota live set" |
+| TC-0WII | FR-4 | The user opens an act that has a video | The sheet shows the "Recommended Set" link and the YouTube search link |
 
 ### Known Issues
 
+- The prompt "Have a good example set for [artist]?" is hidden until users can suggest a set.
 - The group pages of the ratings slider load the ratings when the sheet opens. A rating that a member gives while the sheet is open shows the next time it opens.

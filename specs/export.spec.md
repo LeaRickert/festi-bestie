@@ -63,7 +63,7 @@ is in `data-import.spec.md`.
 | TC-3NMG | FR-6 | The user opens `/festival/:id/export` directly or reloads it | The page shows the same day and stage choices as before |
 | TC-HCJ0 | FR-7 | The first act starts at 1:00 PM and an act starts at 12:30 AM | The image draws the act once, 11.5 hours below the top of the grid |
 | TC-YCYQ | FR-7 | An artist name contains an HTML tag | The tag is shown as text and does not run |
-| TC-12UL | FR-8 | The user exports a day with an act rated 5 and an act rated 1 | The act rated 5 has a magenta border and a magenta 70% fill. The act rated 1 has a white 40% border and no fill |
+| TC-12UL | FR-8 | The user exports a day with an act rated 5 and an act rated 1 | The act rated 5 has a magenta border and a magenta 70% fill. The act rated 1 has a gray 40% border and no fill |
 | TC-E76L | FR-9 | The chosen acts start at 2:00 PM and the last one ends at 1:00 AM | The image grid runs from 2 to 1, labeled "2" to "1" |
 | TC-J3IS | FR-9 | An act starts at 2:30 PM and ends at 3:00 PM | The act shows "2:30-3" |
 | TC-NETT | FR-10 | A phone with a 390 by 844 screen and a device pixel ratio of 3 exports | The PNG is 1170 by 2532 pixels |

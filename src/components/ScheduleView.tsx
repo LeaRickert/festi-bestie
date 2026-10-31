@@ -25,8 +25,8 @@ interface ScheduleViewProps {
 
 // Width of the time column, and the minimum width of a stage column. At 768 px
 // four stages fit with no sideways scroll; on a phone the grid scrolls.
-const TIME_COLUMN = 'w-6'
-const STAGE_COLUMN = 'flex-1 min-w-[120px]'
+const TIME_COLUMN = 'w-[12px]'
+const STAGE_COLUMN = 'flex-1 min-w-[110px]'
 
 // The time grid of the times view (schedule-grid FR-1, FR-2, FR-5, FR-6).
 const ScheduleView = ({ acts, actStyle, onActClick }: ScheduleViewProps) => {
@@ -71,10 +71,10 @@ const ScheduleView = ({ acts, actStyle, onActClick }: ScheduleViewProps) => {
         <>
           {/* Stage names, pinned under the day control (top-14 is its height). */}
           <div ref={stageNames} className="sticky top-14 z-20 bg-page overflow-hidden">
-            <div className="flex gap-1 pb-1">
+            <div className="flex gap-0.5 pb-1">
               <div className={`${TIME_COLUMN} shrink-0 sticky left-0 bg-page`} />
               {stages.map((stage) => (
-                <div key={stage} className={`${STAGE_COLUMN} text-white/80 text-xs font-semibold truncate`}>
+                <div key={stage} className={`${STAGE_COLUMN} text-white/80 text-xs font-semibold truncate pl-2`}>
                   {stage}
                 </div>
               ))}
@@ -83,7 +83,7 @@ const ScheduleView = ({ acts, actStyle, onActClick }: ScheduleViewProps) => {
 
           <div className="overflow-x-auto pb-4" onScroll={syncStageNames}>
             {/* w-max lets the hour lines run under every stage when the grid scrolls sideways. */}
-            <div className="relative flex gap-1 w-max min-w-full">
+            <div className="relative flex gap-0.5 w-max min-w-full">
               {/* One line per hour across the whole grid, under the acts. */}
               <div aria-hidden="true" className="absolute inset-x-0 top-0 z-[1] pointer-events-none" style={{ height: gridHeight }}>
                 {hourLineElements}

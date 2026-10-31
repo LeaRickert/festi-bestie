@@ -97,7 +97,7 @@ const ActSheet = ({ act, rating, signedIn, groups = [], userId = null, onRate, o
             <Search className="h-3.5 w-3.5 mr-1.5 mt-0.5 shrink-0" />
             <span>Search YouTube for "{act.artist} live set"</span>
           </a>
-          {!act.youtubeVideoId && <p className="text-white/60 text-xs">Have a good example set for {act.artist}?</p>}
+          {/*{!act.youtubeVideoId && <p className="text-white/60 text-xs">Have a good example set for {act.artist}?</p>}*/}
         </div>
 
         {/* Last, so the stars stay in the same place with or without a video. */}

@@ -33,14 +33,14 @@ CREATE OR REPLACE FUNCTION private.refresh_act_stats()
   festival_max as (
     select festival_id, max(score) as max_score
     from scores
-    where raters >= 5
+    where raters >= 1
     group by festival_id
   )
   insert into public.act_stats (act_id, heat, computed_at)
   select
     s.act_id,
     case
-      when s.raters < 5 then null
+      when s.raters < 1 then null
       when m.max_score = 0 then 0
       else ln(1 + s.score) / ln(1 + m.max_score)
     end,

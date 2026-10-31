@@ -20,12 +20,12 @@ other members of their groups share for the festival of each group
 - Rating: An integer from 1 to 5 in `user_ratings`.
 - Label: The text for a rating. 1 "Not for me", 2 "Meh", 3 "Interested", 4 "Hyped", 5 "Must See!". All users read a rating with the same meaning, so friends can compare them.
 - Average rating: The `acts.avg_rating` column. The app only reads it.
-- Rating style: How an act block or act card shows the rating of the signed-in user. The time grid, the lineup, stages and schedule views and the export all use one style function.
+- Rating style: How an act block or act card shows the rating of the signed-in user. The time grid, the lineup, stages and schedule views and the export all use one style function. Gray is `#aaaaaa`.
 
   | Rating | Border | Fill | Text |
   |---|---|---|---|
-  | 1 | white 40% | none | white 80% |
-  | none or 2 | white 70% | none | white |
+  | 1 | gray 40% | none | gray 80% |
+  | none or 2 | gray 70% | none | white |
   | 3 | magenta | none | white |
   | 4 | magenta | magenta 20% | white |
   | 5 | magenta | magenta 70% | white |
@@ -73,13 +73,13 @@ other members of their groups share for the festival of each group
 | TC-16K9 | FR-7 | A user changes a rating from 3 to 5 and the save fails | The act shows 3 stars again |
 | TC-7FMH | FR-8 | A signed-in user selects the 4th star in the sheet | The rating is saved, the sheet stays open and shows "Hyped" |
 | TC-3K8R | FR-9 | The screen is 375 px wide and the sheet shows the stars | Each star is at least 44 by 44 px |
-| TC-YBFW | FR-10 | The user rated one act 2 and left one act unrated | Both acts have a white 70% border and no fill |
-| TC-CC2Q | FR-10 | The user rated an act 1 | The act has a white 40% border, no fill and white 80% text |
+| TC-YBFW | FR-10 | The user rated one act 2 and left one act unrated | Both acts have a gray 70% border and no fill |
+| TC-CC2Q | FR-10 | The user rated an act 1 | The act has a gray 40% border, no fill and gray 80% text |
 | TC-FINQ | FR-10 | The user rated an act 3 | The act has a magenta border and no fill |
 | TC-QZZJ | FR-10 | The user rated an act 4 | The act has a magenta border and a magenta 20% fill |
 | TC-NECG | FR-10 | The user rated an act 5 | The act has a magenta border and a magenta 70% fill |
 
 ### Known Issues
 
-- FR-6 covers single ratings. The global heat of `heatmap.spec.md` publishes the sum of all ratings of an act, and only for an act with 5 raters or more.
+- FR-6 covers single ratings. The global heat of `heatmap.spec.md` publishes the sum of all ratings of an act, for each act with at least one rater.
 - The app does not calculate `acts.avg_rating`. The heatmap shows no average. The column stays for now, unused.

@@ -61,7 +61,7 @@ choice, not a privacy rule (FR-8).
 | FR-9 | List each user who is a current member of at least one shared group, once |
 | FR-10 | Show the score as a number from 0 to 100 rounded to 2 decimals, with no trailing zeros and no percent sign |
 | FR-11 | Show a "Bestie Scores" button with the heart-handshake icon next to the "Groups" button on the festival page, only when the user is in at least one group for the festival |
-| FR-12 | Open the bestie scores as a bottom sheet on a phone and a dialog on a wider screen, with the closing rules of the act sheet. Show above the list: "Your score is how closely your ratings match theirs. Acts you both love count most, and their 1 on an act you rated 4 or 5 counts against you." |
+| FR-12 | Open the bestie scores as a bottom sheet on a phone and a dialog on a wider screen, with the closing rules of the act sheet. Show above the list: "Your score is how closely your ratings match theirs. Acts you both love count most, but a clash brings down the score." |
 | FR-13 | When no other user is in the groups of the user for the festival, show "No one in your groups yet. Share an invite link from Groups." and no list |
 | FR-14 | Load the ratings of the members and calculate the scores each time the popup opens |
 

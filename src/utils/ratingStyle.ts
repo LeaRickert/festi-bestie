@@ -24,7 +24,7 @@ export interface RatingStyle {
 }
 
 const magenta = (alpha: number) => `rgba(158, 31, 179, ${alpha})`
-const white = (alpha: number) => `rgba(255, 255, 255, ${alpha})`
+const white = (alpha: number) => `rgba(170, 170, 170, ${alpha})`
 
 // Plain CSS values, so they work in a React style object and in the export HTML.
 export function ratingStyle(rating: number): RatingStyle {
