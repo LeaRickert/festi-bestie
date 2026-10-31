@@ -1,10 +1,9 @@
 import { Music, MapPin } from 'lucide-react'
 import { useMemo } from 'react'
-import { ratingStyle } from '../utils/ratingStyle'
 import { getUniqueDays } from '../utils/scheduleUtils'
 import DayControl, { useSelectedDay } from './DayControl'
 
-const ScheduleByDayView = ({ acts, ratings, onActClick }) => {
+const ScheduleByDayView = ({ acts, actStyle, onActClick }) => {
   const days = useMemo(() => getUniqueDays(acts), [acts])
   const [selectedDay, setSelectedDay] = useSelectedDay(days)
 
@@ -70,7 +69,7 @@ const ScheduleByDayView = ({ acts, ratings, onActClick }) => {
                       key={act.id}
                       onClick={() => onActClick(act)}
                       className="border rounded-md p-2.5 active:opacity-80 transition-opacity cursor-pointer"
-                      style={ratingStyle(ratings[act.id] || 0)}
+                      style={actStyle(act)}
                     >
                       <div className="space-y-1.5">
                         <h5 className="text-white font-medium text-sm truncate">

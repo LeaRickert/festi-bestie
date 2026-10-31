@@ -1,16 +1,16 @@
 ---
 type: Spec
 title: "Spec: Heatmap"
-sources: [../src/components/LineupView.jsx, ../src/components/StagesView.jsx, ../src/components/ScheduleByDayView.jsx, ../src/components/ScheduleView.tsx, ../supabase/schemas]
-tests: []
-description: DRAFT. A mode of each act view that colors each act by how much people want to see it.
-tags: [heatmap, groups, schedule, draft]
+sources: [../src/components/LineupView.jsx, ../src/components/StagesView.jsx, ../src/components/ScheduleByDayView.jsx, ../src/components/ScheduleView.tsx, ../src/components/ModeControl.tsx, ../src/utils/heatStyle.ts, ../src/hooks/useActHeat.ts, ../supabase/schemas]
+tests: [../src/utils/heatStyle.test.ts]
+description: A mode of each act view that colors each act by how much people want to see it.
+tags: [heatmap, groups, schedule]
 timestamp: 2026-10-30T00:00:00Z
 ---
 
 # Heatmap
 
-DRAFT. This feature does not exist yet. The heatmap is a mode of each view
+The Global source exists. The group sources wait for `groups.spec.md`. The heatmap is a mode of each view
 that shows acts: the lineup, stages and schedule views (see
 `festivals.spec.md`) and the time grid (see `schedule-grid.spec.md`). A user
 can rate an act in each of these views, so each view has the heatmap. It looks
@@ -33,8 +33,9 @@ needs no groups, so it ships before them.
 - Heat: A number from 0 to 1 that sets the color of an act.
 - Global heat: `ln(1 + score) / ln(1 + max score)`. The max score is the highest score of an act in the same festival that has 5 raters or more.
 - Group heat: `score / (2 × number of members)`.
-- Rated bucket: The rounded number of raters of an act: "5+", "20+" or "100+". ??
-- `act_stats`: A table with one row for each act: `act_id`, `heat`, `rated_bucket`, `computed_at`. Everyone can read it. Only the scheduled job writes it.
+- Heat step: Heat in 5 steps. Step 1 is heat below 0.2, step 5 is heat 0.8 or more.
+- Heat green: `#107435`. Used only in Heatmap mode. Each step has its own fill alpha.
+- `act_stats`: A table with one row for each act: `act_id`, `heat`, `computed_at`. Everyone can read it. Only the scheduled job writes it.
 
 ## In Scope
 
@@ -61,9 +62,9 @@ needs no groups, so it ships before them.
 | FR-6 | Calculate global heat for each act of a festival from the scores of that festival |
 | FR-7 | Store no heat for an act with fewer than 5 raters, and show the act with no green tint |
 | FR-8 | Calculate global heat again every 15 minutes |
-| FR-9 | Do not show the rating or the exact number of raters of an act to other users. Show the rated bucket |
+| FR-9 | Do not show the ratings, the raters or the number of raters of an act to other users |
 | FR-10 | Calculate group heat from the ratings of the members of the chosen group |
-| FR-11 | Color each act on one green scale from heat 0 to heat 1, and show a legend for the scale |
+| FR-11 | Color each act with the heat green in 5 heat steps. Show no legend |
 | FR-12 | Show an act that no member rated with no green tint. Show no label for it |
 | FR-13 | Show the members who rated an act 3 or more, with their rating, when the user selects the act in a group source |
 | FR-14 | Use the same view on a phone with no horizontal page scroll |
@@ -87,21 +88,20 @@ needs no groups, so it ships before them.
 | TC-I43Q | FR-7 | An act has 4 raters | `act_stats.heat` is null and the act has no green tint and no label |
 | TC-7MJ0 | FR-7 | An act has no raters | The act has no green tint and no label |
 | TC-TMYT | FR-8 | A user rates an act at 10:00 | The global heat includes the rating at 10:15 or before |
-| TC-KLCA | FR-9 | A visitor reads `act_stats` for an act with 23 raters | The row shows the rated bucket "20+" and no user id or rating |
+| TC-KLCA | FR-9 | A visitor reads `act_stats` for an act with 23 raters | The row shows only the act id, the heat and the time of the calculation. It shows no user id, rating or number of raters |
 | TC-AGAM | FR-9 | A visitor requests the ratings of other users | The database returns no rows |
 | TC-8VLB | FR-10 | Three of four members rated an act 5 | The group heat is 0.75 |
 | TC-N2A8 | FR-10 | All four members rated an act 5 | The group heat is 1 |
 | TC-UM64 | FR-10 | In a group of four, two members rated an act 5 and 2 | Only the 5 counts. The group heat is 0.25 |
 | TC-FG7D | FR-10 | In a group of four, one member rated an act 3 | The group heat is 0.0625 |
 | TC-2Q72 | FR-11 | Two acts have the heat 0.2 and 0.9 | The act with 0.9 has the brighter green |
-| TC-JW28 | FR-11 | The user selects "Heatmap" | The legend shows the green scale from heat 0 to heat 1 |
+| TC-JW28 | FR-11 | Acts have the heat 0.1, 0.3, 0.5, 0.7 and 0.9 | Each act has a different heat step, and the fill gets stronger from 0.1 to 0.9 |
 | TC-SMBZ | FR-12 | No member of the group rated an act | The act has no green tint and no label |
 | TC-KSGK | FR-13 | The user selects an act that members A and B rated 5 and 3 | The sheet lists A with 5 and B with 3 |
 | TC-83P4 | FR-14 | The screen is 375 px wide | The page has no horizontal scroll |
 
 ### Known Issues
 
-- Open: the green scale and the number of legend steps. The theme uses magenta for ratings and neon for links. ??
-- Open: the bounds of the rated bucket. ??
 - A user can compare two runs of the job to guess a new rating. The 5-rater floor and the 15-minute batch make this hard.
 - A group of one member gives a heatmap of one color.
+- Until groups exist (Phase 6), Heatmap mode uses "Global" and hides the source choice and the hint (FR-2, FR-3). Both come with groups.

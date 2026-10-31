@@ -74,11 +74,11 @@ The design decisions are in `festivals.spec.md` (theme, FR-1, FR-7 to FR-9), `sc
 
 Needs Phase 4. Spec: `heatmap.spec.md` (draft exists). Needs no groups.
 
-- [ ] Add the table `act_stats` with RLS: everyone reads, only the job writes (heatmap FR-6, FR-9)
-- [ ] Add the `pg_cron` job that calculates global heat every 15 minutes, with the 5-rater floor (heatmap FR-5 to FR-8)
-- [ ] Add the mode control "My picks" / "Heatmap" to every view with acts (lineup, stages, schedule, time grid), with the "Global" source (heatmap FR-1 to FR-4)
-- [ ] Color the acts on the green scale, with the legend, and no tint for an act with no heat (heatmap FR-7, FR-11, FR-14)
-- [ ] Decide what to do with `acts.avg_rating` (ratings Known Issues)
+- [x] Add the table `act_stats` with RLS: everyone reads, only the job writes (heatmap FR-6, FR-9)
+- [x] Add the `pg_cron` job that calculates global heat every 15 minutes, with the 5-rater floor (heatmap FR-5 to FR-8)
+- [x] Add the mode control "My picks" / "Heatmap" to every view with acts (lineup, stages, schedule, time grid), with the "Global" source (heatmap FR-1 to FR-4)
+- [x] Color the acts with the heat green in 5 steps, with no legend, and no tint for an act with no heat (heatmap FR-7, FR-11, FR-14)
+- [x] Decide what to do with `acts.avg_rating`: keep it unused for now (ratings Known Issues)
 
 ## Phase 6: Friend groups
 

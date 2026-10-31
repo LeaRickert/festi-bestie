@@ -1,7 +1,6 @@
 import { Music, MapPin } from 'lucide-react'
-import { ratingStyle } from '../utils/ratingStyle'
 
-const StagesView = ({ acts, ratings, onActClick }) => {
+const StagesView = ({ acts, actStyle, onActClick }) => {
   // Group acts by stage and sort artists alphabetically within each stage
   const actsByStage = acts.reduce((acc, act) => {
     if (act.stage) {
@@ -50,7 +49,7 @@ const StagesView = ({ acts, ratings, onActClick }) => {
                 key={act.id}
                 onClick={() => onActClick(act)}
                 className="border rounded-md p-2.5 active:opacity-80 transition-opacity cursor-pointer"
-                style={ratingStyle(ratings[act.id] || 0)}
+                style={actStyle(act)}
               >
                 <div className="space-y-1.5">
                   <h4 className="text-white font-medium text-sm truncate">

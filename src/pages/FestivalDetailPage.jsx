@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useLocation, useNavigate } from 'react-router'
-import { ArrowLeft, Calendar, MapPin } from 'lucide-react'
+import { useParams, Link, useLocation, useNavigate, useSearchParams } from 'react-router'
+import { ArrowLeft, Calendar, Download, MapPin } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
+import { useActHeat } from '../hooks/useActHeat'
 import { supabase } from '../utils/supabase'
 import { formatDateRange } from '../utils/dateUtils'
+import { ratingStyle } from '../utils/ratingStyle'
+import { heatStyle } from '../utils/heatStyle'
 import ActSheet from '../components/ActSheet'
 import LoginModal from '../components/LoginModal'
+import ModeControl, { useMode } from '../components/ModeControl'
 import ScheduleView from '../components/ScheduleView'
 import AnnouncedView from '../components/AnnouncedView'
 import LineupView from '../components/LineupView'
@@ -23,6 +27,12 @@ const FestivalDetailPage = () => {
   const [debugStatus, setDebugStatus] = useState(null) // For debug mode
   const [showDebugControls, setShowDebugControls] = useState(false) // Toggle debug controls
   const [showLoginModal, setShowLoginModal] = useState(false) // For login modal
+
+  // "My picks" shows the rating style, "Heatmap" the global heat (heatmap FR-1, FR-11).
+  const [mode, setMode] = useMode()
+  const [searchParams] = useSearchParams()
+  const { heat, error: heatError } = useActHeat(festival?.id ?? null, mode === 'heatmap')
+  const actStyle = (act) => (mode === 'heatmap' ? heatStyle(heat[act.id]) : ratingStyle(ratings[act.id] || 0))
 
   // The open act sheet is a history entry, so the browser back button closes
   // only the sheet (act-sheet FR-2). Every other close path goes back too.
@@ -96,28 +106,28 @@ const FestivalDetailPage = () => {
   }
 
 
+  // Use debug status if set, otherwise use festival status
+  const currentStatus = festival ? debugStatus || festival.status : null
+
   const renderContentByStatus = () => {
     if (!festival) return null
-
-    // Use debug status if set, otherwise use festival status
-    const currentStatus = debugStatus || festival.status
 
     switch (currentStatus) {
       case 'announced':
         return <AnnouncedView festival={festival} />
       
       case 'lineup':
-        return <LineupView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={openAct} />
+        return <LineupView acts={getAlphabeticallySortedActs()} actStyle={actStyle} onActClick={openAct} />
       
       case 'stages':
-        return <StagesView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={openAct} />
+        return <StagesView acts={getAlphabeticallySortedActs()} actStyle={actStyle} onActClick={openAct} />
       
       case 'schedule':
-        return <ScheduleByDayView acts={getAlphabeticallySortedActs()} ratings={ratings} onActClick={openAct} />
+        return <ScheduleByDayView acts={getAlphabeticallySortedActs()} actStyle={actStyle} onActClick={openAct} />
       
       case 'times':
       case 'complete':
-        return <ScheduleView acts={acts} ratings={ratings} onActClick={openAct} />
+        return <ScheduleView acts={acts} actStyle={actStyle} onActClick={openAct} />
       
       default:
         return <AnnouncedView festival={festival} />
@@ -175,15 +185,17 @@ const FestivalDetailPage = () => {
       {/* Festival Hero */}
       <section className="px-4 pt-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-xl font-bold text-white mb-1.5">{festival.name}</h1>
-          <div className="flex items-center space-x-4 text-white/70 text-xs">
-            <div className="flex items-center">
-              <Calendar className="h-3 w-3 mr-1" />
-              <span>{formatDateRange(festival.start_date, festival.end_date)}</span>
-            </div>
-            <div className="flex items-center">
-              <MapPin className="h-3 w-3 mr-1" />
-              <span>{festival.location}</span>
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-xl font-bold text-white">{festival.name}</h1>
+            <div className="flex flex-col items-end gap-0.5 text-white/70 text-xs text-right">
+              <div className="flex items-center">
+                <Calendar className="h-3 w-3 mr-1 shrink-0" />
+                <span>{formatDateRange(festival.start_date, festival.end_date)}</span>
+              </div>
+              <div className="flex items-center">
+                <MapPin className="h-3 w-3 mr-1 shrink-0" />
+                <span>{festival.location}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -253,6 +265,28 @@ const FestivalDetailPage = () => {
       {/* Content Display */}
       <section className="py-4 px-4">
         <div className="max-w-4xl mx-auto">
+          {/* Every act view has the mode control; the announced view has no acts (heatmap FR-1). */}
+          {currentStatus && currentStatus !== 'announced' && (
+            <>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <ModeControl mode={mode} onChange={setMode} />
+                {/* Only the times view has a grid to export. The export page keeps the same ?day=. */}
+                {(currentStatus === 'times' || currentStatus === 'complete') && (
+                  <Link
+                    to={`/festival/${id}/export${searchParams.get('day') ? `?day=${encodeURIComponent(searchParams.get('day'))}` : ''}`}
+                    aria-label="Export"
+                    className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
+                  >
+                    <Download className="h-4 w-4 mr-1.5" />
+                    Export
+                  </Link>
+                )}
+              </div>
+              {mode === 'heatmap' && heatError && (
+                <p className="text-red-400 text-xs mb-2">Could not load the heatmap: {heatError}</p>
+              )}
+            </>
+          )}
           {renderContentByStatus()}
         </div>
       </section>

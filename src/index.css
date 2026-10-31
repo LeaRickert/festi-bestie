@@ -1,10 +1,11 @@
 @import 'tailwindcss';
 
-/* The theme (festivals spec). Rating is only for the rating style, link only for text links. */
+/* The theme (festivals spec). Rating is only for the rating style, heat only for Heatmap mode, link only for text links. */
 @theme {
   --color-page: #051721;
   --color-surface: #072230;
   --color-rating: #9e1fb3;
+  --color-heat: #107435;
   --color-link: #d2e359;
 
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;

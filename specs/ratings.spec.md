@@ -81,4 +81,4 @@ rating for each act. A user sees only their own ratings.
 
 - FR-6 covers single ratings. The global heat of `heatmap.spec.md` publishes the sum of all ratings of an act, and only for an act with 5 raters or more.
 - `groups.spec.md` will change FR-6: members of a group read the ratings of each other.
-- The app does not calculate `acts.avg_rating`. The heatmap shows no average. Remove the column or calculate it. ??
+- The app does not calculate `acts.avg_rating`. The heatmap shows no average. The column stays for now, unused.

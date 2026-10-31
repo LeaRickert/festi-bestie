@@ -1,7 +1,6 @@
 import { Music } from 'lucide-react'
-import { ratingStyle } from '../utils/ratingStyle'
 
-const LineupView = ({ acts, ratings, onActClick }) => {
+const LineupView = ({ acts, actStyle, onActClick }) => {
   if (acts.length === 0) {
     return (
       <div className="text-center py-8">
@@ -28,7 +27,7 @@ const LineupView = ({ acts, ratings, onActClick }) => {
             key={act.id}
             onClick={() => onActClick(act)}
             className="border rounded-lg p-3 active:opacity-80 transition-opacity text-center cursor-pointer"
-            style={ratingStyle(ratings[act.id] || 0)}
+            style={actStyle(act)}
           >
             <div className="space-y-1.5">
               <h3 className="text-white font-medium text-sm truncate">

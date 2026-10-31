@@ -1,6 +1,5 @@
 import { type UIEvent, useMemo, useRef } from 'react'
-import { Download, Music } from 'lucide-react'
-import { useNavigate, useParams } from 'react-router'
+import { Music } from 'lucide-react'
 import type { Act } from '../hooks/useFestivalData'
 import {
   PIXELS_PER_HOUR,
@@ -14,12 +13,13 @@ import {
   getUniqueStages,
   hourLabel,
 } from '../utils/scheduleUtils'
-import { ratingStyle } from '../utils/ratingStyle'
+import type { RatingStyle } from '../utils/ratingStyle'
 import DayControl, { useSelectedDay } from './DayControl'
 
 interface ScheduleViewProps {
   acts: Act[]
-  ratings: Record<string, number>
+  // The rating style or the heat style of each act (ratings FR-10, heatmap FR-11).
+  actStyle: (act: Act) => RatingStyle
   onActClick: (act: Act) => void
 }
 
@@ -29,9 +29,7 @@ const TIME_COLUMN = 'w-6'
 const STAGE_COLUMN = 'flex-1 min-w-[120px]'
 
 // The time grid of the times view (schedule-grid FR-1, FR-2, FR-5, FR-6).
-const ScheduleView = ({ acts, ratings, onActClick }: ScheduleViewProps) => {
-  const navigate = useNavigate()
-  const { id } = useParams()
+const ScheduleView = ({ acts, actStyle, onActClick }: ScheduleViewProps) => {
   const days = useMemo(() => getUniqueDays(acts), [acts])
   const [selectedDay, setSelectedDay] = useSelectedDay(days)
 
@@ -66,17 +64,6 @@ const ScheduleView = ({ acts, ratings, onActClick }: ScheduleViewProps) => {
   return (
     <div>
       <DayControl days={days} selectedDay={selectedDay} onChange={setSelectedDay} />
-
-      <div className="flex justify-end py-2">
-        <button
-          type="button"
-          onClick={() => navigate(`/festival/${id}/export?day=${encodeURIComponent(selectedDay)}`)}
-          className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
-        >
-          <Download className="h-4 w-4 mr-1.5" />
-          Export
-        </button>
-      </div>
 
       {!range ? (
         <p className="text-center py-8 text-white/60 text-sm">No set times for {selectedDay} yet.</p>
@@ -127,7 +114,7 @@ const ScheduleView = ({ acts, ratings, onActClick }: ScheduleViewProps) => {
                         key={act.id}
                         onClick={() => onActClick(act)}
                         className="absolute z-[2] left-0.5 right-0.5 flex flex-col justify-start border rounded-md px-1.5 py-1 overflow-hidden text-left active:opacity-80 transition-opacity"
-                        style={{ top, height, ...ratingStyle(ratings[act.id] || 0) }}
+                        style={{ top, height, ...actStyle(act) }}
                       >
                         <div className="text-xs font-semibold leading-tight line-clamp-2">{act.artist}</div>
                         <div className="text-[10px] opacity-80 mt-0.5">{formatShortRange(act.startTime, act.length)}</div>
