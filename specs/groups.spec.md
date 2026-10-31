@@ -2,7 +2,7 @@
 type: Spec
 title: "Spec: Friend Groups"
 sources: [../supabase/schemas]
-tests: []
+tests: [../supabase/tests/database/groups.test.sql]
 description: DRAFT. Groups of friends who see each other's ratings for one festival.
 tags: [groups, ratings, privacy, draft]
 timestamp: 2026-10-30T00:00:00Z

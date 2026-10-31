@@ -16,7 +16,8 @@ Festi Bestie is a festival planning app (React 18, Vite, Tailwind, Supabase). Be
 - Lint is Biome (`npm run lint`, config in `biome.json`). The formatter is off, so keep the existing style: 2 spaces, single quotes, no semicolons. Old a11y and hooks findings are warnings, not errors; do not add new ones.
 - Tests use Vitest (`npm test`), next to the code as `*.test.ts`. Put the `[TC-XXXX]` tag in each test name.
 - Schema changes go in `supabase/schemas/*.sql` (declarative, with their RLS policies and indexes), then generate a migration with `npx supabase db schema declarative sync -f <name> --no-apply`. Never use `db diff`. Seed data lives in `supabase/seed.sql`. Until the first production push the migrations are one squashed `initial_schema`; after that, never edit or squash them.
-- Automated tests cover the pure helpers in `src/utils` and `src/export`, and the data scripts (`scripts/data`). Verify the rest manually: auth, rating, export.
+- Database tests use pgTAP in `supabase/tests/database/*.test.sql` and run with `npx supabase test db` (local stack running). Cover each RLS policy, limit and `security definer` function with them, and put the `[TC-XXXX]` tag in each test description.
+- Automated tests cover the pure helpers in `src/utils` and `src/export`, the data scripts (`scripts/data`), and the database rules (pgTAP). Verify the rest manually: auth, rating, export.
 
 ## Known issues
 

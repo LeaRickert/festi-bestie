@@ -86,11 +86,11 @@ Needs Phase 1. Spec: `groups.spec.md` (draft exists). A group belongs to one
 festival and is private, invite link only. This changes the rule "a user reads
 only their own ratings" in `ratings.spec.md` (FR-6).
 
-- [ ] Add pgTAP tests in `supabase/tests`, run `supabase test db` in CI, and add the convention to CLAUDE.md. Cover the RLS and limit cases of `groups.spec.md` (FR-7 to FR-18)
-- [ ] Add the tables `groups` and `group_members` (with `joined_at`), with RLS, the name check, the 20-member cap and the 2-groups-per-festival limit (groups FR-1, FR-2, FR-7, FR-8)
-- [ ] Add the invite token, the `join_group(token)` function and the owner reset of the link (groups FR-3 to FR-5, FR-9)
-- [ ] Let a member read the shared ratings and the usernames of the other members, and nobody else (groups FR-10 to FR-12). Rewrite ratings FR-6 and TC-6Q8C and remove its Known Issue
-- [ ] Let a user leave a group, pass the owner on, and delete the group when the last member leaves. Let the owner rename and delete (groups FR-13 to FR-18)
+- [x] Add pgTAP tests in `supabase/tests`, run `supabase test db` in CI, and add the convention to CLAUDE.md. Cover the RLS and limit cases of `groups.spec.md` (FR-7 to FR-18)
+- [x] Add the tables `groups` and `group_members` (with `joined_at`), with RLS, the name check, the 20-member cap and the 2-groups-per-festival limit (groups FR-1, FR-2, FR-7, FR-8)
+- [x] Add the invite token, the `join_group(token)` function and the owner reset of the link (groups FR-3 to FR-5, FR-9)
+- [x] Let a member read the shared ratings and the usernames of the other members, and nobody else (groups FR-10 to FR-12). Rewrite ratings FR-6 and TC-6Q8C and remove its Known Issue
+- [x] Let a user leave a group, pass the owner on, and delete the group when the last member leaves. Let the owner rename and delete (groups FR-13 to FR-18)
 - [ ] Add the groups page, the group page and the join screen, with the way back after sign-in (groups FR-6, FR-19, FR-20)
 - [ ] Add the ratings slider to the act sheet (groups FR-21 to FR-26). Remove the "Not built yet" note and the Known Issue from `act-sheet.spec.md`
 - [ ] Remove the DRAFT marks from `groups.spec.md`

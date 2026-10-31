@@ -16,6 +16,11 @@ alter table public.user_ratings enable row level security;
 create policy "Users can view their own ratings" on public.user_ratings
   for select using (auth.uid() = user_id);
 
+-- Members read the ratings of the other members for the festival of the group
+-- (groups FR-10, FR-11).
+create policy "Members can view the shared ratings of their groups" on public.user_ratings
+  for select to authenticated using (public.shares_group_for_act(user_id, act_id));
+
 create policy "Users can create their own ratings" on public.user_ratings
   for insert with check (auth.uid() = user_id);
 

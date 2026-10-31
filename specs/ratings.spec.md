@@ -3,7 +3,7 @@ type: Spec
 title: "Spec: Artist Ratings"
 sources: [../src/components/StarRating.tsx, ../src/utils/ratingStyle.ts, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../supabase/schemas]
 description: How a signed-in user rates an act.
-tests: [../src/utils/ratingStyle.test.ts]
+tests: [../src/utils/ratingStyle.test.ts, ../supabase/tests/database/groups.test.sql]
 tags: [ratings]
 timestamp: 2026-10-30T00:00:00Z
 ---
@@ -11,7 +11,9 @@ timestamp: 2026-10-30T00:00:00Z
 # Artist Ratings
 
 A signed-in user rates an act with 1 to 5 stars. Each user has at most one
-rating for each act. A user sees only their own ratings.
+rating for each act. A user sees their own ratings, and the ratings that the
+other members of their groups share for the festival of each group
+(`groups.spec.md`).
 
 ### Definitions
 
@@ -49,7 +51,7 @@ rating for each act. A user sees only their own ratings.
 | FR-3 | Save the rating with an upsert on `user_id` and `act_id` |
 | FR-4 | Load the ratings of the signed-in user when the acts load |
 | FR-5 | Ask a user who is not signed in to sign in before they rate |
-| FR-6 | Let a user read and write only their own ratings |
+| FR-6 | Let a user write only their own ratings. Let a user read their own ratings and the shared ratings of their groups (groups FR-10, FR-11), and no other ratings |
 | FR-7 | Show the previous rating again when a save fails |
 | FR-8 | Keep the act sheet open after the user selects a rating, and show the label of the new rating |
 | FR-9 | Make each star in the act sheet a tap target of at least 44 by 44 px |
@@ -67,7 +69,7 @@ rating for each act. A user sees only their own ratings.
 | TC-UE94 | FR-3 | The user rates the same act twice | One row exists and it holds the second rating |
 | TC-TR50 | FR-4 | A user with ratings for two acts opens the festival | The two acts show the saved ratings |
 | TC-XL9D | FR-5 | A visitor opens an act sheet | The popup shows "Sign In to Rate" and the stars do nothing |
-| TC-6Q8C | FR-6 | User A requests the ratings of user B | The database returns no rows |
+| TC-6Q8C | FR-6 | User A shares no group with user B and requests the ratings of B | The database returns no rows |
 | TC-16K9 | FR-7 | A user changes a rating from 3 to 5 and the save fails | The act shows 3 stars again |
 | TC-7FMH | FR-8 | A signed-in user selects the 4th star in the sheet | The rating is saved, the sheet stays open and shows "Hyped" |
 | TC-3K8R | FR-9 | The screen is 375 px wide and the sheet shows the stars | Each star is at least 44 by 44 px |
@@ -80,5 +82,4 @@ rating for each act. A user sees only their own ratings.
 ### Known Issues
 
 - FR-6 covers single ratings. The global heat of `heatmap.spec.md` publishes the sum of all ratings of an act, and only for an act with 5 raters or more.
-- `groups.spec.md` (Phase 6) will change FR-6: a user also reads the shared ratings of the other members of their groups for the festival of each group (groups FR-10, FR-11). TC-6Q8C then applies to users who share no group.
 - The app does not calculate `acts.avg_rating`. The heatmap shows no average. The column stays for now, unused.
