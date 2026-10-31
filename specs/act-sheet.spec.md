@@ -12,7 +12,8 @@ timestamp: 2026-10-30T00:00:00Z
 
 The user selects an act in any view to open its details. There they rate the
 act and watch a set. Editors and recommendations add controls here (see
-`act-editing.spec.md`), and Phase 6 adds the ratings of friends.
+`act-editing.spec.md`). Phase 6 adds the ratings slider, where a user in a
+group sees the ratings of the group (see `groups.spec.md`).
 
 ### Definitions
 
@@ -20,6 +21,7 @@ act and watch a set. Editors and recommendations add controls here (see
 - YouTube search link: A link to a YouTube search for "[artist] live set".
 - Video: The `youtube_video_id` of an act, opened on YouTube at `https://www.youtube.com/watch?v=<id>`. The app does not embed the player, because many official sets do not allow embedding.
 - Caption: The optional `youtube_title` of an act (see `act-editing.spec.md`).
+- Ratings slider: Not built yet (Phase 6). The rating section as pages, "My rating" and one page for each group of the user (see `groups.spec.md` FR-21 to FR-26). The sheet is the same in every mode of the act views.
 
 ## In Scope
 
@@ -29,6 +31,7 @@ act and watch a set. Editors and recommendations add controls here (see
 ## Out of Scope
 
 - The stars and the save (see `ratings.spec.md`).
+- The ratings slider and the group pages (see `groups.spec.md`).
 - Recommend and edit controls (see `act-editing.spec.md`).
 
 ### Functional Requirements
@@ -55,4 +58,4 @@ act and watch a set. Editors and recommendations add controls here (see
 
 ### Known Issues
 
-- None.
+- The ratings slider of `groups.spec.md` FR-21 to FR-26 does not exist yet. Phase 6 adds it and removes the "Not built yet" note.

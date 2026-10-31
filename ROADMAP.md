@@ -77,19 +77,23 @@ Needs Phase 4. Spec: `heatmap.spec.md` (draft exists). Needs no groups.
 - [x] Add the table `act_stats` with RLS: everyone reads, only the job writes (heatmap FR-6, FR-9)
 - [x] Add the `pg_cron` job that calculates global heat every 15 minutes, with the 5-rater floor (heatmap FR-5 to FR-8)
 - [x] Add the mode control "My picks" / "Heatmap" to every view with acts (lineup, stages, schedule, time grid), with the "Global" source (heatmap FR-1 to FR-4)
-- [x] Color the acts with the heat green in 5 steps, with no legend, and no tint for an act with no heat (heatmap FR-7, FR-11, FR-14)
+- [x] Color the acts with the heat green in 5 steps, with no legend, and no tint for an act with no heat (heatmap FR-7, FR-11, FR-13)
 - [x] Decide what to do with `acts.avg_rating`: keep it unused for now (ratings Known Issues)
 
 ## Phase 6: Friend groups
 
-Needs Phase 1. Write `groups.spec.md` first (draft exists). This changes the
-rule "a user reads only their own ratings" in `ratings.spec.md` (FR-6).
+Needs Phase 1. Spec: `groups.spec.md` (draft exists). A group belongs to one
+festival and is private, invite link only. This changes the rule "a user reads
+only their own ratings" in `ratings.spec.md` (FR-6).
 
-- [ ] Add the tables `groups` and `group_members`, with RLS
-- [ ] Let a user create a group and invite friends ?? (invite link or username)
-- [ ] Let a group member read the ratings of the other members, and nobody else
-- [ ] Let a user leave a group, and stop sharing when they leave
-- [ ] Show who rated an act in the act popup
+- [ ] Add pgTAP tests in `supabase/tests`, run `supabase test db` in CI, and add the convention to CLAUDE.md. Cover the RLS and limit cases of `groups.spec.md` (FR-7 to FR-18)
+- [ ] Add the tables `groups` and `group_members` (with `joined_at`), with RLS, the name check, the 20-member cap and the 2-groups-per-festival limit (groups FR-1, FR-2, FR-7, FR-8)
+- [ ] Add the invite token, the `join_group(token)` function and the owner reset of the link (groups FR-3 to FR-5, FR-9)
+- [ ] Let a member read the shared ratings and the usernames of the other members, and nobody else (groups FR-10 to FR-12). Rewrite ratings FR-6 and TC-6Q8C and remove its Known Issue
+- [ ] Let a user leave a group, pass the owner on, and delete the group when the last member leaves. Let the owner rename and delete (groups FR-13 to FR-18)
+- [ ] Add the groups page, the group page and the join screen, with the way back after sign-in (groups FR-6, FR-19, FR-20)
+- [ ] Add the ratings slider to the act sheet (groups FR-21 to FR-26). Remove the "Not built yet" note and the Known Issue from `act-sheet.spec.md`
+- [ ] Remove the DRAFT marks from `groups.spec.md`
 
 ## Phase 7: Find your bestie
 
@@ -102,9 +106,8 @@ Needs Phase 6. Spec: `bestie.spec.md` (draft exists).
 
 Needs Phases 5 and 6. Spec: `heatmap.spec.md`.
 
-- [ ] Add the groups of the user to the source choice (heatmap FR-2, FR-3)
+- [ ] Add the groups of the user for the festival to the source choice. Show no source choice to a user in no group (heatmap FR-2, FR-3)
 - [ ] Calculate group heat from the ratings of the members (heatmap FR-10, FR-12)
-- [ ] Show the members who rated an act in the act sheet (heatmap FR-13)
 
 ## Phase 9: Offline
 
@@ -146,6 +149,5 @@ Needs Phase 4. Write `rate-mode.spec.md` first.
 
 ## Open questions
 
-- Is a group private by invite only, or can anyone find it?
-- Does a member share all ratings, or one festival at a time?
+- None. Groups are private, invite link only, and each group belongs to one festival (`groups.spec.md`).
 - Does offline need group ratings too, or only the user's own?

@@ -12,7 +12,7 @@ timestamp: 2026-10-30T00:00:00Z
 
 DRAFT. This feature does not exist yet. It needs `groups.spec.md`. A user
 sees how well their ratings match the ratings of each other member of a
-group, for one festival. The member with the highest score is the bestie of
+group. A group belongs to one festival, so the match is for that festival. The member with the highest score is the bestie of
 the user. The list of shared acts is a plan to see them together.
 
 A user compares only with members of a group they are in. A match with other
@@ -42,7 +42,7 @@ user can already read, so the score adds no new access.
 
 | ID   | Requirement |
 |------|-------------|
-| FR-1 | Calculate the match score from the ratings of one festival only |
+| FR-1 | Calculate the match score from the ratings of the festival of the group only |
 | FR-2 | Use the weights of `heatmap.spec.md` for each rating |
 | FR-3 | Calculate the match score of two users from their weights, as in the definition |
 | FR-4 | Add 1 to the denominator for each clash. A rating of 2 against a 4 or 5 is not a clash |
@@ -57,7 +57,7 @@ user can already read, so the score adds no new access.
 
 | Test ID | Requirement | Scenario | Expected Outcome |
 |---------|-------------|----------|------------------|
-| TC-FU68 | FR-1 | A and B rated acts at EDC Orlando 2025 and 2026, and the user chooses 2026 | The score uses only the 2026 ratings |
+| TC-FU68 | FR-1 | A and B are in a group for EDC Orlando 2026 and rated acts at EDC Orlando 2025 and 2026 | The score uses only the 2026 ratings |
 | TC-FZAB | FR-2 | A rated X 4 and B rated X 3 | X adds 0.5 to the numerator and 1 to the denominator |
 | TC-X9MI | FR-3 | A rated X 5 and Y 4. B rated X 5 and Y 5 | The score is 3 / 4 = 75% |
 | TC-Y4ME | FR-3 | A and B gave the same rating to every act | The score is 100% |

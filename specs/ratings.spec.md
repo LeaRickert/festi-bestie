@@ -80,5 +80,5 @@ rating for each act. A user sees only their own ratings.
 ### Known Issues
 
 - FR-6 covers single ratings. The global heat of `heatmap.spec.md` publishes the sum of all ratings of an act, and only for an act with 5 raters or more.
-- `groups.spec.md` will change FR-6: members of a group read the ratings of each other.
+- `groups.spec.md` (Phase 6) will change FR-6: a user also reads the shared ratings of the other members of their groups for the festival of each group (groups FR-10, FR-11). TC-6Q8C then applies to users who share no group.
 - The app does not calculate `acts.avg_rating`. The heatmap shows no average. The column stays for now, unused.
