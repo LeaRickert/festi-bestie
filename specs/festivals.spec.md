@@ -5,7 +5,7 @@ sources: [../src/pages/WelcomePage.tsx, ../src/pages/FestivalListPage.tsx, ../sr
 description: The welcome view, the festival list and the festival page by status.
 tests: [../src/utils/festivalUtils.test.ts, ../src/utils/dateUtils.test.ts]
 tags: [festivals]
-timestamp: 2026-10-30T00:00:00Z
+timestamp: 2026-10-31T00:00:00Z
 ---
 
 # Festivals and App Flow
@@ -21,7 +21,7 @@ acts, watches sets and compares stages.
 - Act: One artist performance in `acts`. It has day, stage, `start_time`, `length_minutes`, genre and notes.
 - Status: One of `announced`, `lineup`, `stages`, `schedule`, `times`, `complete`, in that order.
 - Status badge: A small colored label for a status. `announced` "Announced" (gray), `lineup` "Lineup" (purple), `stages` "Stages" (orange), `schedule` "Schedule" (yellow), `times` "Times" (blue), `complete` "Complete" (green).
-- Welcome view: The page on `/` with the app logo, the name, Log in, Sign up and a smaller "View festivals as guest" link.
+- Welcome view: The page on `/` with the app logo, the name, Log in and Sign up. It has no link to the festival list; a visitor who knows the `/festivals` link can still open it.
 - Festival list: The page on `/festivals`.
 - Phone: A screen 375 px wide. Tablet: a screen 768 px wide.
 - Theme: Page `#051721` (dark teal). Surface `#072230` (a teal slightly lighter than the page). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Heat green `#107435`, used only in Heatmap mode (`heatmap.spec.md`). Link color `#d2e359` (neon), used only for text links. Buttons and selected controls are white or neutral. Status badges keep their own colors. The font is the system font.
@@ -74,9 +74,9 @@ acts, watches sets and compares stages.
 | TC-UIU6 | FR-4 | The festival id matches no festival | The page shows "Festival not found" |
 | TC-I17V | FR-5 | Supabase returns an error for the festival list | The page shows the error and a retry button, and no festival rows |
 | TC-61J9 | FR-6 | A production build opens a festival page | The DEBUG button does not show and Ctrl/Cmd + D does nothing |
-| TC-WW8Q | FR-7 | A visitor who is not signed in opens `/` | The page shows the welcome view with Log in, Sign up and "View festivals as guest" |
+| TC-WW8Q | FR-7 | A visitor who is not signed in opens `/` | The page shows the welcome view with Log in and Sign up, and no link to the festival list |
 | TC-EZVS | FR-7 | A signed-in user opens `/` | The app opens `/festivals` |
-| TC-084O | FR-7 | A visitor who chose guest before opens `/` again | The page shows the welcome view again |
+| TC-084O | FR-7 | A visitor who opened `/festivals` before opens `/` again | The page shows the welcome view again |
 | TC-VEU7 | FR-7 | A visitor opens a link to `/festival/:id` | The festival page opens with no welcome view |
 | TC-PYK4 | FR-7 | A visitor signs in from the sheet on a festival page | The festival page stays open |
 | TC-2CXG | FR-8 | An upcoming festival has the status `times` | The festival list shows a blue "Times" badge |

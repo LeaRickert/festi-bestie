@@ -5,7 +5,7 @@ sources: [../supabase/schemas/groups.sql, ../src/hooks/useGroups.ts, ../src/util
 tests: [../supabase/tests/database/groups.test.sql, ../src/utils/groups.test.ts]
 description: Groups of friends who see each other's ratings for one festival.
 tags: [groups, ratings, privacy]
-timestamp: 2026-10-30T00:00:00Z
+timestamp: 2026-10-31T00:00:00Z
 ---
 
 # Friend Groups
@@ -25,7 +25,7 @@ functions. The frontend only hides controls.
 - Member: A user in a group. A member has a join time (`group_members.joined_at`).
 - Owner: The member who made the group, or the member who took it over (FR-15).
 - Invite link: A link with the secret invite token of a group. Each group has one link at a time, with no expiry. Only members can read the token.
-- Join screen: The page that an invite link opens. It shows the group name, the festival, the usernames of the members, a "Join" button and the warning "Your ratings for this festival will be visible to members".
+- Join screen: The page that an invite link opens. It is a landing page with the app logo and name and no top navigation, and, for a signed-in user, a smaller "Go to festivals" link at the bottom. It shows the group name, the festival, the usernames of the members, a "Join" button and the warning "Your ratings for this festival will be visible to members". To a visitor who is not signed in it shows "You are invited to a group", a short line on what the app does, Sign up and Log in.
 - Past group: A group whose festival end date has passed, by the same rule as the "Past festivals" section of `festivals.spec.md`.
 - Shared rating: A rating of a member for an act of the festival of the group.
 - Groups page: `/festival/:id/groups`. The groups of the user for one festival.
@@ -94,6 +94,7 @@ functions. The frontend only hides controls.
 | TC-3S93 | FR-5 | A signed-in user opens a valid invite link | The join screen shows the group, the festival, the members and the warning, and the user is not a member yet |
 | TC-8N7P | FR-5 | A signed-in user opens a valid invite link and taps "Join" | The user is a member of the group |
 | TC-46LV | FR-6 | A visitor who is not signed in opens a valid invite link | The app asks the visitor to sign in, then shows the same join screen |
+| TC-EG53 | FR-6 | A visitor who is not signed in opens a valid invite link | The page shows the logo, "You are invited to a group", Sign up first and then Log in, with no top navigation |
 | TC-EDFG | FR-7 | A user taps "Join" for a group with 20 members | The app shows that the group is full, and the user is not a member |
 | TC-5HHA | FR-8 | A user in 2 groups for EDC Orlando 2026 makes a third group for it | The database rejects the group |
 | TC-1EAU | FR-8 | A user in 2 groups for EDC Orlando 2025 joins a group for EDC Orlando 2026 | The user is a member of the group |

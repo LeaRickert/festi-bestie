@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { ArrowLeft, Users } from 'lucide-react'
+import { Users } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { fetchInvite, joinGroup, type GroupInvite } from '../hooks/useGroups'
-import SignInPrompt from '../components/SignInPrompt'
+import AuthButtons from '../components/AuthButtons'
 import { groupErrorMessage } from '../utils/groups'
+import logo from '../assets/logo_color.png'
 
 // The screen an invite link opens on `/join/:token` (groups FR-5 to FR-9). The
-// user joins only on a tap of "Join".
+// user joins only on a tap of "Join". It is a landing page with the logo and no
+// top navigation, as it is often the first page a friend sees of the app.
 const JoinPage = () => {
   const { token = '' } = useParams()
   const navigate = useNavigate()
@@ -57,7 +59,19 @@ const JoinPage = () => {
 
   const renderBody = () => {
     if (authLoading || (user && loading)) return <div className="text-white/60 text-sm">Loading...</div>
-    if (!user) return <SignInPrompt message="You have an invite to a group. Sign in or sign up to see it." />
+    // Most visitors here are new to the app, so Sign up comes first (FR-6).
+    if (!user) {
+      return (
+        <div className="flex flex-col items-center text-center">
+          <h2 className="text-xl font-semibold text-white mb-2">You are invited to a group</h2>
+          <p className="text-white/70 text-sm mb-8 max-w-xs">
+            Rate the acts you want to see and find out who in your crew is hyped for the same sets. Sign up or log in to see
+            the group.
+          </p>
+          <AuthButtons primary="signup" />
+        </div>
+      )
+    }
     if (loadError) {
       return (
         <div className="space-y-2">
@@ -76,9 +90,10 @@ const JoinPage = () => {
     if (!invite) return <p className="text-white/80 text-sm">{groupErrorMessage({ message: 'invalid_invite' })}</p>
 
     return (
-      <div className="bg-surface rounded-lg p-4 space-y-4">
+      <div className="w-full bg-surface rounded-lg p-4 space-y-4">
         <div>
-          <h1 className="text-xl font-bold text-white break-words">{invite.groupName}</h1>
+          <p className="text-white/60 text-xs mb-1">You are invited to</p>
+          <h2 className="text-xl font-bold text-white break-words">{invite.groupName}</h2>
           <p className="text-white/60 text-xs">{invite.festivalName}</p>
         </div>
         <div>
@@ -120,16 +135,17 @@ const JoinPage = () => {
   }
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-white/10">
-        <div className="max-w-2xl mx-auto px-4 py-2.5">
-          <Link to="/festivals" className="inline-flex items-center text-white/70 hover:text-white transition-colors text-sm">
-            <ArrowLeft className="h-4 w-4 mr-1.5" />
-            Festivals
-          </Link>
-        </div>
-      </header>
-      <main className="max-w-2xl mx-auto px-4 py-4">{renderBody()}</main>
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10">
+      <img src={logo} alt="" className={`h-auto rounded-2xl mb-4 ${user ? 'w-28' : 'w-40'}`} />
+      <h1 className="text-2xl font-bold text-white mb-8">Festi Bestie</h1>
+
+      <main className="w-full max-w-sm flex flex-col items-center">{renderBody()}</main>
+
+      {user && (
+        <Link to="/festivals" className="mt-6 text-link text-sm hover:underline">
+          Go to festivals
+        </Link>
+      )}
     </div>
   )
 }
