@@ -91,9 +91,9 @@ only their own ratings" in `ratings.spec.md` (FR-6).
 - [x] Add the invite token, the `join_group(token)` function and the owner reset of the link (groups FR-3 to FR-5, FR-9)
 - [x] Let a member read the shared ratings and the usernames of the other members, and nobody else (groups FR-10 to FR-12). Rewrite ratings FR-6 and TC-6Q8C and remove its Known Issue
 - [x] Let a user leave a group, pass the owner on, and delete the group when the last member leaves. Let the owner rename and delete (groups FR-13 to FR-18)
-- [ ] Add the groups page, the group page and the join screen, with the way back after sign-in (groups FR-6, FR-19, FR-20)
-- [ ] Add the ratings slider to the act sheet (groups FR-21 to FR-26). Remove the "Not built yet" note and the Known Issue from `act-sheet.spec.md`
-- [ ] Remove the DRAFT marks from `groups.spec.md`
+- [x] Add the groups page, the group page and the join screen, with the way back after sign-in (groups FR-6, FR-19, FR-20)
+- [x] Add the ratings slider to the act sheet (groups FR-21 to FR-26). Remove the "Not built yet" note and the Known Issue from `act-sheet.spec.md`
+- [x] Remove the DRAFT marks from `groups.spec.md`
 
 ## Phase 7: Find your bestie
 

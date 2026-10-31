@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Act Sheet"
-sources: [../src/components/ActSheet.tsx, ../src/utils/youtube.ts, ../src/pages/FestivalDetailPage.jsx]
+sources: [../src/components/ActSheet.tsx, ../src/components/RatingsSlider.tsx, ../src/utils/youtube.ts, ../src/pages/FestivalDetailPage.jsx]
 description: The details of one act, its rating and its YouTube set.
 tests: [../src/utils/youtube.test.ts]
 tags: [acts]
@@ -12,8 +12,8 @@ timestamp: 2026-10-30T00:00:00Z
 
 The user selects an act in any view to open its details. There they rate the
 act and watch a set. Editors and recommendations add controls here (see
-`act-editing.spec.md`). Phase 6 adds the ratings slider, where a user in a
-group sees the ratings of the group (see `groups.spec.md`).
+`act-editing.spec.md`). In the ratings slider a user in a group sees the
+ratings of the group (see `groups.spec.md`).
 
 ### Definitions
 
@@ -21,7 +21,7 @@ group sees the ratings of the group (see `groups.spec.md`).
 - YouTube search link: A link to a YouTube search for "[artist] live set".
 - Video: The `youtube_video_id` of an act, opened on YouTube at `https://www.youtube.com/watch?v=<id>`. The app does not embed the player, because many official sets do not allow embedding.
 - Caption: The optional `youtube_title` of an act (see `act-editing.spec.md`).
-- Ratings slider: Not built yet (Phase 6). The rating section as pages, "My rating" and one page for each group of the user (see `groups.spec.md` FR-21 to FR-26). The sheet is the same in every mode of the act views.
+- Ratings slider: The rating section as pages, "My rating" and one page for each group of the user (see `groups.spec.md` FR-21 to FR-26). The sheet is the same in every mode of the act views.
 
 ## In Scope
 
@@ -58,4 +58,4 @@ group sees the ratings of the group (see `groups.spec.md`).
 
 ### Known Issues
 
-- The ratings slider of `groups.spec.md` FR-21 to FR-26 does not exist yet. Phase 6 adds it and removes the "Not built yet" note.
+- The group pages of the ratings slider load the ratings when the sheet opens. A rating that a member gives while the sheet is open shows the next time it opens.

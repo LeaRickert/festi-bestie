@@ -29,11 +29,16 @@ interface DatedFestival {
   end_date: string
 }
 
-// Both lists are sorted by start date. A festival is past the day after it ends.
+// A festival is past the day after it ends.
+export function isFestivalPast(endDate: string, today: string): boolean {
+  return endDate < today
+}
+
+// Both lists are sorted by start date.
 export function splitFestivals<T extends DatedFestival>(festivals: T[], today: string): { upcoming: T[]; past: T[] } {
   const sorted = [...festivals].sort((a, b) => a.start_date.localeCompare(b.start_date))
   return {
-    upcoming: sorted.filter((festival) => festival.end_date >= today),
-    past: sorted.filter((festival) => festival.end_date < today),
+    upcoming: sorted.filter((festival) => !isFestivalPast(festival.end_date, today)),
+    past: sorted.filter((festival) => isFestivalPast(festival.end_date, today)),
   }
 }

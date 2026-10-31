@@ -1,16 +1,16 @@
 ---
 type: Spec
 title: "Spec: Friend Groups"
-sources: [../supabase/schemas]
-tests: [../supabase/tests/database/groups.test.sql]
-description: DRAFT. Groups of friends who see each other's ratings for one festival.
-tags: [groups, ratings, privacy, draft]
+sources: [../supabase/schemas/groups.sql, ../src/hooks/useGroups.ts, ../src/utils/groups.ts, ../src/pages/GroupsPage.tsx, ../src/pages/GroupPage.tsx, ../src/pages/JoinPage.tsx, ../src/components/RatingsSlider.tsx]
+tests: [../supabase/tests/database/groups.test.sql, ../src/utils/groups.test.ts]
+description: Groups of friends who see each other's ratings for one festival.
+tags: [groups, ratings, privacy]
 timestamp: 2026-10-30T00:00:00Z
 ---
 
 # Friend Groups
 
-DRAFT. This feature does not exist yet. A user makes a group for one festival
+A user makes a group for one festival
 and invites friends with a link. Members of a group see each other's ratings
 for the acts of that festival, and nothing more. This changes
 `ratings.spec.md` FR-6.
@@ -124,5 +124,6 @@ functions. The frontend only hides controls.
 
 ### Known Issues
 
-- A member reads ratings through RLS. The policy must not let a member read other data of a user. The usernames come from a narrow function that returns only id and username.
+- A member reads the shared ratings through RLS (`shares_group_for_act()`). The usernames come from `get_group_members()`, which returns only the id and username, so `user_profiles` keeps its own-row policy.
 - A leaked invite link lets anyone join until the owner resets it. A member who joined that way stays until they leave.
+- The database checks a past group by the UTC date, and the app by the local date of the user. For a few hours around midnight the app can show Join or Rename and the database then rejects it.

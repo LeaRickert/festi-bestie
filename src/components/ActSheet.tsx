@@ -2,14 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 import type { TouchEvent } from 'react'
 import { Calendar, Clock, MapPin, Music, Play, Search, Star, X } from 'lucide-react'
 import type { Act } from '../hooks/useFestivalData'
+import type { MyGroup } from '../hooks/useGroups'
 import { formatTime } from '../utils/scheduleUtils'
 import { searchUrl, watchUrl } from '../utils/youtube'
+import RatingsSlider from './RatingsSlider'
 import StarRating from './StarRating'
 
 interface ActSheetProps {
   act: Act
   rating: number
   signedIn: boolean
+  // The groups of the user for the festival; with one or more the rating is a slider (groups FR-21, FR-24).
+  groups?: MyGroup[]
+  userId?: string | null
   onRate: (rating: number) => void
   onSignIn: () => void
   onClose: () => void
@@ -20,7 +25,7 @@ const SWIPE_CLOSE_PX = 100
 
 // A bottom sheet below 640 px, a centered dialog on a wider screen. The page
 // owns the browser history; onClose must close only the sheet (act-sheet FR-2).
-const ActSheet = ({ act, rating, signedIn, onRate, onSignIn, onClose }: ActSheetProps) => {
+const ActSheet = ({ act, rating, signedIn, groups = [], userId = null, onRate, onSignIn, onClose }: ActSheetProps) => {
   const sheet = useRef<HTMLDivElement>(null)
   const closed = useRef(false)
   const dragStart = useRef<number | null>(null)
@@ -183,23 +188,29 @@ const ActSheet = ({ act, rating, signedIn, onRate, onSignIn, onClose }: ActSheet
 
           {/* Last, so the stars stay in the same place with or without a video. */}
           <div className="border-t border-white/10 pt-3">
-            <div className="text-white/70 text-xs mb-1">Your Rating:</div>
-            {signedIn ? (
-              <StarRating rating={rating} onRatingChange={onRate} showValue={true} />
+            {signedIn && userId && groups.length > 0 ? (
+              <RatingsSlider actId={act.id} groups={groups} myId={userId} myRating={rating} onRate={onRate} />
             ) : (
-              <div className="space-y-2">
-                <StarRating rating={0} onRatingChange={() => {}} interactive={false} showValue={false} />
-                <div className="bg-white/10 rounded-md p-2.5">
-                  <p className="text-white/70 text-xs mb-2">Sign in to rate this artist</p>
-                  <button
-                    type="button"
-                    onClick={onSignIn}
-                    className="w-full py-2.5 bg-white text-page font-medium rounded-md hover:bg-white/90 transition-colors text-sm"
-                  >
-                    Sign In to Rate
-                  </button>
-                </div>
-              </div>
+              <>
+                <div className="text-white/70 text-xs mb-1">Your Rating:</div>
+                {signedIn ? (
+                  <StarRating rating={rating} onRatingChange={onRate} showValue={true} />
+                ) : (
+                  <div className="space-y-2">
+                    <StarRating rating={0} onRatingChange={() => {}} interactive={false} showValue={false} />
+                    <div className="bg-white/10 rounded-md p-2.5">
+                      <p className="text-white/70 text-xs mb-2">Sign in to rate this artist</p>
+                      <button
+                        type="button"
+                        onClick={onSignIn}
+                        className="w-full py-2.5 bg-white text-page font-medium rounded-md hover:bg-white/90 transition-colors text-sm"
+                      >
+                        Sign In to Rate
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -100,7 +100,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { username: name } },
+      // With email confirmation on, the link comes back to this page, such as a join screen (groups FR-6).
+      options: { data: { username: name }, emailRedirectTo: window.location.href },
     })
     return { data, error }
   }
