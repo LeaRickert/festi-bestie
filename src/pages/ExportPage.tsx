@@ -17,9 +17,9 @@ import {posthogLogger} from "../posthogLogger";
 const PAGE_BACKGROUND = 'min-h-screen bg-page flex items-center justify-center'
 
 const ExportPage = () => {
-  const { id } = useParams()
+  const { slug } = useParams()
   const { user } = useAuth()
-  const { festival, acts, ratings, loading, error, retry } = useFestivalData(id ?? null, user)
+  const { festival, acts, ratings, loading, error, retry } = useFestivalData(slug ?? null, user)
 
   const [selectedStages, setSelectedStages] = useState<string[]>([])
   const [isExporting, setIsExporting] = useState(false)
@@ -135,7 +135,7 @@ const ExportPage = () => {
       <header className="border-b border-white/10">
         <div className="max-w-4xl mx-auto px-4 py-2.5 flex items-center justify-between">
           <Link
-            to={`/festival/${id}?day=${encodeURIComponent(selectedDay)}`}
+            to={`/festival/${slug}?day=${encodeURIComponent(selectedDay)}`}
             className="flex items-center text-white/70 hover:text-white transition-colors text-sm"
           >
             <ArrowLeft className="h-4 w-4 mr-1.5" />

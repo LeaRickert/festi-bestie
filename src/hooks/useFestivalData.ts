@@ -3,6 +3,7 @@ import { supabase } from '../utils/supabase'
 
 export interface Festival {
   id: string
+  slug: string
   name: string
   start_date: string
   end_date: string
@@ -29,11 +30,43 @@ export interface Act {
 
 type Ratings = Record<string, number>
 
+export type FestivalSummary = Pick<Festival, 'id' | 'slug' | 'name' | 'end_date'>
+
+/**
+ * Fetches only the festival of a slug, for pages that do not show its acts.
+ * `festival` stays null with no `error` when the slug matches no festival.
+ */
+export const useFestivalSummary = (slug: string) => {
+  const [festival, setFestival] = useState<FestivalSummary | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    const { data, error: festivalError } = await supabase
+      .from('festivals')
+      .select('id, slug, name, end_date')
+      .eq('slug', slug)
+      .maybeSingle()
+    if (festivalError) console.error('Error fetching festival:', festivalError)
+    setFestival(data)
+    setError(festivalError?.message ?? null)
+    setLoading(false)
+  }, [slug])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  return { festival, loading, error, retry: load }
+}
+
 /**
  * Fetches a festival, its acts and the ratings of the signed-in user.
- * `festival` stays null with no `error` when the id matches no festival.
+ * `festival` stays null with no `error` when the slug matches no festival.
  */
-export const useFestivalData = (festivalId: string | null, user: { id: string } | null = null) => {
+export const useFestivalData = (slug: string | null, user: { id: string } | null = null) => {
   const [festival, setFestival] = useState<Festival | null>(null)
   const [acts, setActs] = useState<Act[]>([])
   const [ratings, setRatings] = useState<Ratings>({})
@@ -47,7 +80,7 @@ export const useFestivalData = (festivalId: string | null, user: { id: string } 
       const { data: festivalData, error: festivalError } = await supabase
         .from('festivals')
         .select('*')
-        .eq('id', festivalId)
+        .eq('slug', slug)
         .maybeSingle()
 
       if (festivalError) throw festivalError
@@ -61,7 +94,7 @@ export const useFestivalData = (festivalId: string | null, user: { id: string } 
       const { data: actsData, error: actsError } = await supabase
         .from('acts')
         .select('*')
-        .eq('festival_id', festivalId)
+        .eq('festival_id', festivalData.id)
         .order('artist', { ascending: true })
 
       if (actsError) throw actsError
@@ -92,7 +125,7 @@ export const useFestivalData = (festivalId: string | null, user: { id: string } 
     } finally {
       setLoading(false)
     }
-  }, [festivalId])
+  }, [slug])
 
   const loadUserRatings = useCallback(async () => {
     if (!user || acts.length === 0) return
@@ -117,10 +150,10 @@ export const useFestivalData = (festivalId: string | null, user: { id: string } 
   }, [user, acts])
 
   useEffect(() => {
-    if (festivalId) {
+    if (slug) {
       fetchFestivalData()
     }
-  }, [festivalId, fetchFestivalData])
+  }, [slug, fetchFestivalData])
 
   useEffect(() => {
     loadUserRatings()

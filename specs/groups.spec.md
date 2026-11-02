@@ -1,11 +1,11 @@
 ---
 type: Spec
 title: "Spec: Friend Groups"
-sources: [../supabase/schemas/groups.sql, ../src/hooks/useGroups.ts, ../src/utils/groups.ts, ../src/pages/GroupsPage.tsx, ../src/pages/GroupPage.tsx, ../src/pages/JoinPage.tsx, ../src/components/RatingsSlider.tsx]
+sources: [../supabase/schemas/groups.sql, ../src/hooks/useGroups.ts, ../src/hooks/useFestivalData.ts, ../src/utils/groups.ts, ../src/pages/GroupsPage.tsx, ../src/pages/GroupPage.tsx, ../src/pages/JoinPage.tsx, ../src/components/RatingsSlider.tsx]
 tests: [../supabase/tests/database/groups.test.sql, ../src/utils/groups.test.ts]
 description: Groups of friends who see each other's ratings for one festival.
 tags: [groups, ratings, privacy]
-timestamp: 2026-10-31T00:00:00Z
+timestamp: 2026-11-01T00:00:00Z
 ---
 
 # Friend Groups
@@ -24,11 +24,11 @@ functions. The frontend only hides controls.
 - Group: A named set of users for one festival.
 - Member: A user in a group. A member has a join time (`group_members.joined_at`).
 - Owner: The member who made the group, or the member who took it over (FR-15).
-- Invite link: A link with the secret invite token of a group. Each group has one link at a time, with no expiry. Only members can read the token.
-- Join screen: The page that an invite link opens. It is a landing page with the app logo and name and no top navigation, and, for a signed-in user, a smaller "Go to festivals" link at the bottom. It shows the group name, the festival, the usernames of the members, a "Join" button and the warning "Your ratings for this festival will be visible to members". To a visitor who is not signed in it shows "You are invited to a group", a short line on what the app does, Sign up and Log in.
+- Invite link: A link with the festival slug and the secret invite token of a group, `/festival/:slug/join/:token`. Each group has one link at a time, with no expiry. Only members can read the token.
+- Join screen: The page that an invite link opens. It is a landing page with the app logo and name and no top navigation, and, for a signed-in user, a smaller "Go to festivals" link at the bottom. It shows the group name, the festival, the usernames of the members, a "Join" button and the warning "Your ratings for this festival will be visible to members". To a visitor who is not signed in it shows "You are invited to a group", the festival name, a short line on what the app does, Sign up and Log in.
 - Past group: A group whose festival end date has passed, by the same rule as the "Past festivals" section of `festivals.spec.md`.
 - Shared rating: A rating of a member for an act of the festival of the group.
-- Groups page: `/festival/:id/groups`. The groups of the user for one festival.
+- Groups page: `/festival/:slug/groups`. The groups of the user for one festival.
 - Group page: The members, the invite link, Leave and the owner actions of one group.
 - Ratings slider: The rating section of the act sheet as pages: "My rating", then one page for each group of the user for the festival.
 
@@ -79,6 +79,8 @@ functions. The frontend only hides controls.
 | FR-24 | Show no slider, chevron, label or dots to a visitor or to a user in no group for the festival |
 | FR-25 | On a group page of the slider, show in each star the number of members, the user included, who gave that rating. Show a star that no member chose empty, with no number. The stars there cannot be edited and use the rating color of `ratings.spec.md` |
 | FR-26 | On a group page of the slider, show "Tap a star to see who" until the user taps a star. On a tap, show the rating, its label and the members with that rating, the user first as "You", for example "4/5 Hyped: You, Alice, Bob". A second tap on the same star hides the line |
+| FR-27 | Show the festival name on the join screen from the slug in the invite link, also to a visitor who is not signed in |
+| FR-28 | Show a signed-in user that the invite link is not valid when its slug is not the festival of the group |
 
 ### QA Test Cases
 
@@ -122,6 +124,8 @@ functions. The frontend only hides controls.
 | TC-1781 | FR-26 | The user opens the "Camp A" page of an act | The line under the stars reads "Tap a star to see who" |
 | TC-E9X7 | FR-26 | A and B are in one group and both rated "Fisher" 4, and A taps the 4th star on the group page | The line reads "4/5 Hyped: You, B" |
 | TC-TQ51 | FR-26 | The user taps the selected star again | The line reads "Tap a star to see who" again |
+| TC-280X | FR-27 | A visitor who is not signed in opens an invite link for EDC Orlando 2026 | The join screen shows "EDC Orlando 2026" before the visitor signs in |
+| TC-RP67 | FR-28 | A signed-in user opens an invite link with the slug of another festival than the group | The app shows that the link is not valid, shows no "Join", and the user is not a member |
 
 ### Known Issues
 

@@ -21,13 +21,13 @@ import StagesView from '../components/StagesView'
 import ScheduleByDayView from '../components/ScheduleByDayView'
 
 const FestivalDetailPage = () => {
-  const { id } = useParams()
+  const { slug } = useParams()
   const { user } = useAuth()
 
   // Use the shared hook for festival data, acts, and ratings
-  const { festival, acts, ratings, loading, error, retry, setRatings } = useFestivalData(id, user)
+  const { festival, acts, ratings, loading, error, retry, setRatings } = useFestivalData(slug, user)
   // The groups of the user for this festival make the ratings slider (groups FR-21).
-  const { groups, reload: reloadGroups } = useMyGroups(id ?? null, user?.id ?? null)
+  const { groups, reload: reloadGroups } = useMyGroups(festival?.id ?? null, user?.id ?? null)
 
   const [debugStatus, setDebugStatus] = useState(null) // For debug mode
   const [showDebugControls, setShowDebugControls] = useState(false) // Toggle debug controls
@@ -211,7 +211,7 @@ const FestivalDetailPage = () => {
               )}
               {/* The groups page (groups FR-19). */}
               <Link
-                to={`/festival/${id}/groups`}
+                to={`/festival/${slug}/groups`}
                 className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
               >
                 <Users className="h-4 w-4 mr-1.5" />
@@ -313,7 +313,7 @@ const FestivalDetailPage = () => {
                 {/* Only the times view has a grid to export. The export page keeps the same ?day=. */}
                 {(currentStatus === 'times' || currentStatus === 'complete') && (
                   <Link
-                    to={`/festival/${id}/export${searchParams.get('day') ? `?day=${encodeURIComponent(searchParams.get('day'))}` : ''}`}
+                    to={`/festival/${slug}/export${searchParams.get('day') ? `?day=${encodeURIComponent(searchParams.get('day'))}` : ''}`}
                     aria-label="Export"
                     className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
                   >

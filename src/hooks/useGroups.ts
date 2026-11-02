@@ -25,6 +25,7 @@ export interface GroupDetails {
   name: string
   inviteToken: string
   festivalId: string
+  festivalSlug: string
   festivalName: string
   festivalEndDate: string
 }
@@ -57,7 +58,7 @@ export const fetchGroupMembers = async (groupId: string): Promise<MemberInfo[]> 
 export const fetchGroup = async (groupId: string): Promise<GroupDetails | null> => {
   const { data, error } = await supabase
     .from('groups')
-    .select('id, name, invite_token, festival_id, festivals(name, end_date)')
+    .select('id, name, invite_token, festival_id, festivals(slug, name, end_date)')
     .eq('id', groupId)
     .maybeSingle()
   if (error) throw error
@@ -68,6 +69,7 @@ export const fetchGroup = async (groupId: string): Promise<GroupDetails | null> 
     name: data.name,
     inviteToken: data.invite_token,
     festivalId: data.festival_id,
+    festivalSlug: festival?.slug ?? '',
     festivalName: festival?.name ?? '',
     festivalEndDate: festival?.end_date ?? '',
   }

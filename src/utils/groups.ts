@@ -31,8 +31,8 @@ export function isValidGroupName(name: string): boolean {
   return trimmed.length >= 1 && trimmed.length <= 40
 }
 
-export function inviteUrl(origin: string, token: string): string {
-  return `${origin}/join/${token}`
+export function inviteUrl(origin: string, festivalSlug: string, token: string): string {
+  return `${origin}/festival/${festivalSlug}/join/${token}`
 }
 
 // "My rating", then the groups in the order the user joined them (FR-21).

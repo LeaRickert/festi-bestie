@@ -24,7 +24,7 @@ const SECONDARY_BUTTON =
 // The members, the invite link, Leave, and Rename, Reset link and Delete for
 // the owner (groups FR-3, FR-4, FR-9, FR-13, FR-17, FR-18, FR-20).
 const GroupPage = () => {
-  const { id = '', groupId = '' } = useParams()
+  const { slug = '', groupId = '' } = useParams()
   const navigate = useNavigate()
   const { user, loading: authLoading } = useAuth()
 
@@ -62,7 +62,7 @@ const GroupPage = () => {
 
   const isOwner = members.some((member) => member.userId === userId && member.isOwner)
   const past = group ? isFestivalPast(group.festivalEndDate, localDateString(new Date())) : false
-  const link = group ? inviteUrl(window.location.origin, group.inviteToken) : ''
+  const link = group ? inviteUrl(window.location.origin, group.festivalSlug, group.inviteToken) : ''
 
   // Runs one action and shows the error of the database, if any.
   const run = async (
@@ -78,14 +78,14 @@ const GroupPage = () => {
       setActionError(groupErrorMessage(error))
       return
     }
-    posthog?.capture(event, { festival_id: id, group_id: groupId })
+    posthog?.capture(event, { festival_id: group?.festivalId, group_id: groupId })
     after?.()
   }
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(link)
-      posthog?.capture('group_invite_copied', { festival_id: id, group_id: groupId })
+      posthog?.capture('group_invite_copied', { festival_id: group?.festivalId, group_id: groupId })
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
@@ -96,7 +96,7 @@ const GroupPage = () => {
   const handleShare = async () => {
     try {
       await navigator.share({ title: group?.name, text: `Join my group "${group?.name}" on Festi Bestie`, url: link })
-      posthog?.capture('group_invite_shared', { festival_id: id, group_id: groupId })
+      posthog?.capture('group_invite_shared', { festival_id: group?.festivalId, group_id: groupId })
     } catch {
       // The user closed the share sheet.
     }
@@ -132,12 +132,12 @@ const GroupPage = () => {
 
   const handleDelete = () => {
     if (!window.confirm(`Delete "${group?.name}" for all members? This cannot be undone.`)) return
-    run(() => deleteGroup(groupId), 'group_deleted', () => navigate(`/festival/${id}/groups`, { replace: true }))
+    run(() => deleteGroup(groupId), 'group_deleted', () => navigate(`/festival/${slug}/groups`, { replace: true }))
   }
 
   const handleLeave = () => {
     if (!userId || !window.confirm(`Leave "${group?.name}"? The members stop seeing your ratings.`)) return
-    run(() => leaveGroup(groupId, userId), 'group_left', () => navigate(`/festival/${id}/groups`, { replace: true }))
+    run(() => leaveGroup(groupId, userId), 'group_left', () => navigate(`/festival/${slug}/groups`, { replace: true }))
   }
 
   const renderBody = () => {
@@ -272,7 +272,7 @@ const GroupPage = () => {
     <div className="min-h-screen">
       <header className="border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-2.5">
-          <Link to={`/festival/${id}/groups`} className="inline-flex items-center text-white/70 hover:text-white transition-colors text-sm">
+          <Link to={`/festival/${slug}/groups`} className="inline-flex items-center text-white/70 hover:text-white transition-colors text-sm">
             <ArrowLeft className="h-4 w-4 mr-1.5" />
             Groups
           </Link>

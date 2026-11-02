@@ -1,87 +1,76 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ArrowLeft, ChevronRight, Plus } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { useFestivalSummary } from '../hooks/useFestivalData'
 import { createGroup, useMyGroups } from '../hooks/useGroups'
 import { posthog } from '../posthog'
 import { posthogLogger } from '../posthogLogger'
 import SignInPrompt from '../components/SignInPrompt'
-import { supabase } from '../utils/supabase'
 import { isFestivalPast, localDateString } from '../utils/festivalUtils'
 import { groupErrorMessage, isValidGroupName } from '../utils/groups'
 
 // A user is in at most 2 groups for a festival (groups FR-8).
 const MAX_GROUPS = 2
 
-interface FestivalSummary {
-  id: string
-  name: string
-  end_date: string
-}
-
 // The groups of the user for one festival, and "Make a group" (groups FR-1, FR-19).
 const GroupsPage = () => {
-  const { id = '' } = useParams()
+  const { slug = '' } = useParams()
   const navigate = useNavigate()
   const { user, loading: authLoading } = useAuth()
-  const { groups, loading, error, reload } = useMyGroups(id, user?.id ?? null)
+  const { festival, loading: festivalLoading, error: festivalError, retry: retryFestival } = useFestivalSummary(slug)
+  const { groups, loading, error, reload } = useMyGroups(festival?.id ?? null, user?.id ?? null)
 
-  const [festival, setFestival] = useState<FestivalSummary | null>(null)
   const [name, setName] = useState('')
   const [creating, setCreating] = useState(false)
   const [createError, setCreateError] = useState('')
-
-  useEffect(() => {
-    supabase
-      .from('festivals')
-      .select('id, name, end_date')
-      .eq('id', id)
-      .maybeSingle()
-      .then(({ data }) => setFestival(data))
-  }, [id])
 
   const past = festival ? isFestivalPast(festival.end_date, localDateString(new Date())) : false
 
   const handleCreate = async (e: FormEvent) => {
     e.preventDefault()
+    if (!festival) return
     if (!isValidGroupName(name)) {
       setCreateError(groupErrorMessage({ code: '23514' }))
       return
     }
     setCreating(true)
     setCreateError('')
-    const { groupId, error: dbError } = await createGroup(id, name)
+    const { groupId, error: dbError } = await createGroup(festival.id, name)
     setCreating(false)
     if (dbError || !groupId) {
       setCreateError(groupErrorMessage(dbError))
       return
     }
-    posthog?.capture('group_created', { festival_id: id, group_id: groupId })
-    posthogLogger.info('group created', { festival_id: id, group_id: groupId })
-    navigate(`/festival/${id}/groups/${groupId}`)
+    posthog?.capture('group_created', { festival_id: festival.id, group_id: groupId })
+    posthogLogger.info('group created', { festival_id: festival.id, group_id: groupId })
+    navigate(`/festival/${slug}/groups/${groupId}`)
   }
 
   const renderBody = () => {
-    if (authLoading || (user && loading)) {
+    if (authLoading || festivalLoading || (user && loading)) {
       return <div className="text-white/60 text-sm">Loading...</div>
     }
-    if (!user) {
-      return <SignInPrompt message="Sign in to see your groups or make one." />
-    }
-    if (error) {
+    if (festivalError || error) {
       return (
         <div className="space-y-2">
-          <p className="text-red-400 text-sm">Could not load your groups: {error}</p>
+          <p className="text-red-400 text-sm">
+            Could not load {festivalError ? 'the festival' : 'your groups'}: {festivalError ?? error}
+          </p>
           <button
             type="button"
-            onClick={reload}
+            onClick={festivalError ? retryFestival : reload}
             className="px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
           >
             Try again
           </button>
         </div>
       )
+    }
+    if (!festival) return <p className="text-white/80 text-sm">Festival not found</p>
+    if (!user) {
+      return <SignInPrompt message="Sign in to see your groups or make one." />
     }
 
     return (
@@ -91,7 +80,7 @@ const GroupsPage = () => {
             {groups.map((group) => (
               <li key={group.id}>
                 <Link
-                  to={`/festival/${id}/groups/${group.id}`}
+                  to={`/festival/${slug}/groups/${group.id}`}
                   className="flex items-center gap-3 bg-surface rounded-lg px-3 py-2.5 hover:bg-surface/80 transition-colors"
                 >
                   <div className="min-w-0 flex-1">
@@ -151,7 +140,7 @@ const GroupsPage = () => {
     <div className="min-h-screen">
       <header className="border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-2.5">
-          <Link to={`/festival/${id}`} className="inline-flex items-center text-white/70 hover:text-white transition-colors text-sm">
+          <Link to={`/festival/${slug}`} className="inline-flex items-center text-white/70 hover:text-white transition-colors text-sm">
             <ArrowLeft className="h-4 w-4 mr-1.5" />
             Back
           </Link>

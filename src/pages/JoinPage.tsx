@@ -2,19 +2,23 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Users } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { useFestivalSummary } from '../hooks/useFestivalData'
 import { fetchInvite, joinGroup, type GroupInvite } from '../hooks/useGroups'
 import { posthog } from '../posthog'
 import AuthButtons from '../components/AuthButtons'
 import { groupErrorMessage } from '../utils/groups'
 import logo from '../assets/logo_color.png'
 
-// The screen an invite link opens on `/join/:token` (groups FR-5 to FR-9). The
-// user joins only on a tap of "Join". It is a landing page with the logo and no
-// top navigation, as it is often the first page a friend sees of the app.
+// The screen an invite link opens on `/festival/:slug/join/:token` (groups FR-5
+// to FR-9, FR-27, FR-28). The user joins only on a tap of "Join". It is a landing
+// page with the logo and no top navigation, as it is often the first page a
+// friend sees of the app.
 const JoinPage = () => {
-  const { token = '' } = useParams()
+  const { slug = '', token = '' } = useParams()
   const navigate = useNavigate()
   const { user, loading: authLoading } = useAuth()
+  // Festivals are public, so a visitor sees the festival before sign-in (FR-27).
+  const { festival, loading: festivalLoading, error: festivalError, retry: retryFestival } = useFestivalSummary(slug)
 
   const [invite, setInvite] = useState<GroupInvite | null>(null)
   const [loading, setLoading] = useState(true)
@@ -44,7 +48,7 @@ const JoinPage = () => {
     load()
   }, [load])
 
-  const groupPath = invite ? `/festival/${invite.festivalId}/groups/${invite.groupId}` : '/festivals'
+  const groupPath = invite ? `/festival/${slug}/groups/${invite.groupId}` : '/festivals'
 
   const handleJoin = async () => {
     setJoining(true)
@@ -60,12 +64,13 @@ const JoinPage = () => {
   }
 
   const renderBody = () => {
-    if (authLoading || (user && loading)) return <div className="text-white/60 text-sm">Loading...</div>
+    if (authLoading || festivalLoading || (user && loading)) return <div className="text-white/60 text-sm">Loading...</div>
     // Most visitors here are new to the app, so Sign up comes first (FR-6).
     if (!user) {
       return (
         <div className="flex flex-col items-center text-center">
           <h2 className="text-xl font-semibold text-white mb-2">You are invited to a group</h2>
+          {festival && <p className="text-white font-medium text-sm mb-2">{festival.name}</p>}
           <p className="text-white/70 text-sm mb-8 max-w-xs">
             Rate the acts you want to see and find out who in your crew is hyped for the same sets. Sign up or log in to see
             the group.
@@ -74,13 +79,13 @@ const JoinPage = () => {
         </div>
       )
     }
-    if (loadError) {
+    if (festivalError || loadError) {
       return (
         <div className="space-y-2">
-          <p className="text-red-400 text-sm">Could not load the invite: {loadError}</p>
+          <p className="text-red-400 text-sm">Could not load the invite: {festivalError ?? loadError}</p>
           <button
             type="button"
-            onClick={load}
+            onClick={festivalError ? retryFestival : load}
             className="px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
           >
             Try again
@@ -88,8 +93,9 @@ const JoinPage = () => {
         </div>
       )
     }
-    // A reset link or a deleted group (FR-4).
-    if (!invite) return <p className="text-white/80 text-sm">{groupErrorMessage({ message: 'invalid_invite' })}</p>
+    // A reset link, a deleted group (FR-4), or a path with the slug of another
+    // festival, which must not name the wrong festival next to "Join" (FR-28).
+    if (!invite || invite.festivalId !== festival?.id) return <p className="text-white/80 text-sm">{groupErrorMessage({ message: 'invalid_invite' })}</p>
 
     return (
       <div className="w-full bg-surface rounded-lg p-4 space-y-4">

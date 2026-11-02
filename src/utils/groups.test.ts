@@ -39,7 +39,9 @@ describe('group errors (groups FR-2, FR-4, FR-7, FR-8)', () => {
 
 describe('invite link (groups FR-3)', () => {
   it('[TC-B3VI] links to the join screen of the token', () => {
-    expect(inviteUrl('https://festibestie.app', 'abc')).toBe('https://festibestie.app/join/abc')
+    expect(inviteUrl('https://festibestie.app', 'edc-orlando-2026', 'abc')).toBe(
+      'https://festibestie.app/festival/edc-orlando-2026/join/abc',
+    )
   })
 })
 

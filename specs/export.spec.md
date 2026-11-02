@@ -23,7 +23,7 @@ is in `data-import.spec.md`.
 
 ## In Scope
 
-- The page `/festival/:id/export`.
+- The page `/festival/:slug/export`.
 - The preview and the PNG made from it.
 
 ## Out of Scope
@@ -62,7 +62,7 @@ is in `data-import.spec.md`.
 | TC-5VLI | FR-3 | The user exports Friday with one rated act | The PNG contains that act and its rating |
 | TC-BL3F | FR-4 | The festival is "EDC Orlando 2024" and the day is "Friday" | The file is `EDC_Orlando_2024_Friday_schedule.png` |
 | TC-SKGA | FR-5 | `html2canvas` throws an error | The page shows an alert and the button is enabled again |
-| TC-3NMG | FR-6 | The user opens `/festival/:id/export` directly or reloads it | The page shows the same day and stage choices as before |
+| TC-3NMG | FR-6 | The user opens `/festival/:slug/export` directly or reloads it | The page shows the same day and stage choices as before |
 | TC-HCJ0 | FR-7 | The first act starts at 1:00 PM and an act starts at 12:30 AM | The image draws the act once, 11.5 hours below the top of the grid |
 | TC-YCYQ | FR-7 | An artist name contains an HTML tag | The tag is shown as text and does not run |
 | TC-12UL | FR-8 | The user exports a day with an act rated 5 and an act rated 1 | The act rated 5 has a magenta border and a magenta 70% fill. The act rated 1 has a gray 40% border and no fill |

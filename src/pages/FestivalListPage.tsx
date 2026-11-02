@@ -12,7 +12,7 @@ import { localDateString, splitFestivals, statusBadge } from '../utils/festivalU
 const FestivalRow = ({ festival, past = false }: { festival: Festival; past?: boolean }) => (
   <li>
     <Link
-      to={`/festival/${festival.id}`}
+      to={`/festival/${festival.slug}`}
       className="flex items-center gap-3 bg-surface rounded-lg px-3 py-2.5 hover:bg-surface/80 transition-colors"
     >
       <div className="min-w-0 flex-1">
