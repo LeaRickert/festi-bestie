@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Star } from 'lucide-react'
 import { ratingLabel } from '../utils/ratingStyle'
 
+const STARS = [1, 2, 3, 4, 5]
+
 interface StarRatingProps {
   rating?: number
   onRatingChange: (rating: number) => void
@@ -39,22 +41,23 @@ const StarRating = ({
     setIsHovering(false)
   }
 
-  const getStarFill = (starIndex: number) =>
-    currentRating >= starIndex + 1 ? 'fill-rating text-rating' : 'fill-transparent text-white/30'
+  const getStarFill = (star: number) =>
+    currentRating >= star ? 'fill-rating text-rating' : 'fill-transparent text-white/30'
 
   return (
     <div className="flex flex-col items-start space-y-1">
-      <div
+      <fieldset
+        aria-label="Rating"
         className={`flex items-center -ml-1.5 ${interactive ? 'cursor-pointer' : ''}`}
         onMouseLeave={handleMouseLeave}
       >
-        {Array.from({ length: 5 }, (_, index) => (
+        {STARS.map((star) => (
           <button
             type="button"
-            key={index}
-            onClick={() => handleStarClick(index + 1)}
-            onMouseEnter={() => handleStarHover(index + 1)}
-            aria-label={`${index + 1} star${index === 0 ? '' : 's'}: ${ratingLabel(index + 1)}`}
+            key={star}
+            onClick={() => handleStarClick(star)}
+            onMouseEnter={() => handleStarHover(star)}
+            aria-label={`${star} star${star === 1 ? '' : 's'}: ${ratingLabel(star)}`}
             // Each star is a 44 by 44 px tap target (ratings FR-9).
             className={`flex h-11 w-11 items-center justify-center transition-transform duration-150 ${
               interactive ? 'hover:scale-110 active:scale-95' : ''
@@ -62,11 +65,11 @@ const StarRating = ({
             disabled={!interactive}
           >
             <Star
-              className={`h-8 w-8 ${getStarFill(index)} transition-colors duration-150`}
+              className={`h-8 w-8 ${getStarFill(star)} transition-colors duration-150`}
             />
           </button>
         ))}
-      </div>
+      </fieldset>
 
       {showValue && (
         <div className="flex items-center space-x-2 text-sm">

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import type { FormEvent } from 'react'
 import { X, Mail, Lock, User } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
@@ -19,7 +19,8 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }: LoginModalProps)
   const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  
+  const fieldId = useId()
+
   const { signIn, signUp } = useAuth()
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -67,6 +68,7 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }: LoginModalProps)
             {isLogin ? 'Sign In' : 'Sign Up'}
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="text-white/60 hover:text-white transition-colors"
           >
@@ -77,10 +79,11 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }: LoginModalProps)
         <form onSubmit={handleSubmit} className="space-y-3">
           {!isLogin && (
             <div>
-              <label className="block text-white/80 text-xs mb-1.5">Username</label>
+              <label htmlFor={`${fieldId}-username`} className="block text-white/80 text-xs mb-1.5">Username</label>
               <div className="relative">
                 <User className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-white/60" />
                 <input
+                  id={`${fieldId}-username`}
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -94,10 +97,11 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }: LoginModalProps)
           )}
 
           <div>
-            <label className="block text-white/80 text-xs mb-1.5">Email</label>
+            <label htmlFor={`${fieldId}-email`} className="block text-white/80 text-xs mb-1.5">Email</label>
             <div className="relative">
               <Mail className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-white/60" />
               <input
+                id={`${fieldId}-email`}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -109,10 +113,11 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }: LoginModalProps)
           </div>
 
           <div>
-            <label className="block text-white/80 text-xs mb-1.5">Password</label>
+            <label htmlFor={`${fieldId}-password`} className="block text-white/80 text-xs mb-1.5">Password</label>
             <div className="relative">
               <Lock className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-white/60" />
               <input
+                id={`${fieldId}-password`}
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -140,6 +145,7 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }: LoginModalProps)
 
         <div className="mt-4 text-center">
           <button
+            type="button"
             onClick={toggleMode}
             className="text-link hover:underline text-xs"
           >

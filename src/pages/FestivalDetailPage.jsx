@@ -261,6 +261,7 @@ const FestivalDetailPage = () => {
                 <span className="text-white/60 text-[10px]">Switch:</span>
                 {['announced', 'lineup', 'stages', 'schedule', 'times', 'complete'].map(status => (
                   <button
+                    type="button"
                     key={status}
                     onClick={() => setDebugStatus(status)}
                     className={`px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors ${
@@ -273,6 +274,7 @@ const FestivalDetailPage = () => {
                   </button>
                 ))}
                 <button
+                  type="button"
                   onClick={() => setDebugStatus(null)}
                   className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-500/20 text-gray-400 hover:bg-gray-500/30 transition-colors"
                 >
@@ -288,6 +290,7 @@ const FestivalDetailPage = () => {
       {import.meta.env.DEV && (
       <div className="fixed bottom-3 left-3 z-40">
         <button
+          type="button"
           onClick={() => setShowDebugControls(prev => !prev)}
           className={`px-2 py-1 rounded-md text-[10px] font-medium transition-colors ${
             showDebugControls 

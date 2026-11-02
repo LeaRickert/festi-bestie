@@ -65,30 +65,31 @@ const ScheduleByDayView = ({ acts, actStyle, onActClick }) => {
                 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
                   {actsByStage[stage].map(act => (
-                    <div
+                    <button
+                      type="button"
                       key={act.id}
                       onClick={() => onActClick(act)}
-                      className="border rounded-md p-2.5 active:opacity-80 transition-opacity cursor-pointer"
+                      className="w-full border rounded-md p-2.5 active:opacity-80 transition-opacity text-left cursor-pointer"
                       style={actStyle(act)}
                     >
-                      <div className="space-y-1.5">
-                        <h5 className="text-white font-medium text-sm truncate">
+                      <span className="block space-y-1.5">
+                        <span className="block text-white font-medium text-sm truncate">
                           {act.artist}
-                        </h5>
-                        
+                        </span>
+
                         {act.genre && (
-                          <p className="text-white/60 text-xs truncate">
+                          <span className="block text-white/60 text-xs truncate">
                             {act.genre}
-                          </p>
+                          </span>
                         )}
-                        
+
                         {act.category && (
-                          <p className="text-white/50 text-[10px] truncate">
+                          <span className="block text-white/50 text-[10px] truncate">
                             {act.category}
-                          </p>
+                          </span>
                         )}
-                      </div>
-                    </div>
+                      </span>
+                    </button>
                   ))}
                 </div>
               </div>

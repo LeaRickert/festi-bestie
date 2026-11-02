@@ -23,28 +23,29 @@ const LineupView = ({ acts, actStyle, onActClick }) => {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
         {sortedActs.map(act => (
-          <div
+          <button
+            type="button"
             key={act.id}
             onClick={() => onActClick(act)}
-            className="border rounded-lg p-3 active:opacity-80 transition-opacity text-center cursor-pointer"
+            className="w-full border rounded-lg p-3 active:opacity-80 transition-opacity text-center cursor-pointer"
             style={actStyle(act)}
           >
-            <div className="space-y-1.5">
-              <h3 className="text-white font-medium text-sm truncate">
+            <span className="block space-y-1.5">
+              <span className="block text-white font-medium text-sm truncate">
                 {act.artist}
-              </h3>
+              </span>
               {act.genre && (
-                <p className="text-white/60 text-xs truncate">
+                <span className="block text-white/60 text-xs truncate">
                   {act.genre}
-                </p>
+                </span>
               )}
               {act.category && (
-                <p className="text-white/50 text-[10px] truncate">
+                <span className="block text-white/50 text-[10px] truncate">
                   {act.category}
-                </p>
+                </span>
               )}
-            </div>
-          </div>
+            </span>
+          </button>
         ))}
       </div>
 
