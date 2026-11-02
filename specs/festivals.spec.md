@@ -60,6 +60,7 @@ acts, watches sets and compares stages.
 | FR-9 | Show no festival or act images. Show the festival name, dates and location as text |
 | FR-10 | Show the festival dates the same way in the festival list and on the festival page, as "November 7-9, 2025". Name both months or both years only when the festival crosses them |
 | FR-11 | Use the festival slug, not the database id, in the URL of each festival page |
+| FR-12 | Show "Welcome <username>!" next to Sign Out in the header of the festival list. Cut a name that does not fit |
 
 ### QA Test Cases
 
@@ -86,6 +87,7 @@ acts, watches sets and compares stages.
 | TC-QIDT | FR-9 | The user opens the festival list and a festival page | No image loads. The festival page shows the name, dates and location as text |
 | TC-M0G6 | FR-10 | A festival runs from 2025-11-07 to 2025-11-09 | The festival list and the festival page show "November 7-9, 2025" |
 | TC-DKKO | FR-11 | A user opens `/festival/edc-orlando-2026` | The page shows EDC Orlando 2026 |
+| TC-OW5B | FR-12 | A signed-in user with the username "lea" opens the festival list | The header shows "Welcome lea!" next to Sign Out |
 | TC-E5ZJ | FR-10 | A festival runs from 2025-10-31 to 2025-11-02 | The dates read "October 31 - November 2, 2025" |
 | TC-TKTP | FR-10 | A festival runs from 2025-12-30 to 2026-01-01 | The dates read "December 30, 2025 - January 1, 2026" |
 

@@ -39,7 +39,7 @@ const FestivalListPage = () => {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [showLogin, setShowLogin] = useState(false)
-  const { user, signOut } = useAuth()
+  const { user, username, signOut } = useAuth()
 
   const fetchFestivals = useCallback(async () => {
     setLoading(true)
@@ -65,17 +65,20 @@ const FestivalListPage = () => {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 bg-page/95 backdrop-blur-sm border-b border-white/10">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-lg font-bold text-white">Festi Bestie</h1>
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+          <h1 className="shrink-0 text-lg font-bold text-white">Festi Bestie</h1>
           {user ? (
-            <button
-              type="button"
-              onClick={signOut}
-              className="flex items-center px-2 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
-            >
-              <LogOut className="h-3.5 w-3.5 mr-1" />
-              Sign Out
-            </button>
+            <div className="min-w-0 flex items-center gap-2">
+              {username && <span className="min-w-0 truncate text-white/80 text-sm">Welcome {username}!</span>}
+              <button
+                type="button"
+                onClick={signOut}
+                className="shrink-0 flex items-center px-2 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
+              >
+                <LogOut className="h-3.5 w-3.5 mr-1" />
+                Sign Out
+              </button>
+            </div>
           ) : (
             <button
               type="button"
