@@ -10,6 +10,8 @@ import { downloadSchedulePng } from '../export/downloadPng'
 import DayControl, { useSelectedDay } from '../components/DayControl'
 import FilterPanel from '../components/export/FilterPanel'
 import SchedulePreview from '../components/export/SchedulePreview'
+import {posthog} from "../posthog";
+import {posthogLogger} from "../posthogLogger";
 
 const PAGE_BACKGROUND = 'min-h-screen bg-page flex items-center justify-center'
 
@@ -64,6 +66,18 @@ const ExportPage = () => {
     setIsExporting(true)
     try {
       await downloadSchedulePng(buildHtml(false), size, exportFileName(festival.name, selectedDay))
+      posthog?.capture('schedule_exported', {
+        festival_id: festival.id,
+        selected_day: selectedDay,
+        selected_stage_count: selectedStages.length,
+        act_count: filteredActs.length,
+      })
+      posthogLogger.info('schedule export completed', {
+        festival_id: festival.id,
+        selected_day: selectedDay,
+        selected_stage_count: selectedStages.length,
+        act_count: filteredActs.length,
+      })
     } catch (err) {
       console.error('Error generating schedule image:', err)
       alert('Error generating schedule. Please try again.')

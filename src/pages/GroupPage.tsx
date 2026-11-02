@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ArrowLeft, Copy, Crown, LogOut, Pencil, RefreshCw, Share2, Trash2 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { posthog } from '../posthog.js'
 import {
   deleteGroup,
   fetchGroup,
@@ -64,7 +65,11 @@ const GroupPage = () => {
   const link = group ? inviteUrl(window.location.origin, group.inviteToken) : ''
 
   // Runs one action and shows the error of the database, if any.
-  const run = async (action: () => Promise<{ error: { message: string; code?: string } | null }>, after?: () => void) => {
+  const run = async (
+    action: () => Promise<{ error: { message: string; code?: string } | null }>,
+    event: 'group_renamed' | 'group_invite_reset' | 'group_deleted' | 'group_left',
+    after?: () => void,
+  ) => {
     setBusy(true)
     setActionError('')
     const { error } = await action()
@@ -73,12 +78,14 @@ const GroupPage = () => {
       setActionError(groupErrorMessage(error))
       return
     }
+    posthog?.capture(event, { festival_id: id, group_id: groupId })
     after?.()
   }
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(link)
+      posthog?.capture('group_invite_copied', { festival_id: id, group_id: groupId })
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
@@ -89,6 +96,7 @@ const GroupPage = () => {
   const handleShare = async () => {
     try {
       await navigator.share({ title: group?.name, text: `Join my group "${group?.name}" on Festi Bestie`, url: link })
+      posthog?.capture('group_invite_shared', { festival_id: id, group_id: groupId })
     } catch {
       // The user closed the share sheet.
     }
@@ -102,6 +110,7 @@ const GroupPage = () => {
     }
     run(
       () => renameGroup(groupId, newName),
+      'group_renamed',
       () => {
         setRenaming(false)
         load()
@@ -116,18 +125,19 @@ const GroupPage = () => {
         const { error } = await resetInviteLink(groupId)
         return { error }
       },
+      'group_invite_reset',
       load,
     )
   }
 
   const handleDelete = () => {
     if (!window.confirm(`Delete "${group?.name}" for all members? This cannot be undone.`)) return
-    run(() => deleteGroup(groupId), () => navigate(`/festival/${id}/groups`, { replace: true }))
+    run(() => deleteGroup(groupId), 'group_deleted', () => navigate(`/festival/${id}/groups`, { replace: true }))
   }
 
   const handleLeave = () => {
     if (!userId || !window.confirm(`Leave "${group?.name}"? The members stop seeing your ratings.`)) return
-    run(() => leaveGroup(groupId, userId), () => navigate(`/festival/${id}/groups`, { replace: true }))
+    run(() => leaveGroup(groupId, userId), 'group_left', () => navigate(`/festival/${id}/groups`, { replace: true }))
   }
 
   const renderBody = () => {

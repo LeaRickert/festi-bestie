@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import type { User } from '@supabase/supabase-js'
+import { posthog } from '../posthog.js'
 import { supabase } from '../utils/supabase'
 import { usernameError } from '../utils/username'
 
@@ -54,11 +55,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
+  const identifiedUserId = useRef<string | null>(null)
 
-  // The auth listener only tracks the session. It must not await Supabase
-  // calls, which can deadlock the client. The profile loads in the effect below.
+  // Do not await Supabase calls in this listener, which can deadlock the client.
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN')) {
+        if (identifiedUserId.current && identifiedUserId.current !== session.user.id) {
+          posthog?.reset()
+        }
+
+        const personProperties: Record<string, string> = {}
+        if (session.user.email) personProperties.email = session.user.email
+        const metadataUsername = session.user.user_metadata.username
+        if (typeof metadataUsername === 'string') personProperties.username = metadataUsername
+
+        posthog?.identify(session.user.id, personProperties)
+        identifiedUserId.current = session.user.id
+      } else if (event === 'SIGNED_OUT') {
+        posthog?.reset()
+        identifiedUserId.current = null
+      }
+
       setUser(session?.user ?? null)
       if (!session?.user) {
         setUserProfile(null)

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router'
 import { Users } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { fetchInvite, joinGroup, type GroupInvite } from '../hooks/useGroups'
+import { posthog } from '../posthog.js'
 import AuthButtons from '../components/AuthButtons'
 import { groupErrorMessage } from '../utils/groups'
 import logo from '../assets/logo_color.png'
@@ -54,6 +55,7 @@ const JoinPage = () => {
       setJoinError(groupErrorMessage(error))
       return
     }
+    posthog?.capture('group_joined', { festival_id: invite?.festivalId, group_id: groupId })
     navigate(groupPath, { replace: true })
   }
 

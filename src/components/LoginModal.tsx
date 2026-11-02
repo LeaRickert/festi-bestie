@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { X, Mail, Lock, User } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import { posthog } from '../posthog.js'
 import { USERNAME_MAX } from '../utils/username'
 
 interface LoginModalProps {
@@ -30,9 +31,11 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }: LoginModalProps)
       if (isLogin) {
         const { error } = await signIn(email, password)
         if (error) throw error
+        posthog?.capture('user_signed_in')
       } else {
         const { error } = await signUp(email, password, username)
         if (error) throw error
+        posthog?.capture('user_signed_up')
       }
       onClose()
     } catch (error) {

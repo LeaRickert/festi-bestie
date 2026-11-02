@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
 import { useActHeat } from '../hooks/useActHeat'
 import { useMyGroups } from '../hooks/useGroups'
+import { posthog } from '../posthog.js'
 import { supabase } from '../utils/supabase'
 import { formatDateRange } from '../utils/dateUtils'
 import { ratingStyle } from '../utils/ratingStyle'
@@ -109,7 +110,14 @@ const FestivalDetailPage = () => {
       if (error) {
         console.error('Error saving rating:', error)
         restorePrevious()
+        return
       }
+
+      posthog?.capture('act_rated', {
+        act_id: actId,
+        festival_id: festival?.id,
+        rating,
+      })
     } catch (error) {
       console.error('Error saving rating:', error)
       restorePrevious()

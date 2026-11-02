@@ -4,6 +4,8 @@ import { Link, useNavigate, useParams } from 'react-router'
 import { ArrowLeft, ChevronRight, Plus } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { createGroup, useMyGroups } from '../hooks/useGroups'
+import { posthog } from '../posthog.js'
+import { posthogLogger } from '../posthogLogger.js'
 import SignInPrompt from '../components/SignInPrompt'
 import { supabase } from '../utils/supabase'
 import { isFestivalPast, localDateString } from '../utils/festivalUtils'
@@ -55,6 +57,8 @@ const GroupsPage = () => {
       setCreateError(groupErrorMessage(dbError))
       return
     }
+    posthog?.capture('group_created', { festival_id: id, group_id: groupId })
+    posthogLogger.info('group created', { festival_id: id, group_id: groupId })
     navigate(`/festival/${id}/groups/${groupId}`)
   }
 
