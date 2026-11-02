@@ -87,7 +87,7 @@ const RatingsSlider = ({ actId, groups, myId, myRating, onRate }: RatingsSliderP
 
   return (
     <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-      <div className="text-white/70 text-xs mb-1 truncate">{group ? group.name : 'Your Rating:'}</div>
+      <div className="text-white/70 text-xs mb-1 truncate">{group ? `Group Ratings: ${group.name}` : 'Your Rating:'}</div>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           {group ? (

@@ -9,7 +9,7 @@
   --color-link: #d2e359;
   --color-white: #f2f2f2;
 
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {

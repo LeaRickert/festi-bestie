@@ -64,13 +64,16 @@ const STAGE_ROW_HEIGHT = 20
 const TIME_COLUMN_WIDTH = 12
 const COLUMN_GAP = 3
 // Room under the last hour line for its number.
-const BOTTOM_LABEL_SPACE = 12
+const LAST_LABEL_SPACE = 12
+// Empty space at the bottom edge of the image.
+const BOTTOM_MARGIN = 28
+const BOTTOM_SPACE = LAST_LABEL_SPACE + BOTTOM_MARGIN
 const MIN_ACT_HEIGHT = 12
 const LINE_COLOR = 'rgba(255, 255, 255, 0.15)'
 
 export interface ScheduleHtmlInput {
   festivalName: string
-  // The header date, for example "Fri, Nov 6".
+  // The header day, for example "Friday".
   dateLabel: string
   stages: string[]
   acts: Act[]
@@ -103,7 +106,7 @@ function actHtml(act: TimedAct, rating: number, range: GridRange, pixelsPerHour:
       line-height: 1.15;
       overflow-wrap: anywhere;
     ">
-      <div style="font-weight: bold; font-size: 7px;">${escapeHtml(act.artist)}</div>
+      <div style="font-weight: 400; font-size: 9px;">${escapeHtml(act.artist)}</div>
       <div style="font-size: 6px; opacity: 0.9;">${formatShortRange(act.startTime, act.length)}</div>
     </div>`
 }
@@ -117,7 +120,7 @@ export function buildScheduleHtml(input: ScheduleHtmlInput): string {
   const range = getGridRange(acts) ?? { startMinutes: 0, endMinutes: 60 }
   const hours = (range.endMinutes - range.startMinutes) / 60
   const clockZoneHeight = Math.round(height * CLOCK_ZONE)
-  const gridHeight = height - clockZoneHeight - HEADER_HEIGHT - STAGE_ROW_HEIGHT - BOTTOM_LABEL_SPACE
+  const gridHeight = height - clockZoneHeight - HEADER_HEIGHT - STAGE_ROW_HEIGHT - BOTTOM_SPACE
   const pixelsPerHour = gridHeight / hours
   const lineTop = (minutes: number) => ((minutes - range.startMinutes) * pixelsPerHour) / 60
   const hourLines = getHourLines(range)
@@ -171,17 +174,17 @@ export function buildScheduleHtml(input: ScheduleHtmlInput): string {
       width: ${width}px;
       height: ${height}px;
       box-sizing: border-box;
-      padding: ${clockZoneHeight}px ${SIDE_PADDING}px ${BOTTOM_LABEL_SPACE}px;
+      padding: ${clockZoneHeight}px ${SIDE_PADDING}px ${BOTTOM_SPACE}px;
       background: ${IMAGE_BACKGROUND};
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       color: white;
       overflow: hidden;
     ">
       ${clockZoneOutline}
-      <div style="height: ${HEADER_HEIGHT}px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden;">
+      <div style="height: ${HEADER_HEIGHT}px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; font-size: 11px; font-weight: bold; white-space: nowrap; overflow: hidden;">
         ${escapeHtml(dateLabel)} - ${escapeHtml(festivalName)}
       </div>
-      <div style="display: flex; gap: ${COLUMN_GAP}px; height: ${STAGE_ROW_HEIGHT}px; padding-bottom: 2px; box-sizing: border-box;">
+      <div style="display: flex; gap: ${COLUMN_GAP}px; height: ${STAGE_ROW_HEIGHT}px;  border-top: 1px solid ${LINE_COLOR}; padding-bottom: 2px; box-sizing: border-box;">
         <div style="width: ${TIME_COLUMN_WIDTH}px; flex-shrink: 0;"></div>
         ${stageNames}
       </div>

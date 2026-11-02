@@ -20,13 +20,13 @@ const act = (overrides: Partial<Act>): Act => ({
 })
 
 const SIZE = { width: 393, height: 852, scale: 3 }
-// 852 minus the clock zone (213), the header (20), the stage names (20) and the room for the last hour number (12).
-const GRID_HEIGHT = 587
+// 852 minus the clock zone (213), the header (20), the stage names (20), the room for the last hour number (12) and the bottom margin (28).
+const GRID_HEIGHT = 559
 
 const html = (acts: Act[], ratings: Record<string, number> = {}, options: { stages?: string[]; preview?: boolean } = {}) =>
   buildScheduleHtml({
     festivalName: 'EDC Orlando 2026',
-    dateLabel: 'Fri, Nov 6',
+    dateLabel: 'Friday',
     stages: options.stages ?? ['Kinetic Field'],
     acts,
     ratings,
@@ -126,9 +126,10 @@ describe('image size (export FR-10)', () => {
 describe('wallpaper layout (export FR-11, FR-12, FR-14)', () => {
   it('[TC-18TU] leaves the top 25% empty and puts the header right above the stage names', () => {
     const output = html([act({})])
-    expect(output).toContain('padding: 213px 6px 12px')
-    const header = output.indexOf('Fri, Nov 6 - EDC Orlando 2026')
+    expect(output).toContain('padding: 213px 6px 40px')
+    const header = output.indexOf('Friday - EDC Orlando 2026')
     expect(header).toBeGreaterThan(-1)
+    expect(output).toContain('text-transform: uppercase')
     expect(output.indexOf('Kinetic Field')).toBeGreaterThan(header)
   })
 

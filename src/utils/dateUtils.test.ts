@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { festivalDayDate, formatDateRange, formatShortDate } from './dateUtils'
+import { festivalDayDate, formatDateRange, formatLongDay } from './dateUtils'
 
 describe('festival dates (festivals FR-10)', () => {
   it('[TC-M0G6] shows days in one month as "November 7-9, 2025"', () => {
@@ -20,10 +20,10 @@ describe('festival dates (festivals FR-10)', () => {
 })
 
 describe('export header date (export FR-11)', () => {
-  it('[TC-18TU] finds Friday of EDC Orlando 2026 and shows it as "Fri, Nov 6"', () => {
+  it('[TC-18TU] finds Friday of EDC Orlando 2026 and shows it as "Friday"', () => {
     const date = festivalDayDate('2026-11-06', '2026-11-08', 'Friday')
     expect(date).toBe('2026-11-06')
-    expect(formatShortDate(date as string)).toBe('Fri, Nov 6')
+    expect(formatLongDay(date as string)).toBe('Friday')
     expect(festivalDayDate('2026-11-06', '2026-11-08', 'Sunday')).toBe('2026-11-08')
   })
 

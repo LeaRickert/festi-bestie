@@ -125,17 +125,18 @@ const FestivalListPage = () => {
             )}
 
             {past.length > 0 && (
-              <details className="mt-6 group">
-                <summary className="cursor-pointer list-none flex items-center gap-1 text-white/70 text-sm font-medium">
-                  <ChevronRight className="h-4 w-4 transition-transform group-open:rotate-90" />
-                  Past festivals ({past.length})
-                </summary>
+              <div className="mt-6 group">
+
+                <div className=" list-none flex items-center gap-1 text-white/70 text-sm font-medium">
+                  
+                  Past festivals
+                </div>
                 <ul className="space-y-2 mt-3">
                   {past.map((festival) => (
                     <FestivalRow key={festival.id} festival={festival} past />
                   ))}
                 </ul>
-              </details>
+              </div>
             )}
           </>
         )}

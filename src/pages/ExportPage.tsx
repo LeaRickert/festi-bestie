@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
 import { getUniqueDays, getUniqueStages, filterActsByDay } from '../utils/scheduleUtils'
 import { buildScheduleHtml, canExport, exportFileName, filterExportActs, getImageSize, isPhone } from '../export/scheduleHtml'
-import { festivalDayDate, formatShortDate } from '../utils/dateUtils'
+import { festivalDayDate, formatLongDay } from '../utils/dateUtils'
 import { downloadFile, renderSchedulePng } from '../export/downloadPng'
 import DayControl, { useSelectedDay } from '../components/DayControl'
 import FilterPanel from '../components/export/FilterPanel'
@@ -54,7 +54,7 @@ const ExportPage = () => {
     const date = festivalDayDate(festival.start_date, festival.end_date, selectedDay)
     return buildScheduleHtml({
       festivalName: festival.name,
-      dateLabel: date ? formatShortDate(date) : selectedDay,
+      dateLabel: date ? formatLongDay(date) : selectedDay,
       stages: selectedStages,
       acts: filteredActs,
       ratings,
@@ -71,18 +71,6 @@ const ExportPage = () => {
       // A phone saves to its gallery from the sheet (export FR-15).
       if (isPhone(navigator.userAgent)) setImageToSave(file)
       else downloadFile(file)
-      posthog?.capture('schedule_exported', {
-        festival_id: festival.id,
-        selected_day: selectedDay,
-        selected_stage_count: selectedStages.length,
-        act_count: filteredActs.length,
-      })
-      posthogLogger.info('schedule export completed', {
-        festival_id: festival.id,
-        selected_day: selectedDay,
-        selected_stage_count: selectedStages.length,
-        act_count: filteredActs.length,
-      })
       posthog?.capture('schedule_exported', {
         festival_id: festival.id,
         selected_day: selectedDay,

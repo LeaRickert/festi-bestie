@@ -25,7 +25,7 @@ acts, watches sets and compares stages.
 - Festival list: The page on `/festivals`.
 - Slug: The unique name of a festival in its URL, for example `edc-orlando-2026`. It is the `slug` column of `festivals`.
 - Phone: A screen 375 px wide. Tablet: a screen 768 px wide.
-- Theme: Page `#051721` (dark teal). Surface `#072230` (a teal slightly lighter than the page). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Heat green `#107435`, used only in Heatmap mode (`heatmap.spec.md`). Link color `#d2e359` (neon), used only for text links. Buttons and selected controls are white (`#f2f2f2`) or neutral. Status badges keep their own colors. The font is the system font.
+- Theme: Page `#051721` (dark teal). Surface `#072230` (a teal slightly lighter than the page). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Heat green `#107435`, used only in Heatmap mode (`heatmap.spec.md`). Link color `#d2e359` (neon), used only for text links. Buttons and selected controls are white (`#f2f2f2`) or neutral. Status badges keep their own colors. The font is Inter, bundled with the app so it is the same on all devices. The system font is the fallback.
 
 ## In Scope
 

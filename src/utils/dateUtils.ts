@@ -45,3 +45,7 @@ export function formatShortDate(date: string): string {
   const weekday = WEEKDAYS[new Date(Date.parse(date)).getUTCDay()]
   return `${weekday.slice(0, 3)}, ${month.slice(0, 3)} ${day}`
 }
+
+export function formatLongDay(date: string): string {
+  return WEEKDAYS[new Date(Date.parse(date)).getUTCDay()]
+}
