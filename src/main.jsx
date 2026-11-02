@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
-import './posthog.js'
+import './posthog'
 import App from './App.jsx'
 import './index.css'
 

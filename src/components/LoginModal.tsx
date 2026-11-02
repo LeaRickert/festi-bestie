@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { X, Mail, Lock, User } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { posthog } from '../posthog.js'
+import { posthog } from '../posthog'
 import { USERNAME_MAX } from '../utils/username'
 
 interface LoginModalProps {

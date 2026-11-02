@@ -5,7 +5,7 @@ sources: [../src/hooks/useAuth.tsx, ../src/components/LoginModal.tsx, ../src/uti
 tests: [../src/utils/username.test.ts, ../supabase/tests/database/user_profiles.test.sql]
 description: Sign-in, profiles and the viewer, editor and admin roles.
 tags: [auth, roles, rls]
-timestamp: 2026-10-29T00:00:00Z
+timestamp: 2026-11-01T00:00:00Z
 ---
 
 # Authentication and Roles
@@ -78,3 +78,4 @@ Level Security (RLS). The frontend only hides controls.
 
 - `RoleBasedExample.jsx` is demo code and no page uses it.
 - Usernames saved before FR-10 can break the username rule. They stay until the user changes them.
+- When a screen for changing the username is added, PostHog must get the new username too (logging Known Issues).

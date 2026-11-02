@@ -3,7 +3,7 @@ import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ArrowLeft, Copy, Crown, LogOut, Pencil, RefreshCw, Share2, Trash2 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { posthog } from '../posthog.js'
+import { posthog } from '../posthog'
 import {
   deleteGroup,
   fetchGroup,

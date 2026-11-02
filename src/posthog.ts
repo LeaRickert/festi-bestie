@@ -17,6 +17,7 @@ if (!projectToken || !host) {
   posthogClient.init(projectToken, {
     api_host: host,
     disable_capture_url_hashes: true,
+    capture_pageview: 'history_change',
     capture_exceptions: {
       capture_unhandled_errors: true,
       capture_unhandled_rejections: true,
