@@ -25,9 +25,12 @@ export interface ScreenInfo {
   devicePixelRatio: number
 }
 
+export function isPhone(userAgent: string): boolean {
+  return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+}
+
 export function getImageSize({ userAgent, screenWidth, screenHeight, devicePixelRatio }: ScreenInfo): ImageSize {
-  const isPhone = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
-  if (!isPhone || !screenWidth || !screenHeight) return DESKTOP_SIZE
+  if (!isPhone(userAgent) || !screenWidth || !screenHeight) return DESKTOP_SIZE
   // A wallpaper is portrait, also when the phone is turned sideways.
   return {
     width: Math.min(screenWidth, screenHeight),

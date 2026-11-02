@@ -3,9 +3,9 @@ type: Spec
 title: "Spec: Schedule Export"
 sources: [../src/pages/ExportPage.tsx, ../src/export, ../src/components/export, ../src/utils/dateUtils.ts]
 description: Export one day of a schedule as a PNG lock screen wallpaper.
-tests: [../src/export/scheduleHtml.test.ts, ../src/utils/dateUtils.test.ts]
+tests: [../src/export/scheduleHtml.test.ts, ../src/export/downloadPng.test.ts, ../src/utils/dateUtils.test.ts]
 tags: [export]
-timestamp: 2026-10-30T00:00:00Z
+timestamp: 2026-11-01T00:00:00Z
 ---
 
 # Schedule Export
@@ -30,7 +30,7 @@ is in `data-import.spec.md`.
 
 - PDF output. The app does not make PDFs.
 - A tablet layout.
-- Sharing the image with friends. Groups share ratings in the app (see `groups.spec.md`).
+- Sharing the image with friends. Groups share ratings in the app (see `groups.spec.md`). The share menu of FR-16 is there to save the image to the phone.
 
 ### Functional Requirements
 
@@ -38,7 +38,7 @@ is in `data-import.spec.md`.
 |------|-------------|
 | FR-1 | Let the user choose one day and one stage or more. Each stage is a chip that toggles on and off |
 | FR-2 | Disable the export button until a day and a stage are chosen |
-| FR-3 | Download a PNG that shows the chosen acts and the ratings of the user |
+| FR-3 | Make a PNG that shows the chosen acts and the ratings of the user |
 | FR-4 | Name the file `<festival>_<day>_schedule.png` with underscores for spaces |
 | FR-5 | Show an error message when the image cannot be made |
 | FR-6 | Load the festival, acts and ratings by the festival id, so a reload of the page keeps working |
@@ -50,6 +50,8 @@ is in `data-import.spec.md`.
 | FR-12 | Show the clock zone as a faint outline in the preview only, not in the PNG |
 | FR-13 | Lay out the page for a phone: the theme and header of the other pages, the day control of schedule-grid FR-2, the stage chips, the preview at full width, and a download button in the header. Show no summary panel |
 | FR-14 | Draw the image on the page color `#051721` with the system font. The stage names (about 8 px) and the time column have no background |
+| FR-15 | In a desktop browser, the download button downloads the PNG. In a phone browser, it opens a sheet with the PNG, which the user presses and holds to save it to the photo gallery |
+| FR-16 | When the browser can share files, the sheet also has a "Save image" button that opens the share menu with the PNG. Closing the share menu keeps the sheet open and shows no error. When the share menu fails, the sheet hides the button and keeps the press and hold hint |
 
 ### QA Test Cases
 
@@ -72,9 +74,15 @@ is in `data-import.spec.md`.
 | TC-5D4V | FR-12 | The preview shows the clock zone | The preview has the outline and the PNG does not |
 | TC-FRTO | FR-13 | The screen is 375 px wide and the user opens the export page | The download button is in the header, the preview fills the width, and no summary panel shows |
 | TC-0TDL | FR-14 | The user exports a day with 4 stages | The stage names and the time column have no background, on a `#051721` image |
+| TC-76GK | FR-15 | The user agent is an iPhone, an Android phone or a desktop | The iPhone and the Android phone count as a phone, the desktop does not |
+| TC-LNHT | FR-15 | A desktop browser exports | The PNG downloads and no sheet opens |
+| TC-CPH9 | FR-15 | A phone browser exports and the user presses and holds the image | The sheet shows the PNG, and the browser menu offers to save it to the photo gallery |
+| TC-RH6Q | FR-16 | A phone browser that can share files taps "Save image" | The share menu opens with the PNG and can save it to the photo gallery |
+| TC-QGYR | FR-16 | A browser has no `navigator.share`, or cannot share files | The sheet has no "Save image" button and shows the press and hold hint |
+| TC-YXDX | FR-16 | The user closes the share menu without saving | The sheet stays open and no error shows |
 
 ### Known Issues
 
 - To fit fewer stages, the user drops stages with FR-1. The image never scrolls sideways.
 - An act without a start time or length is left out of the image.
-- TC-SKGA and TC-3NMG are checked by hand. The tests do not run a browser.
+- TC-SKGA, TC-3NMG, TC-LNHT, TC-CPH9, TC-RH6Q and TC-YXDX are checked by hand. The tests do not run a browser.

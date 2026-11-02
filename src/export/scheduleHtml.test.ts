@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Act } from '../hooks/useFestivalData'
-import { buildScheduleHtml, canExport, exportFileName, filterExportActs, getImageSize } from './scheduleHtml'
+import { buildScheduleHtml, canExport, exportFileName, filterExportActs, getImageSize, isPhone } from './scheduleHtml'
 
 const act = (overrides: Partial<Act>): Act => ({
   id: 'a1',
@@ -143,5 +143,13 @@ describe('wallpaper layout (export FR-11, FR-12, FR-14)', () => {
     // The only backgrounds are the image, the hour lines and the act blocks.
     const backgrounds = output.match(/background: [^;]+/g) ?? []
     expect(backgrounds.filter((b) => b !== 'background: #051721' && b !== 'background: rgba(255, 255, 255, 0.15)' && b !== 'background: transparent')).toEqual([])
+  })
+})
+
+describe('isPhone', () => {
+  it('[TC-76GK] counts an iPhone and an Android phone as a phone, and a desktop not', () => {
+    expect(isPhone('Mozilla/5.0 (iPhone)')).toBe(true)
+    expect(isPhone('Mozilla/5.0 (Linux; Android 14)')).toBe(true)
+    expect(isPhone('Mozilla/5.0 (Macintosh)')).toBe(false)
   })
 })

@@ -4,11 +4,12 @@ import { ArrowLeft, Download } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
 import { getUniqueDays, getUniqueStages, filterActsByDay } from '../utils/scheduleUtils'
-import { buildScheduleHtml, canExport, exportFileName, filterExportActs, getImageSize } from '../export/scheduleHtml'
+import { buildScheduleHtml, canExport, exportFileName, filterExportActs, getImageSize, isPhone } from '../export/scheduleHtml'
 import { festivalDayDate, formatShortDate } from '../utils/dateUtils'
-import { downloadSchedulePng } from '../export/downloadPng'
+import { downloadFile, renderSchedulePng } from '../export/downloadPng'
 import DayControl, { useSelectedDay } from '../components/DayControl'
 import FilterPanel from '../components/export/FilterPanel'
+import SaveImageSheet from '../components/export/SaveImageSheet'
 import SchedulePreview from '../components/export/SchedulePreview'
 import {posthog} from "../posthog";
 import {posthogLogger} from "../posthogLogger";
@@ -22,6 +23,7 @@ const ExportPage = () => {
 
   const [selectedStages, setSelectedStages] = useState<string[]>([])
   const [isExporting, setIsExporting] = useState(false)
+  const [imageToSave, setImageToSave] = useState<File | null>(null)
 
   const days = useMemo(() => getUniqueDays(acts), [acts])
   // The same ?day= as the festival page, so both show the same day (schedule-grid FR-2).
@@ -65,7 +67,22 @@ const ExportPage = () => {
     if (!festival || !exportable) return
     setIsExporting(true)
     try {
-      await downloadSchedulePng(buildHtml(false), size, exportFileName(festival.name, selectedDay))
+      const file = await renderSchedulePng(buildHtml(false), size, exportFileName(festival.name, selectedDay))
+      // A phone saves to its gallery from the sheet (export FR-15).
+      if (isPhone(navigator.userAgent)) setImageToSave(file)
+      else downloadFile(file)
+      posthog?.capture('schedule_exported', {
+        festival_id: festival.id,
+        selected_day: selectedDay,
+        selected_stage_count: selectedStages.length,
+        act_count: filteredActs.length,
+      })
+      posthogLogger.info('schedule export completed', {
+        festival_id: festival.id,
+        selected_day: selectedDay,
+        selected_stage_count: selectedStages.length,
+        act_count: filteredActs.length,
+      })
       posthog?.capture('schedule_exported', {
         festival_id: festival.id,
         selected_day: selectedDay,
@@ -147,6 +164,8 @@ const ExportPage = () => {
           <SchedulePreview html={buildHtml(true)} size={size} />
         </div>
       </div>
+
+      {imageToSave && <SaveImageSheet file={imageToSave} onClose={() => setImageToSave(null)} />}
     </div>
   )
 }
