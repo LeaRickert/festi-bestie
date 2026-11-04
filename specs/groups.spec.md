@@ -5,7 +5,7 @@ sources: [../supabase/schemas/groups.sql, ../src/hooks/useGroups.ts, ../src/hook
 tests: [../supabase/tests/database/groups.test.sql, ../src/utils/groups.test.ts]
 description: Groups of friends who see each other's ratings for one festival.
 tags: [groups, ratings, privacy]
-timestamp: 2026-11-01T00:00:00Z
+timestamp: 2026-11-04T00:00:00Z
 ---
 
 # Friend Groups
@@ -116,7 +116,7 @@ functions. The frontend only hides controls.
 | TC-K7VH | FR-19 | A user in the groups "Camp A" and "Work" for a festival opens the groups page | The page lists "Camp A" and "Work" and shows "Make a group" |
 | TC-SZ8G | FR-20 | A member who is not the owner opens the page of a group | The page shows the members, the invite link and "Leave", and no "Rename", "Reset link" or "Delete" |
 | TC-A0GT | FR-21 | A user joined "Camp A" and then "Work" for the festival and opens an act | The slider pages are "My rating", "Camp A" and "Work", in that order |
-| TC-W8LO | FR-21 | The user switches the mode control to "Heatmap" and opens an act | The act sheet shows the same slider as in "My picks" |
+| TC-W8LO | FR-21 | The user selects the color mode "Heatmap" and opens an act | The act sheet shows the same slider as in "My picks" |
 | TC-NXVN | FR-22 | The act sheet shows the last group page and the user taps the chevron | The slider shows "My rating" |
 | TC-7HGL | FR-23 | The user viewed the "Camp A" page, closes the sheet and opens another act | The sheet opens on "My rating" |
 | TC-6ELZ | FR-24 | A user in no group for the festival opens an act | The rating section shows only the stars, with no chevron, label or dots |

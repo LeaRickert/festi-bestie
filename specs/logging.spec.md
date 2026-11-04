@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Logging and Analytics"
-sources: [../src/posthog.ts, ../src/posthogLogger.ts, ../src/hooks/useAuth.tsx, ../src/components/LoginModal.tsx, ../src/pages/ExportPage.tsx, ../src/pages/FestivalDetailPage.jsx, ../src/pages/GroupPage.tsx, ../src/pages/GroupsPage.tsx, ../src/pages/JoinPage.tsx]
+sources: [../src/posthog.ts, ../src/posthogLogger.ts, ../src/hooks/useAuth.tsx, ../src/components/LoginModal.tsx, ../src/pages/ExportPage.tsx, ../src/pages/FestivalDetailPage.tsx, ../src/pages/GroupPage.tsx, ../src/pages/GroupsPage.tsx, ../src/pages/JoinPage.tsx]
 description: The product events, logs and errors the web app sends to PostHog.
 tags: [logging, analytics, posthog]
 timestamp: 2026-11-01T00:00:00Z

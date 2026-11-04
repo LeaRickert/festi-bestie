@@ -1,4 +1,4 @@
-import { type UIEvent, useMemo, useRef } from 'react'
+import { type ReactNode, type UIEvent, useMemo, useRef } from 'react'
 import { Music } from 'lucide-react'
 import type { Act } from '../hooks/useFestivalData'
 import {
@@ -14,16 +14,20 @@ import {
   getUniqueStages,
   hourLabel,
 } from '../utils/scheduleUtils'
-import type { RatingStyle } from '../utils/ratingStyle'
+import type { ActStyle } from '../utils/viewOptions'
 import DayControl, { useSelectedDay } from './DayControl'
 
 interface ScheduleViewProps {
   acts: Act[]
   // The "Later times on top" setting (schedule-grid FR-7).
   laterOnTop: boolean
-  // The rating style or the heat style of each act (ratings FR-10, heatmap FR-11).
-  actStyle: (act: Act) => RatingStyle
+  // The rating style or the heat style of each act, dimmed by the genre filter
+  // (ratings FR-10, heatmap FR-11, view-options FR-6).
+  actStyle: (act: Act) => ActStyle
   onActClick: (act: Act) => void
+  // The View button and the caption (view-options FR-2, FR-8).
+  dayTrailing?: ReactNode
+  dayBelow?: ReactNode
 }
 
 // Width of the time column, and the minimum width of a stage column. At 768 px
@@ -32,7 +36,7 @@ const TIME_COLUMN = 'w-[12px]'
 const STAGE_COLUMN = 'flex-1 min-w-[110px]'
 
 // The time grid of the times view (schedule-grid FR-1, FR-2, FR-5, FR-6, FR-7).
-const ScheduleView = ({ acts, laterOnTop, actStyle, onActClick }: ScheduleViewProps) => {
+const ScheduleView = ({ acts, laterOnTop, actStyle, onActClick, dayTrailing, dayBelow }: ScheduleViewProps) => {
   const days = useMemo(() => getUniqueDays(acts), [acts])
   const [selectedDay, setSelectedDay] = useSelectedDay(days)
 
@@ -66,14 +70,11 @@ const ScheduleView = ({ acts, laterOnTop, actStyle, onActClick }: ScheduleViewPr
 
   return (
     <div>
-      <DayControl days={days} selectedDay={selectedDay} onChange={setSelectedDay} />
-
-      {!range ? (
-        <p className="text-center py-8 text-white/60 text-sm">No set times for {selectedDay} yet.</p>
-      ) : (
-        <>
-          {/* Stage names, pinned under the day control (top-14 is its height). */}
-          <div ref={stageNames} className="sticky top-14 z-20 bg-page overflow-hidden">
+      {/* One sticky block, so the stage names stay under the day row when the caption shows or hides. */}
+      <div className="sticky top-0 z-30 bg-page">
+        <DayControl days={days} selectedDay={selectedDay} onChange={setSelectedDay} trailing={dayTrailing} below={dayBelow} pinned={false} gutter="-mx-2 px-2" />
+        {range && (
+          <div ref={stageNames} className="overflow-hidden">
             <div className="flex gap-0.5 pb-1">
               <div className={`${TIME_COLUMN} shrink-0 sticky left-0 bg-page`} />
               {stages.map((stage) => (
@@ -83,7 +84,13 @@ const ScheduleView = ({ acts, laterOnTop, actStyle, onActClick }: ScheduleViewPr
               ))}
             </div>
           </div>
+        )}
+      </div>
 
+      {!range ? (
+        <p className="text-center py-8 text-white/60 text-sm">No set times for {selectedDay} yet.</p>
+      ) : (
+        <>
           <div className="overflow-x-auto pb-4" onScroll={syncStageNames}>
             {/* w-max lets the hour lines run under every stage when the grid scrolls sideways. */}
             <div className="relative flex gap-0.5 w-max min-w-full">
@@ -116,11 +123,14 @@ const ScheduleView = ({ acts, laterOnTop, actStyle, onActClick }: ScheduleViewPr
                         type="button"
                         key={act.id}
                         onClick={() => onActClick(act)}
-                        className="absolute z-[2] left-0.5 right-0.5 flex flex-col justify-start border rounded-md px-1.5 py-1 overflow-hidden text-left active:opacity-80 transition-opacity"
+                        className="absolute z-[2] left-0.5 right-0.5 flex flex-col justify-between border rounded-md px-1.5 py-1 overflow-hidden text-left active:opacity-80 transition-opacity"
                         style={{ top, height, ...actStyle(act) }}
                       >
-                        <div className="text-xs font-semibold leading-tight line-clamp-2">{act.artist}</div>
-                        <div className="text-[10px] opacity-80 mt-0.5">{formatShortRange(act.startTime, act.length)}</div>
+                        <span>
+                          <span className="text-xs font-semibold leading-tight line-clamp-2">{act.artist}</span>
+                        <span className="text-[10px] opacity-80 mt-0.5">{formatShortRange(act.startTime, act.length)}</span>
+                        </span>
+                        <span className="text-[10px] opacity-80 mt-0.5">{act.genre}</span>
                       </button>
                     )
                   })}

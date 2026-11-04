@@ -1,11 +1,11 @@
 ---
 type: Spec
 title: "Spec: Festivals and App Flow"
-sources: [../src/pages/WelcomePage.tsx, ../src/pages/FestivalListPage.tsx, ../src/utils/festivalUtils.ts, ../src/utils/dateUtils.ts, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../src/components, ../supabase/schemas]
+sources: [../src/pages/WelcomePage.tsx, ../src/pages/FestivalListPage.tsx, ../src/utils/festivalUtils.ts, ../src/utils/dateUtils.ts, ../src/pages/FestivalDetailPage.tsx, ../src/hooks/useFestivalData.ts, ../src/components, ../supabase/schemas]
 description: The welcome view, the festival list and the festival page by status.
 tests: [../src/utils/festivalUtils.test.ts, ../src/utils/dateUtils.test.ts]
 tags: [festivals]
-timestamp: 2026-11-01T00:00:00Z
+timestamp: 2026-11-04T00:00:00Z
 ---
 
 # Festivals and App Flow
@@ -25,7 +25,7 @@ acts, watches sets and compares stages.
 - Festival list: The page on `/festivals`.
 - Slug: The unique name of a festival in its URL, for example `edc-orlando-2026`. It is the `slug` column of `festivals`.
 - Phone: A screen 375 px wide. Tablet: a screen 768 px wide.
-- Theme: Page `#051721` (dark teal). Surface `#072230` (a teal slightly lighter than the page). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Heat green `#107435`, used only in Heatmap mode (`heatmap.spec.md`). Link color `#d2e359` (neon), used only for text links. Buttons and selected controls are white (`#f2f2f2`) or neutral. Status badges keep their own colors. The font is Inter, bundled with the app so it is the same on all devices. The system font is the fallback.
+- Theme: Page `#051721` (dark teal). Surface `#072230` (a teal slightly lighter than the page). Rating accent `#9e1fb3` (magenta), used only for the rating style in `ratings.spec.md`. Heat green `#107435`, used only in Heatmap mode (`heatmap.spec.md`). Link color `#d2e359` (neon), used only for text links and the caption and dot of `view-options.spec.md`. Buttons and selected controls are white (`#f2f2f2`) or neutral. Status badges keep their own colors. The font is Inter, bundled with the app so it is the same on all devices. The system font is the fallback.
 
 ## In Scope
 
@@ -57,10 +57,11 @@ acts, watches sets and compares stages.
 | FR-6 | Show the debug panel in development builds only |
 | FR-7 | Show the welcome view on `/` to every visitor who is not signed in, on every visit. Send a signed-in user from `/` to `/festivals`. Open a festival page link directly, with no welcome view. Keep the user on the same page after they sign in |
 | FR-8 | Show the status badge of each upcoming festival in the festival list. Show no badge for a past festival |
-| FR-9 | Show no festival or act images. Show the festival name, dates and location as text |
-| FR-10 | Show the festival dates the same way in the festival list and on the festival page, as "November 7-9, 2025". Name both months or both years only when the festival crosses them |
+| FR-9 | Show no festival or act images. Show the festival name, dates and location as text in the festival list. Show the festival name as text on the festival page |
+| FR-10 | Show the festival dates the same way in the festival list and in the announced view, as "November 7-9, 2025". Name both months or both years only when the festival crosses them |
 | FR-11 | Use the festival slug, not the database id, in the URL of each festival page |
 | FR-12 | Show "Welcome <username>!" next to Sign Out in the header of the festival list. Cut a name that does not fit |
+| FR-13 | Show one header row on the festival page: a back icon, the festival name, and icon buttons for Bestie Scores (see `bestie.spec.md`), Groups and Export. Each icon button has an accessible name. Show Export only in the time grid. Cut a name that does not fit |
 
 ### QA Test Cases
 
@@ -84,12 +85,15 @@ acts, watches sets and compares stages.
 | TC-PYK4 | FR-7 | A visitor signs in from the sheet on a festival page | The festival page stays open |
 | TC-2CXG | FR-8 | An upcoming festival has the status `times` | The festival list shows a blue "Times" badge |
 | TC-TM6M | FR-8 | A past festival has the status `complete` | Its row in "Past festivals" shows no badge |
-| TC-QIDT | FR-9 | The user opens the festival list and a festival page | No image loads. The festival page shows the name, dates and location as text |
-| TC-M0G6 | FR-10 | A festival runs from 2025-11-07 to 2025-11-09 | The festival list and the festival page show "November 7-9, 2025" |
+| TC-QIDT | FR-9 | The user opens the festival list and a festival page | No image loads. The festival list shows the name, dates and location as text. The festival page shows the name, with no dates or location in its header |
+| TC-M0G6 | FR-10 | A festival runs from 2025-11-07 to 2025-11-09 | The festival list and the announced view show "November 7-9, 2025" |
 | TC-DKKO | FR-11 | A user opens `/festival/edc-orlando-2026` | The page shows EDC Orlando 2026 |
 | TC-OW5B | FR-12 | A signed-in user with the username "lea" opens the festival list | The header shows "Welcome lea!" next to Sign Out |
 | TC-E5ZJ | FR-10 | A festival runs from 2025-10-31 to 2025-11-02 | The dates read "October 31 - November 2, 2025" |
 | TC-TKTP | FR-10 | A festival runs from 2025-12-30 to 2026-01-01 | The dates read "December 30, 2025 - January 1, 2026" |
+| TC-OX80 | FR-13 | A signed-in user in a group opens a festival page with the status `times` | The header row shows the back icon, the name, and the Bestie Scores, Groups and Export icons |
+| TC-AH82 | FR-13 | A festival with the status `lineup` shows the header | The header row shows no Export icon |
+| TC-EFZ3 | FR-13 | A festival name is too long for the header at 375 px | The name is cut and the icons stay in view, with no horizontal page scroll |
 
 ### Known Issues
 

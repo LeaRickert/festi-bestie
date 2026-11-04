@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Schedule Grid"
-sources: [../src/components/ScheduleView.tsx, ../src/components/DayControl.tsx, ../src/components/ScheduleSettings.tsx, ../src/hooks/useLaterTimesOnTop.ts, ../src/utils/scheduleUtils.ts, ../src/utils/scheduleSettings.ts]
+sources: [../src/components/ScheduleView.tsx, ../src/components/DayControl.tsx, ../src/components/ViewOptions.tsx, ../src/hooks/useLaterTimesOnTop.ts, ../src/utils/scheduleUtils.ts, ../src/utils/scheduleSettings.ts]
 tests: [../src/utils/scheduleUtils.test.ts, ../src/utils/scheduleSettings.test.ts]
 description: The time grid of the times view and its time helpers.
 tags: [schedule]
@@ -39,12 +39,13 @@ compares stages and sees the acts they rated. The heatmap is a mode of this view
 | ID   | Requirement |
 |------|-------------|
 | FR-1 | Show a time grid with one column for each stage in the times view. On a phone each column has a fixed width and the grid scrolls sideways, with the stage names and the time column pinned. Put a 2 px gap between stage columns. The stage names and the time column have no background. The time column shows the hour number only, at its hour line |
-| FR-2 | Let the user filter the schedule by day with a full-width day control that stays at the top while the page scrolls. Keep the chosen day in the URL as `?day=` |
+| FR-2 | Let the user filter the schedule by day with a day control that fills the row next to the View button (see `view-options.spec.md`) and stays at the top while the page scrolls. Keep the chosen day in the URL as `?day=` |
 | FR-3 | Convert 12-hour and 24-hour time text to minutes since midnight, and calculate the end time of a set, also past midnight |
 | FR-4 | Use the stored `day`, `stage`, `start_time` and `length_minutes` of an act. Leave an act without a start time out of the time grid |
 | FR-5 | Fit the time grid to the chosen day: start at the hour of the first start time, rounded down, and end at the hour of the last end time, rounded up, also past midnight |
 | FR-6 | Show the time of an act block in the time grid as start and end with no AM or PM. Show a time on the hour as the hour only |
-| FR-7 | Give the times view a gear icon button to the left of the export button. It opens a settings popup with the setting "Later times on top", which is off by default. When it is off, the first hour of the grid range is at the top. When it is on, the last hour is at the top and the first hour is at the bottom. Save the setting in `localStorage`, so it stays on this device |
+| FR-7 | Give the time grid the setting "Later times on top" in the View sheet (see `view-options.spec.md`), which is off by default. When it is off, the first hour of the grid range is at the top. When it is on, the last hour is at the top and the first hour is at the bottom. Save the setting in `localStorage`, so it stays on this device |
+| FR-8 | Show the genre of an act under its time in the act block. Show no genre for an act that has none |
 
 ### QA Test Cases
 
@@ -70,7 +71,8 @@ compares stages and sees the acts they rated. The heatmap is a mode of this view
 | TC-8KPV | FR-7 | The setting is on and the grid runs from 2 PM to 11 PM | The 11 PM line is at the top of the grid and the 2 PM line is at the bottom |
 | TC-TTCE | FR-7 | The user turns the setting on and reloads the page | The setting is still on |
 | TC-6O46 | FR-7 | The browser blocks localStorage | The setting reads as off, and changing it throws no error |
-| TC-LH21 | FR-7 | The user selects the gear icon button | A popup opens with the setting "Later times on top". Changing it updates the grid at once |
+| TC-LH21 | FR-7 | The user opens the View sheet in the time grid | The sheet shows the setting "Later times on top". Changing it updates the grid at once |
+| TC-WTW1 | FR-8 | An act has the genre "Tech House" | The act block shows "Tech House" under its time |
 
 ### Known Issues
 

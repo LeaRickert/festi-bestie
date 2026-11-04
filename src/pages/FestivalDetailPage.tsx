@@ -1,53 +1,62 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link, useLocation, useNavigate, useSearchParams } from 'react-router'
-import { ArrowLeft, Calendar, Download, HeartHandshake, MapPin, Users } from 'lucide-react'
+import { ArrowLeft, Download, HeartHandshake, Users } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import { useFestivalData } from '../hooks/useFestivalData'
+import { type Act, useFestivalData } from '../hooks/useFestivalData'
 import { useLaterTimesOnTop } from '../hooks/useLaterTimesOnTop'
 import { useActHeat } from '../hooks/useActHeat'
 import { useMyGroups } from '../hooks/useGroups'
 import { posthog } from '../posthog'
 import { supabase } from '../utils/supabase'
-import { formatDateRange } from '../utils/dateUtils'
 import { ratingStyle } from '../utils/ratingStyle'
 import { heatStyle } from '../utils/heatStyle'
+import { type ActStyle, DIMMED_OPACITY, getGenreOptions, matchesGenre, resolveGenre, viewCaption } from '../utils/viewOptions'
 import ActSheet from '../components/ActSheet'
 import BestieSheet from '../components/BestieSheet'
 import LoginModal from '../components/LoginModal'
-import ModeControl, { useMode } from '../components/ModeControl'
-import ScheduleSettings from '../components/ScheduleSettings'
+import { useViewParams, ViewButton, ViewCaption, ViewSheet } from '../components/ViewOptions'
 import ScheduleView from '../components/ScheduleView'
 import AnnouncedView from '../components/AnnouncedView'
 import LineupView from '../components/LineupView'
 import StagesView from '../components/StagesView'
 import ScheduleByDayView from '../components/ScheduleByDayView'
 
+const ICON_BUTTON = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white/80 hover:bg-white/10 transition-colors'
+
 const FestivalDetailPage = () => {
   const { slug } = useParams()
   const { user } = useAuth()
 
   // Use the shared hook for festival data, acts, and ratings
-  const { festival, acts, ratings, loading, error, retry, setRatings } = useFestivalData(slug, user)
+  const { festival, acts, ratings, loading, error, retry, setRatings } = useFestivalData(slug ?? null, user)
   // The groups of the user for this festival make the ratings slider (groups FR-21).
   const { groups, reload: reloadGroups } = useMyGroups(festival?.id ?? null, user?.id ?? null)
 
-  const [debugStatus, setDebugStatus] = useState(null) // For debug mode
+  const [debugStatus, setDebugStatus] = useState<string | null>(null) // For debug mode
   const [showDebugControls, setShowDebugControls] = useState(false) // Toggle debug controls
   const [showLoginModal, setShowLoginModal] = useState(false) // For login modal
+  const [viewOpen, setViewOpen] = useState(false)
 
   // "My picks" shows the rating style, "Heatmap" the global heat (heatmap FR-1, FR-11).
-  const [mode, setMode] = useMode()
+  // A chosen genre dims the other acts (view-options FR-5, FR-6).
+  const { mode, genreParam, setMode, setGenre, resetView } = useViewParams()
+  const genres = useMemo(() => getGenreOptions(acts), [acts])
+  const genre = resolveGenre(genreParam, genres)
+  const caption = viewCaption({ mode, genre })
   const [laterOnTop, setLaterOnTop] = useLaterTimesOnTop()
   const [searchParams] = useSearchParams()
   const { heat, error: heatError } = useActHeat(festival?.id ?? null, mode === 'heatmap')
-  const actStyle = (act) => (mode === 'heatmap' ? heatStyle(heat[act.id]) : ratingStyle(ratings[act.id] || 0))
+  const actStyle = (act: Act): ActStyle => {
+    const style = mode === 'heatmap' ? heatStyle(heat[act.id]) : ratingStyle(ratings[act.id] || 0)
+    return matchesGenre(act, genre) ? style : { ...style, opacity: DIMMED_OPACITY }
+  }
 
   // The open act sheet is a history entry, so the browser back button closes
   // only the sheet (act-sheet FR-2). Every other close path goes back too.
   const location = useLocation()
   const navigate = useNavigate()
   const selectedAct = acts.find(act => act.id === location.state?.actId) ?? null
-  const openAct = (act) => navigate({ search: location.search }, { state: { actId: act.id } })
+  const openAct = (act: Act) => navigate({ search: location.search }, { state: { actId: act.id } })
   const closeAct = () => navigate(-1)
   // The bestie scores close the same way. Reload the groups so the list has
   // the current members (bestie FR-9, FR-12).
@@ -61,7 +70,7 @@ const FestivalDetailPage = () => {
   useEffect(() => {
     if (!import.meta.env.DEV) return
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
         e.preventDefault()
         setShowDebugControls(prev => !prev)
@@ -77,7 +86,7 @@ const FestivalDetailPage = () => {
     return [...acts].sort((a, b) => a.artist.localeCompare(b.artist))
   }
 
-  const handleRatingChange = async (actId, rating) => {
+  const handleRatingChange = async (actId: string, rating: number) => {
     if (!user) return
     
     const previous = ratings[actId]
@@ -130,6 +139,20 @@ const FestivalDetailPage = () => {
 
   // Use debug status if set, otherwise use festival status
   const currentStatus = festival ? debugStatus || festival.status : null
+  const exportDay = searchParams.get('day')
+
+  const hasActView = currentStatus !== null && ['lineup', 'stages', 'schedule', 'times', 'complete'].includes(currentStatus)
+  const isTimeGrid = currentStatus === 'times' || currentStatus === 'complete'
+  const openView = () => setViewOpen(true)
+  const viewButton = <ViewButton caption={caption} onOpen={openView} />
+  const captionLine = caption && <ViewCaption caption={caption} onOpen={openView} />
+  // The lineup and stages views have no day control, so the View button has its own row (view-options FR-2).
+  const viewRow = (
+    <div className="sticky top-0 z-30 -mx-2 flex items-center gap-2 bg-page px-2 py-2">
+      <div className="min-w-0 flex-1">{captionLine}</div>
+      {viewButton}
+    </div>
+  )
 
   const renderContentByStatus = () => {
     if (!festival) return null
@@ -137,20 +160,47 @@ const FestivalDetailPage = () => {
     switch (currentStatus) {
       case 'announced':
         return <AnnouncedView festival={festival} />
-      
+
       case 'lineup':
-        return <LineupView acts={getAlphabeticallySortedActs()} actStyle={actStyle} onActClick={openAct} />
-      
+        return (
+          <>
+            {viewRow}
+            <LineupView acts={getAlphabeticallySortedActs()} actStyle={actStyle} onActClick={openAct} />
+          </>
+        )
+
       case 'stages':
-        return <StagesView acts={getAlphabeticallySortedActs()} actStyle={actStyle} onActClick={openAct} />
-      
+        return (
+          <>
+            {viewRow}
+            <StagesView acts={getAlphabeticallySortedActs()} actStyle={actStyle} onActClick={openAct} />
+          </>
+        )
+
       case 'schedule':
-        return <ScheduleByDayView acts={getAlphabeticallySortedActs()} actStyle={actStyle} onActClick={openAct} />
-      
+        return (
+          <ScheduleByDayView
+            acts={getAlphabeticallySortedActs()}
+            actStyle={actStyle}
+            onActClick={openAct}
+            dayTrailing={viewButton}
+            dayBelow={captionLine}
+          />
+        )
+
       case 'times':
       case 'complete':
-        return <ScheduleView acts={acts} laterOnTop={laterOnTop} actStyle={actStyle} onActClick={openAct} />
-      
+        return (
+          <ScheduleView
+            acts={acts}
+            laterOnTop={laterOnTop}
+            actStyle={actStyle}
+            onActClick={openAct}
+            dayTrailing={viewButton}
+            dayBelow={captionLine}
+          />
+        )
+
       default:
         return <AnnouncedView festival={festival} />
     }
@@ -189,60 +239,34 @@ const FestivalDetailPage = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-white/10">
-        <div className="max-w-4xl mx-auto px-4 py-2.5">
-          <div className="flex items-center justify-between">
-            <Link 
-              to="/festivals"
-              className="flex items-center text-white/70 hover:text-white transition-colors text-sm"
-            >
-              <ArrowLeft className="h-4 w-4 mr-1.5" />
-              Back
-            </Link>
-            <div className="flex items-center gap-2">
-              {/* Only for a user in a group for this festival (bestie FR-11). */}
-              {user && groups.length > 0 && (
-                <button
-                  type="button"
-                  onClick={openBestie}
-                  className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
-                >
-                  <HeartHandshake className="h-4 w-4 mr-1.5" />
-                  Bestie Scores
-                </button>
-              )}
-              {/* The groups page (groups FR-19). */}
-              <Link
-                to={`/festival/${slug}/groups`}
-                className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
-              >
-                <Users className="h-4 w-4 mr-1.5" />
-                Groups
-              </Link>
-            </div>
-          </div>
-        </div>
+      {/* One header row (festivals FR-13). */}
+      <header className="max-w-4xl mx-auto flex items-center gap-0.5 px-1 py-1">
+        <Link to="/festivals" aria-label="Back" title="Back" className={ICON_BUTTON}>
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
+        <h1 className="min-w-0 flex-1 truncate pl-0.5 text-base font-bold text-white">{festival.name}</h1>
+        {/* Only for a user in a group for this festival (bestie FR-11). */}
+        {user && groups.length > 0 && (
+          <button type="button" onClick={openBestie} aria-label="Bestie Scores" title="Bestie Scores" className={ICON_BUTTON}>
+            <HeartHandshake className="h-4 w-4" />
+          </button>
+        )}
+        {/* The groups page (groups FR-19). */}
+        <Link to={`/festival/${slug}/groups`} aria-label="Groups" title="Groups" className={ICON_BUTTON}>
+          <Users className="h-4 w-4" />
+        </Link>
+        {/* Only the times view has a grid to export. The export page keeps the same ?day=. */}
+        {isTimeGrid && (
+          <Link
+            to={`/festival/${slug}/export${exportDay ? `?day=${encodeURIComponent(exportDay)}` : ''}`}
+            aria-label="Export"
+            title="Export"
+            className={ICON_BUTTON}
+          >
+            <Download className="h-4 w-4" />
+          </Link>
+        )}
       </header>
-
-      {/* Festival Hero */}
-      <section className="px-4 pt-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between gap-3">
-            <h1 className="text-xl font-bold text-white">{festival.name}</h1>
-            <div className="flex flex-col items-end gap-0.5 text-white/70 text-xs text-right">
-              <div className="flex items-center">
-                <Calendar className="h-3 w-3 mr-1 shrink-0" />
-                <span>{formatDateRange(festival.start_date, festival.end_date)}</span>
-              </div>
-              <div className="flex items-center">
-                <MapPin className="h-3 w-3 mr-1 shrink-0" />
-                <span>{festival.location}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Debug Controls */}
       {import.meta.env.DEV && showDebugControls && (
@@ -309,36 +333,29 @@ const FestivalDetailPage = () => {
 
 
       {/* Content Display */}
-      <section className="py-4 px-2">
+      <section className={`px-2 ${hasActView ? 'pb-4' : 'py-4'}`}>
         <div className="max-w-4xl mx-auto">
-          {/* Every act view has the mode control; the announced view has no acts (heatmap FR-1). */}
-          {currentStatus && currentStatus !== 'announced' && (
-            <>
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <ModeControl mode={mode} onChange={setMode} />
-                {/* Only the times view has a grid to export. The export page keeps the same ?day=. */}
-                {(currentStatus === 'times' || currentStatus === 'complete') && (
-                  <div className="flex items-center gap-2">
-                    <ScheduleSettings laterOnTop={laterOnTop} onLaterOnTopChange={setLaterOnTop} />
-                    <Link
-                      to={`/festival/${slug}/export${searchParams.get('day') ? `?day=${encodeURIComponent(searchParams.get('day'))}` : ''}`}
-                      aria-label="Export"
-                      className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
-                    >
-                      <Download className="h-4 w-4 mr-1.5" />
-                      Export
-                    </Link>
-                  </div>
-                )}
-              </div>
-              {mode === 'heatmap' && heatError && (
-                <p className="text-red-400 text-xs mb-2">Could not load the heatmap: {heatError}</p>
-              )}
-            </>
+          {hasActView && mode === 'heatmap' && heatError && (
+            <p className="text-red-400 text-xs pt-2">Could not load the heatmap: {heatError}</p>
           )}
           {renderContentByStatus()}
         </div>
       </section>
+
+      {/* View options (view-options FR-3 to FR-9). */}
+      {viewOpen && hasActView && (
+        <ViewSheet
+          mode={mode}
+          onModeChange={setMode}
+          genres={genres}
+          genre={genre}
+          onGenreChange={setGenre}
+          laterOnTop={isTimeGrid ? { value: laterOnTop, onChange: setLaterOnTop } : undefined}
+          isDefault={caption === null}
+          onReset={resetView}
+          onClose={() => setViewOpen(false)}
+        />
+      )}
 
       {/* Act Sheet */}
       {selectedAct && (
@@ -356,7 +373,7 @@ const FestivalDetailPage = () => {
       )}
 
       {/* Bestie Scores */}
-      {bestieOpen && (
+      {bestieOpen && user && (
         <BestieSheet
           festivalId={festival.id}
           acts={acts}

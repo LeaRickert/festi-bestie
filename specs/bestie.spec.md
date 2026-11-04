@@ -1,11 +1,11 @@
 ---
 type: Spec
 title: "Spec: Find Your Bestie"
-sources: [../src/utils/bestie.ts, ../src/components/BestieSheet.tsx, ../src/components/Sheet.tsx, ../src/hooks/useGroups.ts, ../src/pages/FestivalDetailPage.jsx]
+sources: [../src/utils/bestie.ts, ../src/components/BestieSheet.tsx, ../src/components/Sheet.tsx, ../src/hooks/useGroups.ts, ../src/pages/FestivalDetailPage.tsx]
 tests: [../src/utils/bestie.test.ts]
 description: A match score that compares the ratings of a user with each friend in their groups for a festival.
 tags: [groups, ratings, bestie]
-timestamp: 2026-10-31T00:00:00Z
+timestamp: 2026-11-04T00:00:00Z
 ---
 
 # Find Your Bestie
@@ -60,7 +60,7 @@ choice, not a privacy rule (FR-8).
 | FR-8 | Show only the matches of the user, and no score of two other members |
 | FR-9 | List each user who is a current member of at least one shared group, once |
 | FR-10 | Show the score as a number from 0 to 100 rounded to 2 decimals, with no trailing zeros and no percent sign |
-| FR-11 | Show a "Bestie Scores" button with the heart-handshake icon next to the "Groups" button on the festival page, only when the user is in at least one group for the festival |
+| FR-11 | Show a heart-handshake icon button with the accessible name "Bestie Scores" next to the "Groups" icon button on the festival page, only when the user is in at least one group for the festival |
 | FR-12 | Open the bestie scores as a bottom sheet on a phone and a dialog on a wider screen, with the closing rules of the act sheet. Show above the list: "Your score is how closely your ratings match theirs. Acts you both love count most, but a clash brings down the score." |
 | FR-13 | When no other user is in the groups of the user for the festival, show "No one in your groups yet. Share an invite link from Groups." and no list |
 | FR-14 | Load the ratings of the members and calculate the scores each time the popup opens |
@@ -90,7 +90,7 @@ choice, not a privacy rule (FR-8).
 | TC-478I | FR-9 | A and B are both in "Camp A" and "Work" for the festival | The list shows B once, with "Camp A · Work" |
 | TC-4HGL | FR-10 | The match score of A and B is 0.751234 | The list shows 75.12 |
 | TC-8DMY | FR-10 | The match score of A and B is 0.75 | The list shows 75 |
-| TC-KN0D | FR-11 | A user in a group for the festival opens the festival page | The page shows "Bestie Scores" next to "Groups" |
+| TC-KN0D | FR-11 | A user in a group for the festival opens the festival page | The page shows the "Bestie Scores" icon button next to "Groups" |
 | TC-4PLT | FR-11 | A user in no group for the festival opens the festival page | The page shows no "Bestie Scores" button |
 | TC-WD0A | FR-12 | A user taps "Bestie Scores" on a phone | A bottom sheet opens with the explanation above the list |
 | TC-PAS7 | FR-13 | A user is the only member of their groups for the festival and opens the bestie scores | The popup shows "No one in your groups yet. Share an invite link from Groups." |

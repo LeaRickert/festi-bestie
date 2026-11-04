@@ -102,11 +102,19 @@ Needs Phase 6. Spec: `bestie.spec.md`.
 - [x] Add the match score, the sort and the score format as pure helpers in `src/utils`, with tests (bestie FR-1 to FR-6, FR-10)
 - [x] Add the "Bestie Scores" button and popup: the matches of the user across their groups for the festival, and the shared acts and clashes (bestie FR-5 to FR-14)
 
+## Festival page cleanup
+
+Spec: `view-options.spec.md`. Needs Phase 5.
+
+- [x] Merge the header of the festival page into one row with icon buttons, and remove the dates and location from it (festivals FR-9, FR-13, bestie FR-11)
+- [x] Move the color mode, the heatmap explanation and "Later times on top" into a View sheet, with a caption and a dot when the view is not the default (view-options FR-1 to FR-4, FR-7 to FR-9)
+- [x] Add the genre filter, which dims the acts of other genres (view-options FR-5, FR-6)
+
 ## Phase 8: Group heatmap
 
 Needs Phases 5 and 6. Spec: `heatmap.spec.md`.
 
-- [ ] Add the groups of the user for the festival to the source choice. Show no source choice to a user in no group (heatmap FR-2, FR-3)
+- [ ] Add the groups of the user for the festival to the source choice in the View sheet. Show no source choice to a user in no group (heatmap FR-2, FR-3)
 - [ ] Calculate group heat from the ratings of the members (heatmap FR-10, FR-12)
 
 ## Phase 9: Offline

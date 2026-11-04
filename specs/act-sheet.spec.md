@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Act Sheet"
-sources: [../src/components/ActSheet.tsx, ../src/components/RatingsSlider.tsx, ../src/utils/youtube.ts, ../src/pages/FestivalDetailPage.jsx]
+sources: [../src/components/ActSheet.tsx, ../src/components/RatingsSlider.tsx, ../src/utils/youtube.ts, ../src/pages/FestivalDetailPage.tsx]
 description: The details of one act, its rating and its YouTube set.
 tests: [../src/utils/youtube.test.ts]
 tags: [acts]

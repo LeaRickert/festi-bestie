@@ -1,7 +1,7 @@
 ---
 type: Spec
 title: "Spec: Artist Ratings"
-sources: [../src/components/StarRating.tsx, ../src/utils/ratingStyle.ts, ../src/pages/FestivalDetailPage.jsx, ../src/hooks/useFestivalData.ts, ../supabase/schemas]
+sources: [../src/components/StarRating.tsx, ../src/utils/ratingStyle.ts, ../src/pages/FestivalDetailPage.tsx, ../src/hooks/useFestivalData.ts, ../supabase/schemas]
 description: How a signed-in user rates an act.
 tests: [../src/utils/ratingStyle.test.ts, ../supabase/tests/database/groups.test.sql]
 tags: [ratings]

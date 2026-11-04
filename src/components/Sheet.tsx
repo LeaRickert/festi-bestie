@@ -8,6 +8,8 @@ interface SheetProps {
   header: ReactNode
   onClose: () => void
   children: ReactNode
+  // Keep the page visible behind the sheet, for a sheet that changes the page at once.
+  lightBackdrop?: boolean
 }
 
 // Drag the sheet down this far to close it (act-sheet FR-2).
@@ -16,7 +18,7 @@ const SWIPE_CLOSE_PX = 100
 // A bottom sheet below 640 px, a centered dialog on a wider screen, with the
 // closing rules of act-sheet FR-2: the X, a tap outside, Escape and a swipe
 // down. The page owns the browser history; onClose must close only the sheet.
-const Sheet = ({ titleId, header, onClose, children }: SheetProps) => {
+const Sheet = ({ titleId, header, onClose, children, lightBackdrop = false }: SheetProps) => {
   const sheet = useRef<HTMLDivElement>(null)
   const closed = useRef(false)
   const dragStart = useRef<number | null>(null)
@@ -76,7 +78,7 @@ const Sheet = ({ titleId, header, onClose, children }: SheetProps) => {
         tabIndex={-1}
         aria-label="Close"
         onClick={close}
-        className="absolute inset-0 h-full w-full cursor-default bg-black/50 backdrop-blur-sm"
+        className={`absolute inset-0 h-full w-full cursor-default ${lightBackdrop ? 'bg-black/30' : 'bg-black/50 backdrop-blur-sm'}`}
       />
       <div
         ref={sheet}

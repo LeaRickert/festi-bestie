@@ -1,9 +1,20 @@
 import { Music, MapPin } from 'lucide-react'
-import { useMemo } from 'react'
+import { type ReactNode, useMemo } from 'react'
+import type { Act } from '../hooks/useFestivalData'
 import { getUniqueDays } from '../utils/scheduleUtils'
+import type { ActStyle } from '../utils/viewOptions'
 import DayControl, { useSelectedDay } from './DayControl'
 
-const ScheduleByDayView = ({ acts, actStyle, onActClick }) => {
+interface ScheduleByDayViewProps {
+  acts: Act[]
+  actStyle: (act: Act) => ActStyle
+  onActClick: (act: Act) => void
+  // The View button and the caption (view-options FR-2, FR-8).
+  dayTrailing?: ReactNode
+  dayBelow?: ReactNode
+}
+
+const ScheduleByDayView = ({ acts, actStyle, onActClick, dayTrailing, dayBelow }: ScheduleByDayViewProps) => {
   const days = useMemo(() => getUniqueDays(acts), [acts])
   const [selectedDay, setSelectedDay] = useSelectedDay(days)
 
@@ -14,7 +25,7 @@ const ScheduleByDayView = ({ acts, actStyle, onActClick }) => {
 
   // Group acts by stage and sort artists alphabetically within each stage
   const actsByStage = useMemo(() => {
-    const grouped = dayActs.reduce((acc, act) => {
+    const grouped = dayActs.reduce<Record<string, Act[]>>((acc, act) => {
       if (act.stage) {
         if (!acc[act.stage]) {
           acc[act.stage] = []
@@ -46,7 +57,7 @@ const ScheduleByDayView = ({ acts, actStyle, onActClick }) => {
 
   return (
     <div className="space-y-4">
-      <DayControl days={days} selectedDay={selectedDay} onChange={setSelectedDay} />
+      <DayControl days={days} selectedDay={selectedDay} onChange={setSelectedDay} trailing={dayTrailing} below={dayBelow} gutter="-mx-2 px-2" />
 
       {selectedDay && (
         <div className="space-y-4">
