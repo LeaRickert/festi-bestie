@@ -3,6 +3,7 @@ import { useParams, Link, useLocation, useNavigate, useSearchParams } from 'reac
 import { ArrowLeft, Calendar, Download, HeartHandshake, MapPin, Users } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
+import { useLaterTimesOnTop } from '../hooks/useLaterTimesOnTop'
 import { useActHeat } from '../hooks/useActHeat'
 import { useMyGroups } from '../hooks/useGroups'
 import { posthog } from '../posthog'
@@ -14,6 +15,7 @@ import ActSheet from '../components/ActSheet'
 import BestieSheet from '../components/BestieSheet'
 import LoginModal from '../components/LoginModal'
 import ModeControl, { useMode } from '../components/ModeControl'
+import ScheduleSettings from '../components/ScheduleSettings'
 import ScheduleView from '../components/ScheduleView'
 import AnnouncedView from '../components/AnnouncedView'
 import LineupView from '../components/LineupView'
@@ -35,6 +37,7 @@ const FestivalDetailPage = () => {
 
   // "My picks" shows the rating style, "Heatmap" the global heat (heatmap FR-1, FR-11).
   const [mode, setMode] = useMode()
+  const [laterOnTop, setLaterOnTop] = useLaterTimesOnTop()
   const [searchParams] = useSearchParams()
   const { heat, error: heatError } = useActHeat(festival?.id ?? null, mode === 'heatmap')
   const actStyle = (act) => (mode === 'heatmap' ? heatStyle(heat[act.id]) : ratingStyle(ratings[act.id] || 0))
@@ -146,7 +149,7 @@ const FestivalDetailPage = () => {
       
       case 'times':
       case 'complete':
-        return <ScheduleView acts={acts} actStyle={actStyle} onActClick={openAct} />
+        return <ScheduleView acts={acts} laterOnTop={laterOnTop} actStyle={actStyle} onActClick={openAct} />
       
       default:
         return <AnnouncedView festival={festival} />
@@ -315,14 +318,17 @@ const FestivalDetailPage = () => {
                 <ModeControl mode={mode} onChange={setMode} />
                 {/* Only the times view has a grid to export. The export page keeps the same ?day=. */}
                 {(currentStatus === 'times' || currentStatus === 'complete') && (
-                  <Link
-                    to={`/festival/${slug}/export${searchParams.get('day') ? `?day=${encodeURIComponent(searchParams.get('day'))}` : ''}`}
-                    aria-label="Export"
-                    className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
-                  >
-                    <Download className="h-4 w-4 mr-1.5" />
-                    Export
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <ScheduleSettings laterOnTop={laterOnTop} onLaterOnTopChange={setLaterOnTop} />
+                    <Link
+                      to={`/festival/${slug}/export${searchParams.get('day') ? `?day=${encodeURIComponent(searchParams.get('day'))}` : ''}`}
+                      aria-label="Export"
+                      className="flex items-center px-3 py-1.5 bg-white/10 text-white/80 rounded-md hover:bg-white/20 transition-colors text-sm"
+                    >
+                      <Download className="h-4 w-4 mr-1.5" />
+                      Export
+                    </Link>
+                  </div>
                 )}
               </div>
               {mode === 'heatmap' && heatError && (

@@ -5,7 +5,7 @@ sources: [../src/pages/ExportPage.tsx, ../src/export, ../src/components/export, 
 description: Export one day of a schedule as a PNG lock screen wallpaper.
 tests: [../src/export/scheduleHtml.test.ts, ../src/export/downloadPng.test.ts, ../src/utils/dateUtils.test.ts]
 tags: [export]
-timestamp: 2026-11-01T00:00:00Z
+timestamp: 2026-11-04T00:00:00Z
 ---
 
 # Schedule Export
@@ -52,6 +52,7 @@ is in `data-import.spec.md`.
 | FR-14 | Draw the image on the page color `#051721` with the Inter font. The stage names (about 8 px) and the time column have no background |
 | FR-15 | In a desktop browser, the download button downloads the PNG. In a phone browser, it opens a sheet with the PNG, which the user presses and holds to save it to the photo gallery |
 | FR-16 | When the browser can share files, the sheet also has a "Save image" button that opens the share menu with the PNG. Closing the share menu keeps the sheet open and shows no error. When the share menu fails, the sheet hides the button and keeps the press and hold hint |
+| FR-17 | Draw the image and the preview in the order of the "Later times on top" setting of schedule-grid FR-7 |
 
 ### QA Test Cases
 
@@ -81,6 +82,8 @@ is in `data-import.spec.md`.
 | TC-RH6Q | FR-16 | A phone browser that can share files taps "Save image" | The share menu opens with the PNG and can save it to the photo gallery |
 | TC-QGYR | FR-16 | A browser has no `navigator.share`, or cannot share files | The sheet has no "Save image" button and shows the press and hold hint |
 | TC-YXDX | FR-16 | The user closes the share menu without saving | The sheet stays open and no error shows |
+| TC-P505 | FR-17 | The setting is on and the user exports a day with acts from 2:00 PM to 1:00 AM | The image grid runs from 1 at the top to 2 at the bottom |
+| TC-F98H | FR-17 | The setting is off and the user exports a day | The image grid has the earlier times on top |
 
 ### Known Issues
 

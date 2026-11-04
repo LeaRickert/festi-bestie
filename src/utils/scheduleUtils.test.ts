@@ -7,6 +7,7 @@ import {
   getActsForStage,
   getGridRange,
   getHourLines,
+  getTimeTop,
   hourLabel,
   timeToMinutes,
 } from './scheduleUtils'
@@ -84,6 +85,36 @@ describe('grid range (schedule-grid FR-5)', () => {
 
   it('[TC-5146] has no range when no act has a time', () => {
     expect(getGridRange([act({ startTime: null })])).toBeNull()
+  })
+})
+
+describe('later times on top (schedule-grid FR-7)', () => {
+  const early = { startTime: '14:00', length: 60 }
+  const late = { startTime: '22:00', length: 60 }
+
+  it('[TC-4K1L] puts a 2 PM set above a 10 PM set by default', () => {
+    const range = rangeOf([act(early), act(late)])
+    expect(getActPosition(early, range).top).toBeLessThan(getActPosition(late, range).top)
+  })
+
+  it('[TC-O0NF] puts a 10 PM set above a 2 PM set, with the bottom of each at its start time', () => {
+    const range = rangeOf([act(early), act(late)])
+    const layout = { laterOnTop: true }
+    const earlyPosition = getActPosition(early, range, layout)
+    const latePosition = getActPosition(late, range, layout)
+    expect(latePosition.top).toBeLessThan(earlyPosition.top)
+    expect(latePosition.top + latePosition.height).toBe(getTimeTop(22 * 60, range, layout))
+    expect(earlyPosition.top + earlyPosition.height).toBe(getTimeTop(14 * 60, range, layout))
+  })
+
+  it('[TC-8KPV] draws the 11 PM line at the top and the 2 PM line at the bottom', () => {
+    const range = { startMinutes: 14 * 60, endMinutes: 23 * 60 }
+    const layout = { laterOnTop: true }
+    const lines = getHourLines(range, layout)
+    expect(lines[0]).toBe(23 * 60)
+    expect(lines[lines.length - 1]).toBe(14 * 60)
+    expect(getTimeTop(23 * 60, range, layout)).toBe(0)
+    expect(getTimeTop(14 * 60, range, layout)).toBe(810)
   })
 })
 

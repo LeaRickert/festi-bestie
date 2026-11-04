@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router'
 import { ArrowLeft, Download } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useFestivalData } from '../hooks/useFestivalData'
+import { useLaterTimesOnTop } from '../hooks/useLaterTimesOnTop'
 import { getUniqueDays, getUniqueStages, filterActsByDay } from '../utils/scheduleUtils'
 import { buildScheduleHtml, canExport, exportFileName, filterExportActs, getImageSize, isPhone } from '../export/scheduleHtml'
 import { festivalDayDate, formatLongDay } from '../utils/dateUtils'
@@ -21,6 +22,7 @@ const ExportPage = () => {
   const { user } = useAuth()
   const { festival, acts, ratings, loading, error, retry } = useFestivalData(slug ?? null, user)
 
+  const [laterOnTop] = useLaterTimesOnTop()
   const [selectedStages, setSelectedStages] = useState<string[]>([])
   const [isExporting, setIsExporting] = useState(false)
   const [imageToSave, setImageToSave] = useState<File | null>(null)
@@ -60,6 +62,7 @@ const ExportPage = () => {
       ratings,
       size,
       preview,
+      laterOnTop,
     })
   }
 

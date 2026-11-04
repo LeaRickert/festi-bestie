@@ -9,6 +9,7 @@ import {
   getActsForStage,
   getGridRange,
   getHourLines,
+  getTimeTop,
   getUniqueDays,
   getUniqueStages,
   hourLabel,
@@ -18,6 +19,8 @@ import DayControl, { useSelectedDay } from './DayControl'
 
 interface ScheduleViewProps {
   acts: Act[]
+  // The "Later times on top" setting (schedule-grid FR-7).
+  laterOnTop: boolean
   // The rating style or the heat style of each act (ratings FR-10, heatmap FR-11).
   actStyle: (act: Act) => RatingStyle
   onActClick: (act: Act) => void
@@ -28,8 +31,8 @@ interface ScheduleViewProps {
 const TIME_COLUMN = 'w-[12px]'
 const STAGE_COLUMN = 'flex-1 min-w-[110px]'
 
-// The time grid of the times view (schedule-grid FR-1, FR-2, FR-5, FR-6).
-const ScheduleView = ({ acts, actStyle, onActClick }: ScheduleViewProps) => {
+// The time grid of the times view (schedule-grid FR-1, FR-2, FR-5, FR-6, FR-7).
+const ScheduleView = ({ acts, laterOnTop, actStyle, onActClick }: ScheduleViewProps) => {
   const days = useMemo(() => getUniqueDays(acts), [acts])
   const [selectedDay, setSelectedDay] = useSelectedDay(days)
 
@@ -54,9 +57,9 @@ const ScheduleView = ({ acts, actStyle, onActClick }: ScheduleViewProps) => {
     )
   }
 
-  const hourLines = range ? getHourLines(range) : []
+  const hourLines = range ? getHourLines(range, { laterOnTop }) : []
   const gridHeight = range ? ((range.endMinutes - range.startMinutes) * PIXELS_PER_HOUR) / 60 : 0
-  const lineTop = (minutes: number) => (range ? ((minutes - range.startMinutes) * PIXELS_PER_HOUR) / 60 : 0)
+  const lineTop = (minutes: number) => (range ? getTimeTop(minutes, range, { laterOnTop }) : 0)
   const hourLineElements = hourLines.map((minutes) => (
     <div key={minutes} className="absolute left-0 right-0 h-px bg-white/15" style={{ top: lineTop(minutes) }} />
   ))
@@ -107,7 +110,7 @@ const ScheduleView = ({ acts, actStyle, onActClick }: ScheduleViewProps) => {
                 <div key={stage} className={`${STAGE_COLUMN} relative bg-surface rounded-sm`} style={{ height: gridHeight }}>
                   {getActsForStage(dayActs, stage).map((act) => {
                     if (!act.startTime || !act.length) return null
-                    const { top, height } = getActPosition({ startTime: act.startTime, length: act.length }, range)
+                    const { top, height } = getActPosition({ startTime: act.startTime, length: act.length }, range, { laterOnTop })
                     return (
                       <button
                         type="button"

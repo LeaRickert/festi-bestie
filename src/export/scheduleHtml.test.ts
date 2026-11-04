@@ -23,7 +23,7 @@ const SIZE = { width: 393, height: 852, scale: 3 }
 // 852 minus the clock zone (213), the header (20), the stage names (20), the room for the last hour number (12) and the bottom margin (28).
 const GRID_HEIGHT = 559
 
-const html = (acts: Act[], ratings: Record<string, number> = {}, options: { stages?: string[]; preview?: boolean } = {}) =>
+const html = (acts: Act[], ratings: Record<string, number> = {}, options: { stages?: string[]; preview?: boolean; laterOnTop?: boolean } = {}) =>
   buildScheduleHtml({
     festivalName: 'EDC Orlando 2026',
     dateLabel: 'Friday',
@@ -32,6 +32,7 @@ const html = (acts: Act[], ratings: Record<string, number> = {}, options: { stag
     ratings,
     size: SIZE,
     preview: options.preview,
+    laterOnTop: options.laterOnTop,
   })
 
 describe('export page (export FR-1 to FR-4)', () => {
@@ -144,6 +145,26 @@ describe('wallpaper layout (export FR-11, FR-12, FR-14)', () => {
     // The only backgrounds are the image, the hour lines and the act blocks.
     const backgrounds = output.match(/background: [^;]+/g) ?? []
     expect(backgrounds.filter((b) => b !== 'background: #051721' && b !== 'background: rgba(255, 255, 255, 0.15)' && b !== 'background: transparent')).toEqual([])
+  })
+})
+
+describe('later times on top (export FR-17)', () => {
+  const acts = [act({ startTime: '14:00', length: 60 }), act({ id: 'a2', startTime: '00:00', length: 60 })]
+  const labels = (output: string) => [...output.matchAll(/>(\d+)<\/div>/g)].map((match) => match[1])
+  const tops = (output: string) => [...output.matchAll(/position: absolute;\s+left: 0;\s+width: 100%;\s+top: ([\d.]+)px/g)].map((match) => Number(match[1]))
+
+  it('[TC-P505] runs the grid from 1 at the top to 2 at the bottom when the setting is on', () => {
+    const output = html(acts, {}, { laterOnTop: true })
+    expect(labels(output)).toEqual(['1', '12', '11', '10', '9', '8', '7', '6', '5', '4', '3', '2'])
+    // 11 hours, and the 12 AM set ends on the top line.
+    expect(tops(output)[1]).toBeCloseTo(0)
+    expect(tops(output)[0]).toBeCloseTo((10 * GRID_HEIGHT) / 11)
+  })
+
+  it('[TC-F98H] has the earlier times on top when the setting is off', () => {
+    const output = html(acts)
+    expect(labels(output)[0]).toBe('2')
+    expect(tops(output)[0]).toBeCloseTo(0)
   })
 })
 

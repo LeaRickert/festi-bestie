@@ -1,11 +1,11 @@
 ---
 type: Spec
 title: "Spec: Schedule Grid"
-sources: [../src/components/ScheduleView.tsx, ../src/components/DayControl.tsx, ../src/utils/scheduleUtils.ts]
-tests: [../src/utils/scheduleUtils.test.ts]
+sources: [../src/components/ScheduleView.tsx, ../src/components/DayControl.tsx, ../src/components/ScheduleSettings.tsx, ../src/hooks/useLaterTimesOnTop.ts, ../src/utils/scheduleUtils.ts, ../src/utils/scheduleSettings.ts]
+tests: [../src/utils/scheduleUtils.test.ts, ../src/utils/scheduleSettings.test.ts]
 description: The time grid of the times view and its time helpers.
 tags: [schedule]
-timestamp: 2026-10-30T00:00:00Z
+timestamp: 2026-11-04T00:00:00Z
 ---
 
 # Schedule Grid
@@ -18,13 +18,14 @@ compares stages and sees the acts they rated. The heatmap is a mode of this view
 ### Definitions
 
 - Phone: A screen 375 px wide. Tablet: a screen 768 px wide.
-- Act block: The box of one act in the grid. Its top is the start time and its height is the length, at 90 px per hour.
+- Act block: The box of one act in the grid. Its top is the start time (the end time with "Later times on top") and its height is the length, at 90 px per hour.
 - Grid range: The hours the grid shows for one day.
 
 ## In Scope
 
 - The time grid and the day control.
 - Time and position helpers in `scheduleUtils.ts`.
+- The "Later times on top" setting.
 
 ## Out of Scope
 
@@ -43,6 +44,7 @@ compares stages and sees the acts they rated. The heatmap is a mode of this view
 | FR-4 | Use the stored `day`, `stage`, `start_time` and `length_minutes` of an act. Leave an act without a start time out of the time grid |
 | FR-5 | Fit the time grid to the chosen day: start at the hour of the first start time, rounded down, and end at the hour of the last end time, rounded up, also past midnight |
 | FR-6 | Show the time of an act block in the time grid as start and end with no AM or PM. Show a time on the hour as the hour only |
+| FR-7 | Give the times view a gear icon button to the left of the export button. It opens a settings popup with the setting "Later times on top", which is off by default. When it is off, the first hour of the grid range is at the top. When it is on, the last hour is at the top and the first hour is at the bottom. Save the setting in `localStorage`, so it stays on this device |
 
 ### QA Test Cases
 
@@ -63,7 +65,13 @@ compares stages and sees the acts they rated. The heatmap is a mode of this view
 | TC-5146 | FR-5 | The first Friday act starts at 2:30 PM and the last Friday act ends at 2:15 AM | The Friday grid runs from 2 PM to 3 AM |
 | TC-6A6R | FR-6 | An act starts at 1:00 PM and ends at 1:50 PM | The block shows "1-1:50" |
 | TC-WSC4 | FR-6 | An act starts at 11:30 PM and ends at 1:00 AM | The block shows "11:30-1" |
+| TC-4K1L | FR-7 | No setting is saved on this device and the grid has acts at 2:00 PM and 10:00 PM | The setting is off and the 2:00 PM act is above the 10:00 PM act |
+| TC-O0NF | FR-7 | The setting is on and an act starts at 2:00 PM and an act starts at 10:00 PM on the same stage | The 10:00 PM act is above the 2:00 PM act, and the bottom of each block is at its start time |
+| TC-8KPV | FR-7 | The setting is on and the grid runs from 2 PM to 11 PM | The 11 PM line is at the top of the grid and the 2 PM line is at the bottom |
+| TC-TTCE | FR-7 | The user turns the setting on and reloads the page | The setting is still on |
+| TC-6O46 | FR-7 | The browser blocks localStorage | The setting reads as off, and changing it throws no error |
+| TC-LH21 | FR-7 | The user selects the gear icon button | A popup opens with the setting "Later times on top". Changing it updates the grid at once |
 
 ### Known Issues
 
-- TC-CILX, TC-I3EO and TC-L5HW are checked by hand. The tests do not run a browser.
+- TC-CILX, TC-I3EO, TC-L5HW and TC-LH21 are checked by hand. The tests do not run a browser.

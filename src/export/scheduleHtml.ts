@@ -1,6 +1,6 @@
 import type { Act } from '../hooks/useFestivalData'
 import { ratingStyle } from '../utils/ratingStyle'
-import { type GridRange, formatShortRange, getActPosition, getGridRange, getHourLines, hourLabel } from '../utils/scheduleUtils'
+import { type GridLayout, type GridRange, formatShortRange, getActPosition, getGridRange, getHourLines, getTimeTop, hourLabel } from '../utils/scheduleUtils'
 
 // The export image is a lock screen wallpaper, built as one HTML string. The
 // live preview shows the same string, so the preview and the PNG always match.
@@ -81,13 +81,15 @@ export interface ScheduleHtmlInput {
   size: ImageSize
   // Outline the clock zone. Only the preview does this (export FR-12).
   preview?: boolean
+  // The "Later times on top" setting (export FR-17).
+  laterOnTop?: boolean
 }
 
 type TimedAct = Act & { startTime: string; length: number }
 
-function actHtml(act: TimedAct, rating: number, range: GridRange, pixelsPerHour: number): string {
+function actHtml(act: TimedAct, rating: number, range: GridRange, layout: GridLayout): string {
   const style = ratingStyle(rating)
-  const position = getActPosition(act, range, pixelsPerHour)
+  const position = getActPosition(act, range, layout)
   const height = Math.max(position.height, MIN_ACT_HEIGHT)
   return `
     <div style="
@@ -112,7 +114,7 @@ function actHtml(act: TimedAct, rating: number, range: GridRange, pixelsPerHour:
 }
 
 export function buildScheduleHtml(input: ScheduleHtmlInput): string {
-  const { festivalName, dateLabel, stages, acts, ratings, size, preview = false } = input
+  const { festivalName, dateLabel, stages, acts, ratings, size, preview = false, laterOnTop = false } = input
   const { width, height } = size
 
   // The grid fits the chosen acts (schedule-grid FR-5) and fills the image
@@ -121,9 +123,9 @@ export function buildScheduleHtml(input: ScheduleHtmlInput): string {
   const hours = (range.endMinutes - range.startMinutes) / 60
   const clockZoneHeight = Math.round(height * CLOCK_ZONE)
   const gridHeight = height - clockZoneHeight - HEADER_HEIGHT - STAGE_ROW_HEIGHT - BOTTOM_SPACE
-  const pixelsPerHour = gridHeight / hours
-  const lineTop = (minutes: number) => ((minutes - range.startMinutes) * pixelsPerHour) / 60
-  const hourLines = getHourLines(range)
+  const layout: GridLayout = { laterOnTop, pixelsPerHour: gridHeight / hours }
+  const lineTop = (minutes: number) => getTimeTop(minutes, range, layout)
+  const hourLines = getHourLines(range, layout)
 
   const lines = hourLines
     .map((minutes) => `<div style="position: absolute; left: 0; right: 0; top: ${lineTop(minutes)}px; height: 1px; background: ${LINE_COLOR};"></div>`)
@@ -159,7 +161,7 @@ export function buildScheduleHtml(input: ScheduleHtmlInput): string {
       const stageActs = acts.filter((act): act is TimedAct => act.stage === stage && Boolean(act.startTime) && Boolean(act.length))
       return `
         <div style="flex: 1; min-width: 0; position: relative; height: ${gridHeight}px;">
-          ${stageActs.map((act) => actHtml(act, ratings[act.id] || 0, range, pixelsPerHour)).join('')}
+          ${stageActs.map((act) => actHtml(act, ratings[act.id] || 0, range, layout)).join('')}
         </div>`
     })
     .join('')

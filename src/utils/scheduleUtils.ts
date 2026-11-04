@@ -68,12 +68,22 @@ export const getGridRange = (acts: Act[]): GridRange | null => {
   }
 }
 
+// How the grid is drawn. Earlier times are on top unless laterOnTop is set (FR-7).
+export interface GridLayout {
+  laterOnTop?: boolean
+  pixelsPerHour?: number
+}
+
 // Minutes of every hour line, from the top line to the bottom line.
-export const getHourLines = (range: GridRange): number[] => {
+export const getHourLines = (range: GridRange, { laterOnTop = false }: GridLayout = {}): number[] => {
   const lines: number[] = []
   for (let minutes = range.startMinutes; minutes <= range.endMinutes; minutes += 60) lines.push(minutes)
-  return lines
+  return laterOnTop ? lines.reverse() : lines
 }
+
+// The px from the top of the grid to a time.
+export const getTimeTop = (minutes: number, range: GridRange, { laterOnTop = false, pixelsPerHour = PIXELS_PER_HOUR }: GridLayout = {}): number =>
+  ((laterOnTop ? range.endMinutes - minutes : minutes - range.startMinutes) * pixelsPerHour) / 60
 
 // The hour number only: 1200 (8 PM) is "8", 1440 (12 AM) is "12".
 export const hourLabel = (minutes: number): string => {
@@ -93,11 +103,16 @@ export const formatShortRange = (startTime: string, length: number): string => {
   return `${shortTime(start)}-${shortTime(start + length)}`
 }
 
-// Top and height of an act block, in px from the top of the grid.
-export const getActPosition = (act: TimedAct, range: GridRange, pixelsPerHour = PIXELS_PER_HOUR) => ({
-  top: ((festivalMinutes(act.startTime) - range.startMinutes) * pixelsPerHour) / 60,
-  height: (act.length * pixelsPerHour) / 60,
-})
+// Top and height of an act block, in px from the top of the grid. With later
+// times on top, the top of the block is the end of the set.
+export const getActPosition = (act: TimedAct, range: GridRange, layout: GridLayout = {}) => {
+  const start = festivalMinutes(act.startTime)
+  const { laterOnTop = false, pixelsPerHour = PIXELS_PER_HOUR } = layout
+  return {
+    top: getTimeTop(laterOnTop ? start + act.length : start, range, layout),
+    height: (act.length * pixelsPerHour) / 60,
+  }
+}
 
 // Get unique days from acts
 export const getUniqueDays = (acts: Act[]): string[] => {
